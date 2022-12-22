@@ -65,33 +65,26 @@
         <module>abstract</module>
         <module>plugin</module>
 
-        <module>1_8_R1</module>
-        <module>1_8_R2</module>
-        <module>1_8_R3</module>
-
-        <module>1_9_R1</module>
-        <module>1_9_R2</module>
-
-        <module>1_10_R1</module>
-        <module>1_11_R1</module>
-        <module>1_12_R1</module>
-
-        <module>1_13_R1</module>
-        <module>1_13_R2</module>
-
-        <module>1_14_R1</module>
-        <module>1_15_R1</module>
-
-        <module>1_16_R1</module>
-        <module>1_16_R2</module>
-        <module>1_16_R3</module>
-
-        <module>1_17_R1</module>
-
-        <module>1_18_R1</module>
-        <module>1_18_R2</module>
-
-        <module>1_19_R1</module>
+        <module>nms/1_8_R1</module>
+        <module>nms/1_8_R2</module>
+        <module>nms/1_8_R3</module>
+        <module>nms/1_9_R1</module>
+        <module>nms/1_9_R2</module>
+        <module>nms/1_10_R1</module>
+        <module>nms/1_11_R1</module>
+        <module>nms/1_12_R1</module>
+        <module>nms/1_13_R1</module>
+        <module>nms/1_13_R2</module>
+        <module>nms/1_14_R1</module>
+        <module>nms/1_15_R1</module>
+        <module>nms/1_16_R1</module>
+        <module>nms/1_16_R2</module>
+        <module>nms/1_16_R3</module>
+        <module>nms/1_17_R1</module>
+        <module>nms/1_18_R1</module>
+        <module>nms/1_18_R2</module>
+        <module>nms/1_19_R1</module>
+        <module>nms/1_19_R2</module>
     </modules>
 
     <build>
@@ -107,10 +100,18 @@
 
                 <executions>
                     <execution>
-                        <id>compile</id>
+                        <id>compile-kotlin</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>test-compile-kotlin</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -130,6 +131,24 @@
                             </excludes>
                         </filter>
                     </filters>
+                    <relocations>
+                        <relocation>
+                            <pattern>revxrsal.commands</pattern>
+                            <shadedPattern>me.gamercoder215.battlecards.shaded.lamp</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.jeff_media.updatechecker</pattern>
+                            <shadedPattern>me.gamercoder215.battlecards.shaded.updatechecker</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>me.gamercoder215.battlecards.shaded.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>kotlin</pattern>
+                            <shadedPattern>me.gamercoder215.battlecards.shaded.kotlin</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
                 <executions>
                     <execution>

@@ -10,6 +10,10 @@
     <artifactId>battlecards-1_13_R2</artifactId>
     <name>BattleCards-1.13.2</name>
 
+    <properties>
+        <lamp.version>3.1.1</lamp.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -21,6 +25,19 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>battlecards-abstract</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.Revxrsal.Lamp</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>${lamp.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Revxrsal.Lamp</groupId>
+            <artifactId>common</artifactId>
+            <version>${lamp.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

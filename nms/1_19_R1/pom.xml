@@ -8,11 +8,11 @@
     </parent>
 
     <artifactId>battlecards-1_19_R1</artifactId>
-    <name>BattleCards-1.19</name>
+    <name>BattleCards-1.19.2</name>
 
     <properties>
         <java.version>17</java.version>
-        <minecraft.version>1.19-R0.1-SNAPSHOT</minecraft.version>
+        <minecraft.version>1.19.2-R0.1-SNAPSHOT</minecraft.version>
     </properties>
 
     <build>
