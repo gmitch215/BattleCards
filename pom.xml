@@ -62,9 +62,9 @@
 
     <modules>
         <module>api</module>
-        <module>abstract</module>
         <module>plugin</module>
 
+        <module>nms/abstract</module>
         <module>nms/1_8_R1</module>
         <module>nms/1_8_R2</module>
         <module>nms/1_8_R3</module>

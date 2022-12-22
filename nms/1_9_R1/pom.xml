@@ -5,6 +5,7 @@
         <groupId>me.gamercoder215.battlecards</groupId>
         <version>1.0.0-SNAPSHOT</version>
         <artifactId>battlecards-parent</artifactId>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>battlecards-1_9_R1</artifactId>
