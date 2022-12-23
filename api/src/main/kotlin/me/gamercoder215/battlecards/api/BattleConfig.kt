@@ -18,7 +18,7 @@ interface BattleConfig {
          */
         @JvmStatic
         fun getPlugin(): Plugin {
-            return Bukkit.getPluginManager().getPlugin("BattleCards")
+            return Bukkit.getPluginManager().getPlugin("BattleCards") ?: throw IllegalStateException("BattleCards is not loaded!")
         }
 
         /**
