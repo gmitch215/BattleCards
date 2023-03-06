@@ -12,7 +12,7 @@
     <description>API used for the BattleCards Spigot Plugin</description>
 
     <properties>
-        <dokka.version>1.7.20</dokka.version>
+        <dokka.version>1.8.10</dokka.version>
     </properties>
 
     <build>
