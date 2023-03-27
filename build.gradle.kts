@@ -36,7 +36,7 @@ publishing {
 allprojects {
     group = pGroup
     version = pVersion
-    description = "Advanced and Open-Source Cosmetics Plugin for Spigot 1.9+"
+    description = "BattleCards is a premium, action-packed Minecraft Plugin, featuring upgradable and collectible cards used in Battle."
 
     repositories {
         mavenCentral()
