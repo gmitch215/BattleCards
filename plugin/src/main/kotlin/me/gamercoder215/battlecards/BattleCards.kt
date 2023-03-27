@@ -6,7 +6,6 @@ import org.bukkit.plugin.java.JavaPlugin
 class BattleCards : JavaPlugin(), BattleConfig {
 
     override fun onEnable() {
-
         logger.info("Finished!")
     }
 

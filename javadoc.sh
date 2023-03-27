@@ -6,7 +6,7 @@ if [ ! -d "docs" ]; then
   mkdir docs
 fi;
 
-cp -Rfv api/target/dokka/* ./docs/
+cp -Rfv api/build/dokka/javadoc/* ./docs/
 
 git checkout gh-pages
 
@@ -25,5 +25,5 @@ rm -rf ./docs
 git add .
 git branch -D gh-pages
 git branch -m gh-pages
-git commit -m "Update KDocs ($1)"
+git commit -m "Update JavaDocs ($1)"
 git push -f origin gh-pages

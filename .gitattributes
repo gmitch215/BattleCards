@@ -11,3 +11,6 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+/gradlew        text eol=lf
+*.bat           text eol=crlf
+
