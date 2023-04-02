@@ -3,7 +3,7 @@ package me.gamercoder215.battlecards
 import me.gamercoder215.battlecards.api.BattleConfig
 import org.bukkit.plugin.java.JavaPlugin
 
-class BattleCards : JavaPlugin(), BattleConfig {
+object BattleCards : JavaPlugin(), BattleConfig {
 
     override fun onEnable() {
         logger.info("Finished!")
