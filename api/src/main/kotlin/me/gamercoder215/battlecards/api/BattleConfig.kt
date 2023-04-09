@@ -1,8 +1,12 @@
 package me.gamercoder215.battlecards.api
 
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.plugin.Plugin
 import java.io.File
+import java.io.IOException
+import java.util.*
+import java.util.logging.Logger
 
 /**
  * Main BattleCards Configuration
@@ -31,12 +35,59 @@ interface BattleConfig {
         }
 
         /**
+         * Fetches the directory that all player information is stored in.
+         * @return Player Directory
+         */
+        @JvmStatic
+        fun getPlayerDirectory(): File {
+            return File(getDataFolder(), "players").apply { if (!this.exists()) mkdirs() }
+        }
+
+        /**
          * Fetches the BattleConfig Instance.
          * @return BattleConfig
          */
         @JvmStatic
         fun getConfig(): BattleConfig {
             return plugin as BattleConfig
+        }
+
+        /**
+         * Fetches the Plugin's Logger.
+         * @return Plugin Logger
+         */
+        @JvmStatic
+        fun getLogger(): Logger {
+            return plugin.logger
+        }
+
+        /**
+         * Prints a Throwable in the Plugin's Namespace.
+         * @param t Throwable
+         */
+        @JvmStatic
+        fun print(t: Throwable) {
+            getLogger().severe(t::class.java.simpleName)
+            getLogger().severe("-----------")
+            getLogger().severe(t.localizedMessage)
+            for (element in t.stackTrace) getLogger().severe(element.toString())
+        }
+
+        /**
+         * Fetches a localized message from the Plugin's Language File.
+         * @param key Language Key
+         * @return Localized Message
+         */
+        @JvmStatic
+        fun getLocalizedString(key: String): String? {
+            val id = if (getConfig().getLanguage() == "en") "" else "_" + getConfig().getLanguage()
+
+            val p = Properties()
+            val str = plugin::class.java.getResourceAsStream("/lang/battlecards$id.properties") ?: return "Unknown Value"
+            p.load(str)
+            str.close()
+
+            return ChatColor.translateAlternateColorCodes('&', p.getProperty(key, "Unknown Value"))
         }
     }
 
@@ -45,5 +96,20 @@ interface BattleConfig {
      * @return Plugin Language
      */
     fun getLanguage(): String
+
+    /**
+     * Fetches the [Locale] based on [getLanguage].
+     * @return Locale
+     */
+    fun getLocale(): Locale {
+        return when (getLanguage()) {
+            "en" -> Locale.ENGLISH
+            "fr" -> Locale.FRENCH
+            "de" -> Locale.GERMAN
+            "ja" -> Locale.JAPANESE
+            "zh" -> Locale.CHINESE
+            else -> Locale(getLanguage())
+        }
+    }
 
 }
