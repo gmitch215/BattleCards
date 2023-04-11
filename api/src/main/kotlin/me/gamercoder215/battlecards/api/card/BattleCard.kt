@@ -1,7 +1,6 @@
 package me.gamercoder215.battlecards.api.card
 
-import me.gamercoder215.battlecards.api.BattleConfig
-import org.bukkit.entity.Entity
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import java.util.*
 import kotlin.math.floor
@@ -11,7 +10,7 @@ import kotlin.math.pow
  * Represents an instance of a Card in BattleCards
  * @param T The Entity type this BattleCard represents
  */
-interface BattleCard<T : Entity> {
+interface BattleCard<T : LivingEntity> {
 
     /**
      * Fetches the Entity Class that this BattleCard represents.
@@ -35,19 +34,19 @@ interface BattleCard<T : Entity> {
      * Fetches the Card ID of this BattleCard.
      * @return BattleCard ID
      */
-    fun getCardID(): String = this::class.java.annotations.find { it is CardDetails }?.let { (it as CardDetails).id } ?: "unknown"
+    fun getCardID(): String
 
     /**
      * Fetches the Localized Name of this BattleCard.
      * @return BattleCard Localized Name
      */
-    fun getLocalizedName(): String = this::class.java.annotations.find { it is CardDetails }?.let { BattleConfig.getLocalizedString((it as CardDetails).name) } ?: "Unknown"
+    fun getLocalizedName(): String
 
     /**
      * Fetches the Rarity of this BattleCard.
      * @return BattleCard Rarity
      */
-    fun getRarity(): Rarity = this::class.java.annotations.find { it is CardDetails }?.let { (it as CardDetails).rarity } ?: Rarity.COMMON
+    fun getRarity(): Rarity
 
     /**
      * Fetches the Date this card was created.

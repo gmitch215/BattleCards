@@ -1,19 +1,27 @@
-package me.gamercoder215.battlecards.api.card
+package me.gamercoder215.battlecards.impl
 
+import me.gamercoder215.battlecards.api.card.Rarity
 import org.bukkit.Material
 import java.lang.annotation.Inherited
 import java.util.function.BiFunction
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS)
 internal annotation class CardDetails(val id: String, val name: String, val description: String, val rarity: Rarity)
 
 // Attributes
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS)
+internal annotation class Settings(
+    val float: Boolean = false,
+)
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
 internal annotation class Attributes(
     val maxHealth: Double,
     val attackDamage: Double,
@@ -26,7 +34,7 @@ internal annotation class Attributes(
 @Inherited
 @Repeatable
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS)
 internal annotation class AttributesModifier(
     val attribute: CardAttribute,
     val operation: CardAttributeOperation,
@@ -77,7 +85,7 @@ internal annotation class Passive(val interval: Long)
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.CLASS)
 internal annotation class BlockAttachment(
     val material: Material,
     // Uses Directional (^ ^ ^) offsets
