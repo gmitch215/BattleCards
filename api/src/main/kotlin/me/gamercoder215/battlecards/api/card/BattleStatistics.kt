@@ -1,5 +1,7 @@
 package me.gamercoder215.battlecards.api.card
 
+import kotlin.jvm.Throws
+
 /**
  * Represents a [BattleCard]'s Lifetime Statistics and Attributes
  */
@@ -16,97 +18,31 @@ interface BattleStatistics {
      * Fetches the maximum health this BattleCard can have.
      * @return Max Health
      */
-    fun getMaxHealth(): Double {
-        val base = getCard()::class.java.annotations.find { it is Attributes }?.let { (it as Attributes).maxHealth } ?: 0.0
-        val mod = getCard()::class.java.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == CardAttribute.MAX_HEALTH }
-
-        var value = base
-
-        for (i in 0 until getCardLevel())
-            value = mod.operation.apply(value, if (mod.value.isNaN()) base else mod.value)
-
-        return value
-    }
+    fun getMaxHealth(): Double
 
     /**
      * Fetches the attack damage value for this BattleCard.
      * @return Attack Damage Value
      */
-    fun getAttackDamage(): Double {
-        val base = getCard()::class.java.annotations.find { it is Attributes }?.let { (it as Attributes).attackDamage } ?: 0.0
-        val mod = getCard()::class.java.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == CardAttribute.ATTACK_DAMAGE }
-
-        var value = base
-
-        for (i in 0 until getCardLevel())
-            value = mod.operation.apply(value, if (mod.value.isNaN()) base else mod.value)
-
-        return value
-    }
-
-    /**
-     * Fetches the attack knockback value for this BattleCard.
-     * @return Attack Knockback Value
-     */
-    fun getAttackKnockback(): Double {
-        val base = getCard()::class.java.annotations.find { it is Attributes }?.let { (it as Attributes).attackKnockback } ?: 0.0
-        val mod = getCard()::class.java.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == CardAttribute.ATTACK_KNOCKBACK }
-
-        var value = base
-
-        for (i in 0 until getCardLevel())
-            value = mod.operation.apply(value, if (mod.value.isNaN()) base else mod.value)
-
-        return value
-    }
+    fun getAttackDamage(): Double
 
     /**
      * Fetches the defensive value for this BattleCard.
      * @return Defense Value
      */
-    fun getDefense(): Double {
-        val base = getCard()::class.java.annotations.find { it is Attributes }?.let { (it as Attributes).defense } ?: 0.0
-        val mod = getCard()::class.java.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == CardAttribute.DEFENSE }
-
-        var value = base
-
-        for (i in 0 until getCardLevel())
-            value = mod.operation.apply(value, if (mod.value.isNaN()) base else mod.value)
-
-        return value
-    }
+    fun getDefense(): Double
 
     /**
      * Fetches the speed modifier value for this BattleCard.
      * @return Speed Value
      */
-    fun getSpeed(): Double {
-        val base = getCard()::class.java.annotations.find { it is Attributes }?.let { (it as Attributes).speed } ?: 0.0
-        val mod = getCard()::class.java.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == CardAttribute.SPEED }
-
-        var value = base
-
-        for (i in 0 until getCardLevel())
-            value = mod.operation.apply(value, mod.value)
-
-        return value
-    }
+    fun getSpeed(): Double
 
     /**
      * Fetches the knockback resistance value for this BattleCard.
      * @return Knockback Resistance Value
      */
-    fun getKnockbackResistance(): Double {
-        val base = getCard()::class.java.annotations.find { it is Attributes }?.let { (it as Attributes).knockbackResistance } ?: 0.0
-        val mod = getCard()::class.java.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == CardAttribute.KNOCKBACK_RESISTANCE }
-
-        var value = base
-
-        for (i in 0 until getCardLevel())
-            value = mod.operation.apply(value, mod.value)
-
-        return value
-    }
+    fun getKnockbackResistance(): Double
 
     // Statistics
 
@@ -120,7 +56,9 @@ interface BattleStatistics {
      * Sets the total amount of players this Card has killed
      * @param kills Player Kills
      * @return Player Kills
+     * @throws IllegalArgumentException if kills is negative
      */
+    @Throws(IllegalArgumentException::class)
     fun setPlayerKills(kills: Int)
 
     /**
@@ -133,7 +71,9 @@ interface BattleStatistics {
      * Sets the total amount of other BattleCards this Card has killed
      * @param kills Card Kills
      * @return Card Kills
+     * @throws IllegalArgumentException if kills is negative
      */
+    @Throws(IllegalArgumentException::class)
     fun setCardKills(kills: Int)
 
     /**
@@ -146,7 +86,9 @@ interface BattleStatistics {
      * Sets the total amount of entities this Card has killed
      * @param kills Entity Kills
      * @return Entity Kills
+     * @throws IllegalArgumentException if kills is negative
      */
+    @Throws(IllegalArgumentException::class)
     fun setEntityKills(kills: Int)
 
     /**
@@ -165,7 +107,9 @@ interface BattleStatistics {
      * Sets the total amount of damage this Card has dealt
      * @param damage Damage Dealt
      * @return Damage Dealt
+     * @throws IllegalArgumentException if damage is negative
      */
+    @Throws(IllegalArgumentException::class)
     fun setDamageDealt(damage: Int)
 
     /**
@@ -178,7 +122,9 @@ interface BattleStatistics {
      * Sets the total amount of damage this Card has received
      * @param damage Damage Received
      * @return Damage Received
+     * @throws IllegalArgumentException if damage is negative
      */
+    @Throws(IllegalArgumentException::class)
     fun setDamageReceived(damage: Int)
 
     /**
@@ -226,7 +172,25 @@ interface BattleStatistics {
      * Sets the level that this Card is currently at.
      * @param level Card Level
      * @return Card Level
+     * @throws IllegalArgumentException If the Card's level is greater than the maximum level
      */
-    fun setCardLevel(level: Int) = setCardExperience(BattleCard.toExperience(level, getCard().getRarity()))
+    @Throws(IllegalArgumentException::class)
+    fun setCardLevel(level: Int) {
+        if (level > getMaxCardLevel()) throw IllegalArgumentException("Level cannot be greater than ${getMaxCardLevel()} for this card!")
+        setCardExperience(BattleCard.toExperience(level, getCard().getRarity()))
+    }
+
+    /**
+     * Fetches the maximum level that this Card can be.
+     * @return Max Card Level
+     */
+    fun getMaxCardLevel(): Int = getCard().getMaxCardLevel()
+
+    /**
+     * Fetches the maximum experience that this Card can have.
+     * @return Max Card Experience
+     */
+    fun getMaxCardExperience(): Double = getCard().getMaxCardExperience()
+
 
 }
