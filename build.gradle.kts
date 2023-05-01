@@ -25,18 +25,14 @@ sonarqube {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-        }
-    }
-}
-
 allprojects {
     group = pGroup
     version = pVersion
     description = "BattleCards is a premium, action-packed Minecraft Plugin, featuring upgradable and collectible cards used in Battle."
+
+    apply<JavaPlugin>()
+    apply<JavaLibraryPlugin>()
+    apply(plugin = "maven-publish")
 
     repositories {
         mavenCentral()
@@ -54,13 +50,36 @@ allprojects {
         maven("https://libraries.minecraft.net/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
+
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                from(components["java"])
+
+                pom {
+                    url.set("https://github.com/GamerCoder215/BattleCards")
+
+                    licenses {
+                        license {
+                            name.set("Apache License 2.0")
+                            url.set("${pom.url}/blob/master/LICENSE")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git:git://github.com/GamerCoder215/BattleCards.git")
+                        developerConnection.set("scm:git:ssh://github.com/GamerCoder215/BattleCards.git")
+                        url.set(pom.url)
+                    }
+                }
+            }
+        }
+    }
 }
 
-val jvmVersion = JavaVersion.VERSION_1_8
+val jvmVersion = JavaVersion.VERSION_11
 
 subprojects {
-    apply<JavaPlugin>()
-    apply<JavaLibraryPlugin>()
     apply<JacocoPlugin>()
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.sonarqube")
@@ -72,14 +91,21 @@ subprojects {
 
         testImplementation("org.mockito:mockito-core:5.3.1")
         testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
-
-        testImplementation("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT")
-        testImplementation("net.md-5:bungeecord-chat:1.16-R0.4")
+        testImplementation("org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT")
+        testImplementation("com.github.seeseemelk:MockBukkit-v1.13:0.2.0")
     }
 
     java {
         sourceCompatibility = jvmVersion
         targetCompatibility = jvmVersion
+    }
+
+    publishing {
+        publications {
+            getByName<MavenPublication>("maven") {
+                artifact(tasks["shadowJar"])
+            }
+        }
     }
 
     tasks {
@@ -130,7 +156,7 @@ subprojects {
             relocate("org.bstats", "me.gamercoder215.shaded.bstats")
             relocate("com.jeff_media.updatechecker", "me.gamercoder215.shaded.updatechecker")
 
-            archiveFileName.set("${project.name}-${project.version}.jar")
+            archiveClassifier.set("")
         }
     }
 }
