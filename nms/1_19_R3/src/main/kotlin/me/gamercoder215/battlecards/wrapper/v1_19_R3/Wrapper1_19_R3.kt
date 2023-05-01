@@ -1,7 +1,6 @@
 package me.gamercoder215.battlecards.wrapper.v1_19_R3
 
-import me.gamercoder215.battlecards.api.card.BattleCard
-import me.gamercoder215.battlecards.impl.IBattleCard
+import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
@@ -20,19 +19,4 @@ class Wrapper1_19_R3 : Wrapper {
         sendActionbar(player, TextComponent(message))
     }
 
-    // Card Editing
-
-    private fun addCardPathfinders(entity: net.minecraft.world.entity.Mob, card: IBattleCard<*>) {
-        val goal = entity.goalSelector
-        val target = entity.targetSelector
-
-        goal.removeAllGoals { true }
-        target.removeAllGoals { true }
-
-        goal.addGoal(0, FloatGoal(entity))
-    }
-
-    override fun editCard(entity: LivingEntity, card: IBattleCard<*>) {
-
-    }
 }
