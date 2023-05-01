@@ -72,12 +72,42 @@ interface BattleCard<T : LivingEntity> {
      */
     fun getLastUsedPlayer(): Player?
 
+    /**
+     * Fetches the level of this BattleCard.
+     * @return BattleCard Level
+     */
+    fun getLevel(): Int = getStatistics().getCardLevel()
+
+    /**
+     * Fetches the experience of this BattleCard.
+     * @return BattleCard Experience
+     */
+    fun getExperience(): Double = getStatistics().getCardExperience()
+
+    /**
+     * Fetches the maximum level that this Card can be.
+     * @return Max Card Level
+     */
+    fun getMaxCardLevel(): Int = getRarity().getMaxCardLevel()
+
+    /**
+     * Fetches the maximum experience that this Card can have.
+     * @return Max Card Experience
+     */
+    fun getMaxCardExperience(): Double = getRarity().getMaxCardExperience()
+
+    /**
+     * Fetches the numerical identifier for the generation of BattleCards this card is from.
+     * @return BattleCard Generation
+     */
+    fun getGeneration(): Int
+
     // Static Methods
 
     companion object {
 
         /**
-         * The maximum level a BattleCard can be
+         * The maximum level any BattleCard can be
          */
         const val MAX_LEVEL = 150
 
