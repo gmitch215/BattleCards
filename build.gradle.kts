@@ -19,7 +19,7 @@ val pAuthor = "GamerCoder"
 
 sonarqube {
     properties {
-        property("sonar.projectKey", "${pAuthor}_BattleCards")
+        property("sonar.projectKey", "GamerCoder215_BattleCards")
         property("sonar.organization", "gamercoder215")
         property("sonar.host.url", "https://sonarcloud.io")
     }
