@@ -77,7 +77,7 @@ allprojects {
     }
 }
 
-val jvmVersion = JavaVersion.VERSION_11
+val jvmVersion = JavaVersion.VERSION_1_8
 
 subprojects {
     apply<JacocoPlugin>()
@@ -91,7 +91,7 @@ subprojects {
 
         testImplementation("org.mockito:mockito-core:5.3.1")
         testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
-        testImplementation("org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT")
+        testImplementation("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT")
         testImplementation("com.github.seeseemelk:MockBukkit-v1.13:0.2.0")
     }
 

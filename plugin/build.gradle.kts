@@ -1,8 +1,8 @@
 dependencies {
     // Spigot
-    compileOnly("org.spigotmc:spigot-api:1.13.2-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT") {
         version {
-            strictly("1.13.2-R0.1-SNAPSHOT")
+            strictly("1.8-R0.1-SNAPSHOT")
         }
     }
 
@@ -17,6 +17,15 @@ dependencies {
     api(project(":battlecards-api"))
 
     listOf(
+        "1_8_R1",
+        "1_8_R2",
+        "1_8_R3",
+        "1_9_R1",
+        "1_9_R2",
+        "1_10_R1",
+        "1_11_R1",
+        "1_12_R1",
+        "1_13_R1",
         "1_13_R2",
         "1_14_R1",
         "1_15_R1",
