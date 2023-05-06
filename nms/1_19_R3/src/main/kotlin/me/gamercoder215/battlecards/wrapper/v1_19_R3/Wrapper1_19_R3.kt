@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.world.entity.ai.goal.FloatGoal
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.entity.Wither
 
 class Wrapper1_19_R3 : Wrapper {
 
@@ -17,6 +18,10 @@ class Wrapper1_19_R3 : Wrapper {
 
     override fun sendActionbar(player: Player, message: String) {
         sendActionbar(player, TextComponent(message))
+    }
+
+    override fun setBossBarVisibility(boss: Wither, visible: Boolean) {
+        boss.bossBar?.isVisible = visible
     }
 
 }

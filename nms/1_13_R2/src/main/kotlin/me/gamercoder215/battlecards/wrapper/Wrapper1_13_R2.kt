@@ -11,6 +11,7 @@ import org.bukkit.craftbukkit.v1_13_R2.attribute.CraftAttributeMap
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftMob
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
+import org.bukkit.entity.Wither
 
 class Wrapper1_13_R2 : Wrapper {
 
@@ -22,15 +23,8 @@ class Wrapper1_13_R2 : Wrapper {
         sendActionbar(player, TextComponent(message))
     }
 
-//    override fun loadProperties(entity: Mob, card: IBattleCard<*>) {
-//        val nms = (entity as CraftMob).handle
-//
-//        // Attributes
-//
-//        for (entry in card.getStatistics().getAttributes())
-//            entity.getAttribute(entry.key.toBukkit())?.baseValue = entry.value
-//
-//        TODO("Finish")
-//    }
+    override fun setBossBarVisibility(boss: Wither, visible: Boolean) {
+        boss.bossBar?.isVisible = visible
+    }
 
 }
