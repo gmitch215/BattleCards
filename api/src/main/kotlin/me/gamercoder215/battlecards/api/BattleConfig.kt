@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.api
 
+import me.gamercoder215.battlecards.api.card.BattleCard
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.plugin.Plugin
@@ -111,5 +112,18 @@ interface BattleConfig {
             else -> Locale(getLanguage())
         }
     }
+
+    /**
+     * Fetches an immutable set of all of the registered BattleCards.
+     */
+    fun getRegisteredCards(): Set<Class<out BattleCard<*>>>
+
+    /**
+     * Registers a BattleCard.
+     * @param card BattleCard to register
+     * @throws IllegalArgumentException if the BattleCard is already registered
+     */
+    @Throws(IllegalArgumentException::class)
+    fun registerCard(card: Class<out BattleCard<*>>)
 
 }
