@@ -10,13 +10,14 @@ import kotlin.math.pow
  * Represents an instance of a Card in BattleCards
  * @param T The Entity type this BattleCard represents
  */
+@Suppress("unchecked_cast")
 interface BattleCard<T : LivingEntity> {
 
     /**
      * Fetches the Entity Class that this BattleCard represents.
      * @return Entity Class
      */
-    fun getEntityClass(): Class<T>
+    fun getEntityClass(): Class<T> = getType().getEntityClass() as Class<T>
 
     /**
      * Whether this BattleCard is currently spawend.
@@ -34,19 +35,19 @@ interface BattleCard<T : LivingEntity> {
      * Fetches the Card ID of this BattleCard.
      * @return BattleCard ID
      */
-    fun getCardID(): String
+    fun getCardID(): String = getType().getLocalizedName()
 
     /**
      * Fetches the Localized Name of this BattleCard.
      * @return BattleCard Localized Name
      */
-    fun getLocalizedName(): String
+    fun getLocalizedName(): String = getType().getLocalizedName()
 
     /**
      * Fetches the Rarity of this BattleCard.
      * @return BattleCard Rarity
      */
-    fun getRarity(): Rarity
+    fun getRarity(): Rarity = getType().getRarity()
 
     /**
      * Fetches the Date this card was created.
@@ -100,7 +101,13 @@ interface BattleCard<T : LivingEntity> {
      * Fetches the numerical identifier for the generation of BattleCards this card is from.
      * @return BattleCard Generation
      */
-    fun getGeneration(): Int
+    fun getGeneration(): Int = getType().getGeneration()
+
+    /**
+     * Fetches the BattleCardType of this BattleCard.
+     * @return [BattleCardType]
+     */
+    fun getType(): BattleCardType
 
     // Static Methods
 

@@ -1,7 +1,6 @@
 package me.gamercoder215.battlecards.impl.cards
 
-import me.gamercoder215.battlecards.api.card.DiamondGolem
-import me.gamercoder215.battlecards.api.card.Rarity
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import org.bukkit.Material
 import org.bukkit.entity.IronGolem
@@ -9,22 +8,21 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 
-@CardDetails("diamond_golem", "card.diamond_golem", "card.diamond_golem.desc", Rarity.RARE)
-
-@Attributes(50.0, 5.3, 5.5, 0.3, 1.0)
+@Attributes(500.0, 15.3, 85.5, 0.3, 1.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.04)
 
 @BlockAttachment(Material.DIAMOND_BLOCK, 0.0, 0.0, 0.2)
-class IDiamondGolem : IBattleCard<IronGolem>(), DiamondGolem {
+@Suppress("deprecation")
+class IDiamondGolem : IBattleCard<IronGolem>(BattleCardType.DIAMOND_GOLEM) {
 
     override fun init() {
         super.init()
         en.isPlayerCreated = true
     }
 
-    @CardAbility("card.diamond_golem.ability.launch", "card.diamond_golem.ability.launch.desc")
+    @CardAbility("card.diamond_golem.ability.launch")
     @Offensive(0.15, CardOperation.ADD, 0.025)
     private fun launch(event: EntityDamageByEntityEvent) {
         val target = event.entity as? Player ?: return
@@ -33,7 +31,7 @@ class IDiamondGolem : IBattleCard<IronGolem>(), DiamondGolem {
         target.velocity = en.location.direction.multiply(amplifier)
     }
 
-    @CardAbility("card.diamond_golem.ability.thorns", "card.diamond_golem.ability.thorns.desc")
+    @CardAbility("card.diamond_golem.ability.thorns")
     @Defensive(0.1)
     private fun thorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return

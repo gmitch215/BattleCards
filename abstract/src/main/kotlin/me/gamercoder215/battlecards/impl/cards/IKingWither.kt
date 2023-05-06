@@ -1,12 +1,10 @@
 package me.gamercoder215.battlecards.impl.cards
 
-import me.gamercoder215.battlecards.api.card.KingWither
-import me.gamercoder215.battlecards.api.card.Rarity
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
-import me.gamercoder215.battlecards.impl.Attributes
-import me.gamercoder215.battlecards.impl.AttributesModifier
-import me.gamercoder215.battlecards.impl.CardDetails
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Material
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -15,22 +13,27 @@ import org.bukkit.potion.PotionEffectType
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
-@CardDetails("king_wither", "card.king_wither", "card.king_wither.desc", Rarity.ULTIMATE)
-
-@Attributes(5000.0, 55.5, 100.0, 0.2, 150.0)
+@Attributes(3500.0, 55.5, 100.0, 0.15, 150.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 125.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 15.0)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.1)
 
 @BlockAttachment(Material.BEDROCK, 0.0, 2.5, 0.0, true)
-class IKingWither : IBattleCard<Wither>(), KingWither {
+class IKingWither : IBattleCard<Wither>(BattleCardType.WITHER_KING) {
 
     override fun init() {
         super.init()
-        en.bossBar?.isVisible = false
+        w.setBossBarVisibility(getEntity(), false)
+
+        p.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, Int.MAX_VALUE, getLevel() / 3, true, false))
     }
 
-    @CardAbility("card.king_wither.ability.poison_thorns", "card.king_wither.ability.poison_thorns.desc")
+    override fun uninit() {
+        super.uninit()
+        p.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
+    }
+
+    @CardAbility("card.king_wither.ability.poison_thorns")
     @Defensive(0.2, CardOperation.ADD, 0.01)
     private fun posionThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
@@ -41,12 +44,21 @@ class IKingWither : IBattleCard<Wither>(), KingWither {
     }
 
     @UnlockedAt(5)
-    @CardAbility("card.king_wither.ability.lightning_thorns", "card.king_wither.ability.lightning_thorns.desc")
+    @CardAbility("card.king_wither.ability.lightning_thorns")
     @Defensive(0.25, CardOperation.ADD, 0.02)
     private fun lightningThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
 
         attacker.world.strikeLightning(attacker.location)
+    }
+
+
+    @CardAbility("card.king_wither.ability.user.wither_offensive")
+    @UserOffensive(0.4, CardOperation.ADD, 0.02)
+    private fun witherOffensive(event: EntityDamageByEntityEvent) {
+        val target = event.entity as? LivingEntity ?: return
+
+        target.addPotionEffect(PotionEffect(PotionEffectType.WITHER, 60, 1, false))
     }
 
 }

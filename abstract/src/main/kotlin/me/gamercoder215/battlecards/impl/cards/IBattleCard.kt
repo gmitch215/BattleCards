@@ -1,32 +1,42 @@
 package me.gamercoder215.battlecards.impl.cards
 
-import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
-import me.gamercoder215.battlecards.api.card.BattleStatistics
-import me.gamercoder215.battlecards.api.card.Rarity
-import me.gamercoder215.battlecards.impl.CardDetails
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.IBattleStatistics
-import me.gamercoder215.battlecards.wrapper.Wrapper
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Location
-import org.bukkit.entity.Mob
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import java.util.*
 
-abstract class IBattleCard<T : Mob>(
-    protected val creation: Long = System.currentTimeMillis(),
-    internal val stats: MutableMap<String, Any> = mutableMapOf(),
-    protected var last: Long? = null,
-    protected var lastPlayer: Player? = null
+abstract class IBattleCard<T : LivingEntity>(
+    protected val cardType: BattleCardType
 ) : BattleCard<T> {
 
-    protected lateinit var en: T
+    val stats: MutableMap<String, Any> = mutableMapOf()
 
-    fun spawn(location: Location): T {
+    protected val creation: Long = System.currentTimeMillis()
+    protected var last: Long? = null
+    protected var lastPlayer: Player? = null
+
+    protected lateinit var en: T
+    protected lateinit var p: Player
+
+    fun spawn(player: Player, location: Location): T {
+        if (!en.isDead) throw IllegalStateException("Entity already spawned")
+
+        lastPlayer = player
+        last = System.currentTimeMillis()
+        p = player
+
         en = location.world?.spawn(location, getEntityClass()) ?: throw IllegalStateException("Could not spawn entity")
 
         en.isCustomNameVisible = true
-        en.customName = "${getRarity().getColor()}${getLocalizedName()}"
+        en.customName = "${getRarity().getColor()}${player.displayName ?: player.name}'s ${getRarity().getColor()}${getLocalizedName()}"
+
+        en.equipment.helmetDropChance = 0.0f
+        en.equipment.chestplateDropChance = 0.0f
+        en.equipment.leggingsDropChance = 0.0f
+        en.equipment.bootsDropChance = 0.0f
 
 //        w.loadProperties(en, this)
 
@@ -34,23 +44,28 @@ abstract class IBattleCard<T : Mob>(
         return en
     }
 
+    fun despawn() {
+        uninit()
+        en.remove()
+    }
+
     // Implementation
 
     open fun init() {
-        if (!this::en.isInitialized) throw IllegalStateException("Entity not spawned")
+        if (!::en.isInitialized) throw IllegalStateException("Entity not spawned")
     }
+
+    open fun uninit() {
+        if (!::en.isInitialized) throw IllegalStateException("Entity not spawned")
+    }
+
+    final override fun getType(): BattleCardType = cardType
 
     final override fun getStatistics(): IBattleStatistics {
         return IBattleStatistics(this)
     }
 
     final override fun getEntity(): T = en
-
-    final override fun getCardID(): String = this::class.java.annotations.find { it is CardDetails }?.let { (it as CardDetails).id } ?: "unknown"
-
-    final override fun getLocalizedName(): String = this::class.java.annotations.find { it is CardDetails }?.let { BattleConfig.getLocalizedString((it as CardDetails).name) } ?: "Unknown"
-
-    final override fun getRarity(): Rarity = this::class.java.annotations.find { it is CardDetails }?.let { (it as CardDetails).rarity } ?: Rarity.COMMON
 
     final override fun getCreationDate(): Date = Date(creation)
 
@@ -60,8 +75,8 @@ abstract class IBattleCard<T : Mob>(
 
     // Util
 
-    fun getAnnotations(): List<Annotation> {
-        val annotations = mutableListOf<Annotation>()
+    fun getAnnotations(): Set<Annotation> {
+        val annotations = mutableSetOf<Annotation>()
         var superClass: Class<*> = this::class.java
 
         while (superClass.superclass != null) {
