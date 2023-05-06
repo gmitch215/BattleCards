@@ -2,28 +2,16 @@ package me.gamercoder215.battlecards.impl
 
 import me.gamercoder215.battlecards.api.card.Rarity
 import org.bukkit.Material
-import org.bukkit.attribute.Attribute
+import org.bukkit.potion.PotionEffectTypeWrapper
 import java.lang.annotation.Inherited
 import java.util.function.BiFunction
-
-@Inherited
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-internal annotation class CardDetails(val id: String, val name: String, val desc: String, val rarity: Rarity)
 
 // Attributes
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-internal annotation class Settings(
-    val float: Boolean = false,
-)
-
-@Inherited
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-internal annotation class Attributes(
+annotation class Attributes(
     val maxHealth: Double,
     val attackDamage: Double,
     val defense: Double,
@@ -35,10 +23,11 @@ internal annotation class Attributes(
 @Repeatable
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-internal annotation class AttributesModifier(
+annotation class AttributesModifier(
     val attribute: CardAttribute,
     val operation: CardOperation,
     val value: Double = Double.NaN,
+    val max: Double = Double.MAX_VALUE
 )
 
 enum class CardAttribute {
@@ -50,23 +39,13 @@ enum class CardAttribute {
 
     ;
 
-    internal fun getAttribute(attributes: Attributes): Double {
+    fun getAttribute(attributes: Attributes): Double {
         return when (this) {
             MAX_HEALTH -> attributes.maxHealth
             ATTACK_DAMAGE -> attributes.attackDamage
             DEFENSE -> attributes.defense
             SPEED -> attributes.speed
             KNOCKBACK_RESISTANCE -> attributes.knockbackResistance
-        }
-    }
-
-    fun toBukkit(): Attribute {
-        return when (this) {
-            MAX_HEALTH -> Attribute.GENERIC_MAX_HEALTH
-            ATTACK_DAMAGE -> Attribute.GENERIC_ATTACK_DAMAGE
-            DEFENSE -> Attribute.GENERIC_ARMOR
-            SPEED -> Attribute.GENERIC_MOVEMENT_SPEED
-            KNOCKBACK_RESISTANCE -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
         }
     }
 }
@@ -85,50 +64,78 @@ enum class CardOperation(
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-internal annotation class CardAbility(val name: String, val desc: String)
-
-@Inherited
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
-internal annotation class Defensive(
-    val chance: Double = 1.0,
-    val operation: CardOperation = CardOperation.ADD,
-    val value: Double = Double.NaN
+annotation class CardAbility(
+    val name: String,
+    val desc: String = "<desc>"
 )
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-internal annotation class Offensive(
+annotation class Defensive(
     val chance: Double = 1.0,
     val operation: CardOperation = CardOperation.ADD,
-    val value: Double = Double.NaN
+    val value: Double = Double.NaN,
+    val max: Double = 1.0
 )
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-internal annotation class Passive(
+annotation class Offensive(
+    val chance: Double = 1.0,
+    val operation: CardOperation = CardOperation.ADD,
+    val value: Double = Double.NaN,
+    val max: Double = 1.0
+)
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class Passive(
     val interval: Long,
     val operation: CardOperation = CardOperation.ADD,
-    val value: Double = Double.NaN
+    val value: Double = Double.NaN,
+    val max: Double = 1.0
 )
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-internal annotation class UnlockedAt(val level: Int)
+annotation class UnlockedAt(val level: Int)
 
 // Visuals
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-internal annotation class BlockAttachment(
+annotation class BlockAttachment(
     val material: Material,
     // Uses Directional (^ ^ ^) offsets
     val offsetX: Double,
     val offsetY: Double,
     val offsetZ: Double,
     val small: Boolean = false
+)
+
+// User Grants
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class UserDefensive(
+    val chance: Double = 1.0,
+    val operation: CardOperation = CardOperation.ADD,
+    val value: Double = Double.NaN,
+    val max: Double = 1.0
+)
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class UserOffensive(
+    val chance: Double = 1.0,
+    val operation: CardOperation = CardOperation.ADD,
+    val value: Double = Double.NaN,
+    val max: Double = 1.0
 )
