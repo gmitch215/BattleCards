@@ -1,4 +1,4 @@
-package me.gamercoder215.battlecards.wrapper.v1_19_R3
+package me.gamercoder215.battlecards.wrapper.v1_18_R1
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
@@ -6,31 +6,22 @@ import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
-import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.AttributeMap
-import net.minecraft.world.entity.ai.goal.FloatGoal
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftCreature
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMob
-import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey
 import org.bukkit.entity.Creature
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 
 @Suppress("unchecked_cast")
-class Wrapper1_19_R3 : Wrapper {
-
+class Wrapper1_18_R1 : Wrapper {
     override fun sendActionbar(player: Player, component: BaseComponent) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component)
     }
@@ -58,7 +49,7 @@ class Wrapper1_19_R3 : Wrapper {
     }
 
     fun toNMS(attribute: Attribute): net.minecraft.world.entity.ai.attributes.Attribute {
-        return BuiltInRegistries.ATTRIBUTE.get(toNMS(attribute.key)) ?: throw NullPointerException("Attribute ${attribute.key} not found")
+        return Registry.ATTRIBUTE.get(toNMS(attribute.key)) ?: throw NullPointerException("Attribute ${attribute.key} not found")
     }
 
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
@@ -83,13 +74,12 @@ class Wrapper1_19_R3 : Wrapper {
             handle.baseValue = value
         }
 
-        nms.goalSelector.addGoal(2, FollowCardOwner1_19_R3(nms, card))
+        nms.goalSelector.addGoal(2, FollowCardOwner1_18_R1(nms, card))
 
-        nms.targetSelector.addGoal(1, CardOwnerHurtByTargetGoal1_19_R3(nms, card))
-        nms.targetSelector.addGoal(2, CardOwnerHurtTargetGoal1_19_R3(nms, card))
+        nms.targetSelector.addGoal(1, CardOwnerHurtByTargetGoal1_18_R1(nms, card))
+        nms.targetSelector.addGoal(2, CardOwnerHurtTargetGoal1_18_R1(nms, card))
         nms.targetSelector.addGoal(3, HurtByTargetGoal(nms))
 
         nms.addTag("battlecards")
     }
-
 }

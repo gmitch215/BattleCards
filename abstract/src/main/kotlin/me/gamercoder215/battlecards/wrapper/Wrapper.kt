@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.impl.cards.IDiamondGolem
 import me.gamercoder215.battlecards.impl.cards.IKingWither
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
+import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 
@@ -18,7 +19,7 @@ interface Wrapper {
 
     fun setBossBarVisibility(boss: Wither, visible: Boolean)
 
-//    fun loadProperties(entity: Mob, card: IBattleCard<*>)
+    fun loadProperties(en: Creature, card: IBattleCard<*>)
 
     companion object {
         val w = getWrapper()
