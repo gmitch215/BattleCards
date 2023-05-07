@@ -3,12 +3,14 @@ package me.gamercoder215.battlecards.impl.cards
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.IBattleStatistics
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Location
+import org.bukkit.entity.Creature
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import java.util.*
 
-abstract class IBattleCard<T : LivingEntity>(
+abstract class IBattleCard<T : Creature>(
     protected val cardType: BattleCardType
 ) : BattleCard<T> {
 
@@ -19,7 +21,7 @@ abstract class IBattleCard<T : LivingEntity>(
     protected var lastPlayer: Player? = null
 
     protected lateinit var en: T
-    protected lateinit var p: Player
+    lateinit var p: Player
 
     fun spawn(player: Player, location: Location): T {
         if (!en.isDead) throw IllegalStateException("Entity already spawned")
@@ -38,8 +40,7 @@ abstract class IBattleCard<T : LivingEntity>(
         en.equipment.leggingsDropChance = 0.0f
         en.equipment.bootsDropChance = 0.0f
 
-//        w.loadProperties(en, this)
-
+        w.loadProperties(en, this)
         init()
         return en
     }
