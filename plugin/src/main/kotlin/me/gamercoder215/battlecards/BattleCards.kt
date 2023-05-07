@@ -22,7 +22,6 @@ object BattleCards : JavaPlugin(), BattleConfig {
     override fun onEnable() {
         saveDefaultConfig()
 
-        w.init()
         loadListeners()
         logger.info("Loaded Files...")
 
