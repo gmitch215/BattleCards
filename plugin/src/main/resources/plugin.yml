@@ -5,6 +5,7 @@ main: me.gamercoder215.battlecards.BattleCards
 author: GamerCoder
 url: "https://github.com/GamerCoder215/BattleCards"
 description: ${project.description}
+softdepend: [Kotlin]
 load: POSTWORLD
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.8.20
