@@ -1,8 +1,6 @@
 package me.gamercoder215.battlecards.impl
 
-import me.gamercoder215.battlecards.api.card.Rarity
 import org.bukkit.Material
-import org.bukkit.potion.PotionEffectTypeWrapper
 import java.lang.annotation.Inherited
 import java.util.function.BiFunction
 
@@ -71,6 +69,14 @@ annotation class CardAbility(
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class ListedCardAbility(
+    val name: String,
+    val desc: String = "<desc>",
+)
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 annotation class Defensive(
     val chance: Double = 1.0,
@@ -96,7 +102,8 @@ annotation class Passive(
     val interval: Long,
     val operation: CardOperation = CardOperation.ADD,
     val value: Double = Double.NaN,
-    val max: Double = 1.0
+    val max: Double = 1.0,
+    val min: Double = 0.0
 )
 
 @Inherited
@@ -139,3 +146,10 @@ annotation class UserOffensive(
     val value: Double = Double.NaN,
     val max: Double = 1.0
 )
+
+// Listener
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class Listener
