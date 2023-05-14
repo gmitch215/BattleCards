@@ -1,9 +1,7 @@
 package me.gamercoder215.battlecards.api.card
 
 import me.gamercoder215.battlecards.api.BattleConfig
-import org.bukkit.entity.IronGolem
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
 import kotlin.reflect.KClass
 
 /**
@@ -30,8 +28,22 @@ enum class BattleCardType {
     /**
      * Represents a Husk BattleCard.
      */
-    MESA_ZOMBIE(1, "Husk", Rarity.UNCOMMON)
+    MESA_ZOMBIE(1, "Husk", Rarity.UNCOMMON),
 
+    /**
+     * Represents a Skeleton BattleCard.
+     */
+    SNIPER(1, Skeleton::class, Rarity.COMMON),
+
+    /**
+     * Represents a Husk BattleCard.
+     */
+    PRINCE_HUSK(1, "Husk", Rarity.EPIC),
+
+    /**
+     * Represents an Enderman BattleCard.
+     */
+    WITHERMAN(1, Enderman::class, Rarity.LEGEND),
     ;
 
     private val generation: Int
