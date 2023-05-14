@@ -6,7 +6,6 @@ import me.gamercoder215.battlecards.impl.IBattleStatistics
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Location
 import org.bukkit.entity.Creature
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import java.util.*
 
