@@ -10,6 +10,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
+import java.security.SecureRandom
 
 interface Wrapper {
 
@@ -23,6 +24,7 @@ interface Wrapper {
 
     companion object {
         val w = getWrapper()
+        val r = SecureRandom()
 
         val versions = listOf(
             "1_8_R1",
