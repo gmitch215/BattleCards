@@ -2,10 +2,9 @@ package me.gamercoder215.battlecards.api
 
 import me.gamercoder215.battlecards.api.card.BattleCard
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.Plugin
 import java.io.File
-import java.io.IOException
 import java.util.*
 import java.util.logging.Logger
 
@@ -54,6 +53,15 @@ interface BattleConfig {
         }
 
         /**
+         * Fetches the Configuration File for the BattleCards plugin.
+         * @return BattleCards [FileConfiguration]
+         */
+        @JvmStatic
+        fun getConfiguration(): FileConfiguration {
+            return plugin.config
+        }
+
+        /**
          * Fetches the Plugin's Logger.
          * @return Plugin Logger
          */
@@ -75,42 +83,29 @@ interface BattleConfig {
         }
 
         /**
-         * Fetches a localized message from the Plugin's Language File.
-         * @param key Language Key
-         * @return Localized Message
+         * Loads the Plugin's Configuration.
+         * @return Loaded [FileConfiguration]
          */
         @JvmStatic
-        fun getLocalizedString(key: String): String? {
-            val id = if (getConfig().getLanguage() == "en") "" else "_" + getConfig().getLanguage()
+        fun loadConfig(): FileConfiguration {
+            plugin.saveDefaultConfig()
+            val config = plugin.config
 
-            val p = Properties()
-            val str = plugin::class.java.getResourceAsStream("/lang/battlecards$id.properties") ?: return "Unknown Value"
-            p.load(str)
-            str.close()
+            if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
+            if (!config.isList("Disabled")) config.set("Disabled", listOf<String>())
 
-            return ChatColor.translateAlternateColorCodes('&', p.getProperty(key, "Unknown Value"))
+            if (!config.isConfigurationSection("Cards.Display")) config.createSection("Cards.Display")
+
+            if (!config.isConfigurationSection("Cards.Display.Inventory")) config.createSection("Cards.Display.Inventory")
+            if (!config.isBoolean("Cards.Display.Inventory.ShowLevel")) config.set("Cards.Display.Inventory.ShowLevel", true)
+
+            if (!config.isConfigurationSection("Cards.Display.Info")) config.createSection("Cards.Display.Info")
+            if (!config.isBoolean("Cards.Display.Info.ShowAbilities")) config.set("Cards.Display.Info.ShowAbilities", true)
+            if (!config.isBoolean("Cards.Display.Info.ShowStatistics")) config.set("Cards.Display.Info.ShowStatistics", true)
+
+            return config
         }
-    }
 
-    /**
-     * Fetches the Plugin's Language
-     * @return Plugin Language
-     */
-    fun getLanguage(): String
-
-    /**
-     * Fetches the [Locale] based on [getLanguage].
-     * @return Locale
-     */
-    fun getLocale(): Locale {
-        return when (getLanguage()) {
-            "en" -> Locale.ENGLISH
-            "fr" -> Locale.FRENCH
-            "de" -> Locale.GERMAN
-            "ja" -> Locale.JAPANESE
-            "zh" -> Locale.CHINESE
-            else -> Locale(getLanguage())
-        }
     }
 
     /**
