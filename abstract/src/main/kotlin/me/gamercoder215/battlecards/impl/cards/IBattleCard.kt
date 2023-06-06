@@ -1,17 +1,33 @@
 package me.gamercoder215.battlecards.impl.cards
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.IBattleStatistics
+import me.gamercoder215.battlecards.util.CardUtils
+import me.gamercoder215.battlecards.util.getEntity
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitRunnable
 import java.util.*
+import java.util.function.Supplier
 
 abstract class IBattleCard<T : Creature>(
     protected val cardType: BattleCardType
 ) : BattleCard<T> {
+
+    companion object {
+        @JvmStatic
+        private val spawned: MutableMap<UUID, IBattleCard<*>> = mutableMapOf()
+
+        @JvmStatic
+        fun byEntity(entity: Creature): IBattleCard<*>? {
+            return spawned[entity.uniqueId]
+        }
+    }
 
     val stats: MutableMap<String, Any> = mutableMapOf()
 
@@ -21,6 +37,8 @@ abstract class IBattleCard<T : Creature>(
 
     protected lateinit var en: T
     lateinit var p: Player
+
+    val attachments: MutableMap<UUID, Supplier<Location>> = mutableMapOf()
 
     fun spawn(player: Player, location: Location): T {
         if (!en.isDead) throw IllegalStateException("Entity already spawned")
@@ -39,14 +57,31 @@ abstract class IBattleCard<T : Creature>(
         en.equipment.leggingsDropChance = 0.0f
         en.equipment.bootsDropChance = 0.0f
 
+        CardUtils.createAttachments(this)
+        object : BukkitRunnable() {
+            override fun run() {
+                if (en.isDead) {
+                    cancel()
+                    return
+                }
+
+                attachments.forEach { (key, value) ->
+                    val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
+                    entity.teleport(value.get())
+                }
+            }
+        }.runTaskTimer(BattleConfig.getPlugin(), 0, 1)
+
         w.loadProperties(en, this)
         init()
+        spawned[en.uniqueId] = this
         return en
     }
 
     fun despawn() {
         uninit()
         en.remove()
+        spawned.remove(en.uniqueId)
     }
 
     // Implementation
@@ -72,19 +107,5 @@ abstract class IBattleCard<T : Creature>(
     override fun getLastUsed(): Date? = last?.let { Date(it) }
 
     override fun getLastUsedPlayer(): Player? = lastPlayer
-
-    // Util
-
-    fun getAnnotations(): Set<Annotation> {
-        val annotations = mutableSetOf<Annotation>()
-        var superClass: Class<*> = this::class.java
-
-        while (superClass.superclass != null) {
-            annotations.addAll(superClass.annotations)
-            superClass = superClass.superclass
-        }
-
-        return annotations
-    }
 
 }
