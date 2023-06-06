@@ -49,12 +49,10 @@ publishing {
                     url.set(pom.url)
                 }
             }
+
+            artifact(tasks.shadowJar)
+            artifact(tasks["javadocJar"])
+            artifact(tasks.kotlinSourcesJar)
         }
     }
-}
-
-artifacts {
-    add("archives", tasks.shadowJar)
-    add("archives", tasks["javadocJar"])
-    add("archives", tasks.kotlinSourcesJar)
 }
