@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_15_R1
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.ChatMessageType
@@ -78,6 +79,10 @@ internal class Wrapper1_15_R1 : Wrapper {
 
     override fun isCard(en: Creature): Boolean {
         return (en as CraftCreature).handle.scoreboardTags.contains("battlecards")
+    }
+
+    override fun createInventory(id: String, name: String, size: Int): BattleInventory {
+        return BattleInventory1_15_R1(id, name, size)
     }
 
 }

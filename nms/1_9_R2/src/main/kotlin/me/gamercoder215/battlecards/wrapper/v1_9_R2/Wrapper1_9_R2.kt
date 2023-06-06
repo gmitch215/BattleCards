@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_9_R2
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.chat.BaseComponent
@@ -90,6 +91,10 @@ internal class Wrapper1_9_R2 : Wrapper {
         val tag = NBTTagCompound()
         (en as CraftCreature).handle.b(tag)
         return tag.getBoolean("battlecard")
+    }
+
+    override fun createInventory(id: String, name: String, size: Int): BattleInventory {
+        return BattleInventory1_9_R2(id, name, size)
     }
 
 }
