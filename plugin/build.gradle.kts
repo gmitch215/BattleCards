@@ -43,6 +43,16 @@ dependencies {
 
 
 tasks {
+    compileKotlin {
+        listOf(
+            "1_18_R1",
+            "1_18_R2",
+            "1_19_R1",
+            "1_19_R2",
+            "1_19_R3"
+        ).forEach { dependsOn(project(":battlecards-$it").tasks["remap"]) }
+    }
+
     kotlinSourcesJar {
         archiveClassifier.set("sources")
     }
