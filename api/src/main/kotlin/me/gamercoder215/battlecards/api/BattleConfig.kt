@@ -121,4 +121,37 @@ interface BattleConfig {
     @Throws(IllegalArgumentException::class)
     fun registerCard(card: Class<out BattleCard<*>>)
 
+    /**
+     * Fetches a localized message from the plugin's language file.
+     * @param key Key to fetch
+     * @return Message
+     */
+    fun get(key: String): String
+
+    /**
+     * Fetches the plugin's language.
+     * @return Language Identifier
+     */
+    fun getLanguage(): String
+
+    /**
+     * Fetches a localized message from the plugin's language file, with the plugin prefix.
+     * @param key Key to fetch
+     * @return Message with prefix
+     */
+    fun getMessage(key: String): String {
+        return "${get("plugin.prefix")} ${get(key)}"
+    }
+
+    /**
+     * Fetches the plugin's locale.
+     * @return Configured Locale
+     */
+    fun getLocale(): Locale {
+        return when (getLanguage()) {
+            "en" -> Locale.ENGLISH
+            "fr" -> Locale.FRENCH
+            else -> Locale(getLanguage())
+        }
+    }
 }
