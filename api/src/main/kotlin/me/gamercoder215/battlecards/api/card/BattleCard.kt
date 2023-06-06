@@ -35,13 +35,7 @@ interface BattleCard<T : LivingEntity> {
      * Fetches the Card ID of this BattleCard.
      * @return BattleCard ID
      */
-    fun getCardID(): String = getType().getLocalizedName()
-
-    /**
-     * Fetches the Localized Name of this BattleCard.
-     * @return BattleCard Localized Name
-     */
-    fun getLocalizedName(): String = getType().getLocalizedName()
+    fun getCardID(): String = getType().getCardID()
 
     /**
      * Fetches the Rarity of this BattleCard.
@@ -86,6 +80,16 @@ interface BattleCard<T : LivingEntity> {
     fun getExperience(): Double = getStatistics().getCardExperience()
 
     /**
+     * Fetches the experience required to reach the next level.
+     * @return Experience to next level
+     */
+    fun getRemainingExperience(): Double {
+        if (getLevel() == getMaxCardLevel()) return 0.0
+
+        return toExperience(getLevel() + 1, getRarity()) - getExperience()
+    }
+
+    /**
      * Fetches the maximum level that this Card can be.
      * @return Max Card Level
      */
@@ -108,6 +112,18 @@ interface BattleCard<T : LivingEntity> {
      * @return [BattleCardType]
      */
     fun getType(): BattleCardType
+
+    /**
+     * Fetches the name of this BattleCard.
+     * @return BattleCard Name
+     */
+    fun getName(): String = getType().name.lowercase().replaceFirstChar { it.uppercase() }
+
+    /**
+     * Fetches the amount of <strong>seconds</strong> this card can be deployed for.
+     * @return BattleCard Deploy Time
+     */
+    fun getDeployTime(): Int = (getLevel() + 10).coerceAtMost(60)
 
     // Static Methods
 

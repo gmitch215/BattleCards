@@ -1,6 +1,5 @@
 package me.gamercoder215.battlecards.api.card
 
-import me.gamercoder215.battlecards.api.BattleConfig
 import org.bukkit.entity.*
 import kotlin.reflect.KClass
 
@@ -71,12 +70,6 @@ enum class BattleCardType {
      * @return BattleCard ID
      */
     fun getCardID(): String = name.lowercase()
-
-    /**
-     * Fetches the Localized Name of this BattleCardType.
-     * @return BattleCard Localized Name
-     */
-    fun getLocalizedName(): String = BattleConfig.getLocalizedString("card.${getCardID()}") ?: "Unknown"
 
     /**
      * Fetches the Rarity of this BattleCardType.

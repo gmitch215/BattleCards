@@ -22,7 +22,7 @@ class IDiamondGolem : IBattleCard<IronGolem>(BattleCardType.DIAMOND_GOLEM) {
         en.isPlayerCreated = true
     }
 
-    @CardAbility("card.diamond_golem.ability.launch")
+    @CardAbility("Launch")
     @Offensive(0.15, CardOperation.ADD, 0.025)
     private fun launch(event: EntityDamageByEntityEvent) {
         val target = event.entity as? Player ?: return
@@ -31,7 +31,7 @@ class IDiamondGolem : IBattleCard<IronGolem>(BattleCardType.DIAMOND_GOLEM) {
         target.velocity = en.location.direction.multiply(amplifier)
     }
 
-    @CardAbility("card.diamond_golem.ability.thorns")
+    @CardAbility("Thorns")
     @Defensive(0.1)
     private fun thorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return

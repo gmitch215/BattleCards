@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.7)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 5.0)
 
-@ListedCardAbility("card.prince_husk.ability.fire_immune")
+@ListedCardAbility("Fire Immune")
 class IPrinceHusk : IBattleCard<Husk>(BattleCardType.PRINCE_HUSK) {
 
     override fun init() {
@@ -24,7 +24,7 @@ class IPrinceHusk : IBattleCard<Husk>(BattleCardType.PRINCE_HUSK) {
         }
     }
 
-    @CardAbility("card.prince_husk.ability.royal_guard")
+    @CardAbility("Royal Guard")
     @Passive(600, CardOperation.SUBTRACT, 5.0, 600.0, 100.0)
     private fun royalGuard() {
         // TODO Add Minion Spawning

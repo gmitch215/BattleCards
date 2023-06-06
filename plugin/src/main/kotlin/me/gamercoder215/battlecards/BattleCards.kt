@@ -22,6 +22,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
     override fun onEnable() {
         saveDefaultConfig()
 
+        BattleConfig.loadConfig()
         loadListeners()
         logger.info("Loaded Files...")
 
@@ -51,10 +52,6 @@ class BattleCards : JavaPlugin(), BattleConfig {
     // BattleConfig Implementation
 
     val cards: MutableSet<Class<out BattleCard<*>>> = mutableSetOf()
-
-    override fun getLanguage(): String {
-        return config.getString("language", "en")
-    }
 
     override fun getRegisteredCards(): Set<Class<out BattleCard<*>>> {
         return ImmutableSet.copyOf(cards)

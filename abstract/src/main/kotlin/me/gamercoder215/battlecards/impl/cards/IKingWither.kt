@@ -33,7 +33,7 @@ class IKingWither : IBattleCard<Wither>(BattleCardType.WITHER_KING) {
         p.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
     }
 
-    @CardAbility("card.king_wither.ability.poison_thorns")
+    @CardAbility("Poison Thorns")
     @Defensive(0.2, CardOperation.ADD, 0.01)
     private fun posionThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return

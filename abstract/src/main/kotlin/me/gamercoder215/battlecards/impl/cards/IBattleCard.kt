@@ -32,7 +32,7 @@ abstract class IBattleCard<T : Creature>(
         en = location.world?.spawn(location, getEntityClass()) ?: throw IllegalStateException("Could not spawn entity")
 
         en.isCustomNameVisible = true
-        en.customName = "${getRarity().getColor()}${player.displayName ?: player.name}'s ${getRarity().getColor()}${getLocalizedName()}"
+        en.customName = "${getRarity().getColor()}${player.displayName ?: player.name}'s ${getRarity().getColor()}${getName()}"
 
         en.equipment.helmetDropChance = 0.0f
         en.equipment.chestplateDropChance = 0.0f
