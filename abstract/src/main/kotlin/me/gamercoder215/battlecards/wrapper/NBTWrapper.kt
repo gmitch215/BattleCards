@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack
 import java.util.*
 
 abstract class NBTWrapper(
-    protected var item: ItemStack
+    var item: ItemStack
 ) {
 
     companion object {
@@ -15,7 +15,6 @@ abstract class NBTWrapper(
         fun of(item: ItemStack) = w.getNBTWrapper(item)
     }
 
-    fun getItem(): ItemStack = item
 
     // NBT Methods/Implementation
 
