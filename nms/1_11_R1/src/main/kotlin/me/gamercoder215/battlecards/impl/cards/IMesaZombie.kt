@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Husk
 import org.bukkit.entity.LivingEntity
@@ -20,7 +21,7 @@ class IMesaZombie : IBattleCard<Husk>(BattleCardType.MESA_ZOMBIE) {
         en.equipment.helmet = ItemStack(Material.RED_SANDSTONE)
     }
 
-    @CardAbility("Fire Aspect")
+    @CardAbility("card.mesa_zombie.ability.fire_aspect", ChatColor.GOLD)
     @Offensive(0.5)
     private fun fireAspect(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return

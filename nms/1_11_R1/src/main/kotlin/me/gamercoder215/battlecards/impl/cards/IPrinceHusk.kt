@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Husk
 import org.bukkit.inventory.ItemStack
@@ -11,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.7)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 5.0)
 
-@ListedCardAbility("Fire Immune")
+@CardAbility("card.prince_husk.ability.fire_immune", ChatColor.GOLD)
 class IPrinceHusk : IBattleCard<Husk>(BattleCardType.PRINCE_HUSK) {
 
     override fun init() {
@@ -24,7 +25,7 @@ class IPrinceHusk : IBattleCard<Husk>(BattleCardType.PRINCE_HUSK) {
         }
     }
 
-    @CardAbility("Royal Guard")
+    @CardAbility("card.prince_husk.ability.royal_guard", ChatColor.DARK_BLUE)
     @Passive(600, CardOperation.SUBTRACT, 5.0, 600.0, 100.0)
     private fun royalGuard() {
         // TODO Add Minion Spawning

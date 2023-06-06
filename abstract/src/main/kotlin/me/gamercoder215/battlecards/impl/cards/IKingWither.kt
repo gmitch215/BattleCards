@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.impl.cards
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -33,7 +34,7 @@ class IKingWither : IBattleCard<Wither>(BattleCardType.WITHER_KING) {
         p.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
     }
 
-    @CardAbility("Poison Thorns")
+    @CardAbility("card.ability.king_wither.poison_thorns", ChatColor.DARK_GREEN)
     @Defensive(0.2, CardOperation.ADD, 0.01)
     private fun posionThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
@@ -44,7 +45,7 @@ class IKingWither : IBattleCard<Wither>(BattleCardType.WITHER_KING) {
     }
 
     @UnlockedAt(5)
-    @CardAbility("card.king_wither.ability.lightning_thorns")
+    @CardAbility("card.king_wither.ability.lightning_thorns", ChatColor.AQUA)
     @Defensive(0.25, CardOperation.ADD, 0.02)
     private fun lightningThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
@@ -53,7 +54,7 @@ class IKingWither : IBattleCard<Wither>(BattleCardType.WITHER_KING) {
     }
 
 
-    @CardAbility("card.king_wither.ability.user.wither_offensive")
+    @CardAbility("card.king_wither.ability.user.wither_offensive", ChatColor.GRAY)
     @UserOffensive(0.4, CardOperation.ADD, 0.02)
     private fun witherOffensive(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return

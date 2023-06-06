@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.impl.cards
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Skeleton
@@ -14,7 +15,7 @@ import org.bukkit.inventory.ItemStack
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.5)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.5)
 
-@ListedCardAbility("card.sniper.ability.triple_shot")
+@CardAbility("card.sniper.ability.triple_shot", ChatColor.GREEN)
 class ISniper : IBattleCard<Skeleton>(BattleCardType.SNIPER) {
 
     override fun init() {
