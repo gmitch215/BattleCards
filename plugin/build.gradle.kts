@@ -48,16 +48,10 @@ tasks {
     }
 
     processResources {
-        filesMatching("plugin.yml") {
-            expand(project.properties)
-        }
+        expand(project.properties)
     }
 
     shadowJar {
-        dependsOn("kotlinSourcesJar")
+        dependsOn(kotlinSourcesJar)
     }
-}
-
-artifacts {
-    add("archives", tasks.kotlinSourcesJar)
 }

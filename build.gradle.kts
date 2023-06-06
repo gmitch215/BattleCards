@@ -8,7 +8,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 
     java
-    `maven-publish`
     `java-library`
     jacoco
 }
@@ -50,31 +49,6 @@ allprojects {
         maven("https://libraries.minecraft.net/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
-
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                from(components["java"])
-
-                pom {
-                    url.set("https://github.com/GamerCoder215/BattleCards")
-
-                    licenses {
-                        license {
-                            name.set("Apache License 2.0")
-                            url.set("${pom.url}/blob/master/LICENSE")
-                        }
-                    }
-
-                    scm {
-                        connection.set("scm:git:git://github.com/GamerCoder215/BattleCards.git")
-                        developerConnection.set("scm:git:ssh://github.com/GamerCoder215/BattleCards.git")
-                        url.set(pom.url)
-                    }
-                }
-            }
-        }
-    }
 }
 
 val jvmVersion = JavaVersion.VERSION_1_8
@@ -97,14 +71,6 @@ subprojects {
     java {
         sourceCompatibility = jvmVersion
         targetCompatibility = jvmVersion
-    }
-
-    publishing {
-        publications {
-            getByName<MavenPublication>("maven") {
-                artifact(tasks["shadowJar"])
-            }
-        }
     }
 
     tasks {

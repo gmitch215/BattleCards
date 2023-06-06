@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.dokka") version "1.8.10"
+    `maven-publish`
 }
 
 dependencies {
@@ -25,7 +26,35 @@ tasks {
     }
 }
 
+publishing {
+    val github = "GamerCoder215/BattleCards"
+
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+
+            pom {
+                url.set("https://github.com/$github")
+
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("${pom.url}/blob/master/LICENSE")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:git://github.com/$github.git")
+                    developerConnection.set("scm:git:ssh://github.com/$github.git")
+                    url.set(pom.url)
+                }
+            }
+        }
+    }
+}
+
 artifacts {
+    add("archives", tasks.shadowJar)
     add("archives", tasks["javadocJar"])
     add("archives", tasks.kotlinSourcesJar)
 }
