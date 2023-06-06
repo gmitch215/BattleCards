@@ -8,6 +8,7 @@ fi;
 
 cp -Rfv api/build/dokka/javadoc/* ./docs/
 
+git restore --staged .
 git checkout gh-pages
 
 for dir in ./*
