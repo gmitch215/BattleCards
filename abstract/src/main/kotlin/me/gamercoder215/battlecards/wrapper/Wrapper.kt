@@ -22,10 +22,16 @@ interface Wrapper {
 
     fun getNBTWrapper(item: ItemStack): NBTWrapper
 
+    fun isCard(en: Creature): Boolean
+
     companion object {
+        @JvmStatic
         val w = getWrapper()
+
+        @JvmStatic
         val r = SecureRandom()
 
+        @JvmStatic
         val versions = listOf(
             "1_8_R1",
             "1_8_R2",
@@ -89,6 +95,16 @@ interface Wrapper {
         @JvmStatic
         fun getServerVersion(): String {
             return Bukkit.getServer().javaClass.`package`.name.split("\\.")[3].substring(1)
+        }
+
+        @JvmStatic
+        fun get(key: String): String {
+            return BattleConfig.getConfig().get(key)
+        }
+
+        @JvmStatic
+        fun getMessage(key: String): String {
+            return BattleConfig.getConfig().getMessage(key)
         }
 
     }

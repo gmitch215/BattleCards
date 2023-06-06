@@ -76,4 +76,8 @@ internal class Wrapper1_15_R1 : Wrapper {
         return NBTWrapper1_15_R1(item)
     }
 
+    override fun isCard(en: Creature): Boolean {
+        return (en as CraftCreature).handle.scoreboardTags.contains("battlecards")
+    }
+
 }

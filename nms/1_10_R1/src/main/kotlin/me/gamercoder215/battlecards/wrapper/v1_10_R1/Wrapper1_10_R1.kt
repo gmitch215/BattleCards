@@ -86,4 +86,10 @@ internal class Wrapper1_10_R1 : Wrapper {
         return NBTWrapper1_10_R1(item)
     }
 
+    override fun isCard(en: Creature): Boolean {
+        val tag = NBTTagCompound()
+        (en as CraftCreature).handle.b(tag)
+        return tag.getBoolean("battlecard")
+    }
+
 }

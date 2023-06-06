@@ -90,4 +90,8 @@ internal class Wrapper1_19_R3 : Wrapper {
         return NBTWrapper1_19_R3(item)
     }
 
+    override fun isCard(en: Creature): Boolean {
+        return (en as CraftCreature).handle.tags.contains("battlecards")
+    }
+
 }

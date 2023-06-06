@@ -88,4 +88,8 @@ internal class Wrapper1_19_R1 : Wrapper {
     override fun getNBTWrapper(item: ItemStack): NBTWrapper {
         return NBTWrapper1_19_R1(item)
     }
+
+    override fun isCard(en: Creature): Boolean {
+        return (en as CraftCreature).handle.tags.contains("battlecards")
+    }
 }
