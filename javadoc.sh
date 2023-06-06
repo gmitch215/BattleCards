@@ -22,8 +22,8 @@ done
 cp -Rfv ./docs/* ./
 rm -rf ./docs
 
+echo "battlecards.gamercoder215.me" > CNAME
+
 git add .
-git branch -D gh-pages
-git branch -m gh-pages
 git commit -m "Update JavaDocs ($1)"
 git push -f origin gh-pages
