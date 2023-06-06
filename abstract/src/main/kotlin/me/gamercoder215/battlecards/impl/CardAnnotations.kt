@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.impl
 
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import java.lang.annotation.Inherited
 import java.util.function.BiFunction
@@ -61,18 +62,11 @@ enum class CardOperation(
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class CardAbility(
     val name: String,
+    val color: ChatColor = ChatColor.WHITE,
     val desc: String = "<desc>"
-)
-
-@Inherited
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-annotation class ListedCardAbility(
-    val name: String,
-    val desc: String = "<desc>",
 )
 
 @Inherited
