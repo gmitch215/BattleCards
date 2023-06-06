@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_9_R1
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.chat.BaseComponent
 import net.minecraft.server.v1_9_R1.*
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 
 @Suppress("unchecked_cast")
-class Wrapper1_9_R1 : Wrapper {
+internal class Wrapper1_9_R1 : Wrapper {
 
     override fun sendActionbar(player: Player, message: String) {
         val packet = PacketPlayOutChat(ChatComponentText(message), 2.toByte())
@@ -79,6 +80,10 @@ class Wrapper1_9_R1 : Wrapper {
         nms.b(tag)
         tag.setBoolean("battlecard", true)
         nms.a(tag)
+    }
+
+    override fun getNBTWrapper(item: org.bukkit.inventory.ItemStack): NBTWrapper {
+        return NBTWrapper1_9_R1(item)
     }
 
 }

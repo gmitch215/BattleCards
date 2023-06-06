@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_13_R2
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
@@ -13,7 +14,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 
 @Suppress("unchecked_cast")
-class Wrapper1_13_R2 : Wrapper {
+internal class Wrapper1_13_R2 : Wrapper {
 
     override fun sendActionbar(player: Player, component: BaseComponent) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component)
@@ -69,6 +70,10 @@ class Wrapper1_13_R2 : Wrapper {
         nms.targetSelector.a(3, PathfinderGoalHurtByTarget(nms, true))
 
         nms.addScoreboardTag("battlecards")
+    }
+
+    override fun getNBTWrapper(item: org.bukkit.inventory.ItemStack): NBTWrapper {
+        return NBTWrapper1_13_R2(item)
     }
 
 }

@@ -1,15 +1,13 @@
 package me.gamercoder215.battlecards.wrapper
 
 import me.gamercoder215.battlecards.api.BattleConfig
-import me.gamercoder215.battlecards.impl.cards.IBasicCard
-import me.gamercoder215.battlecards.impl.cards.IBattleCard
-import me.gamercoder215.battlecards.impl.cards.IDiamondGolem
-import me.gamercoder215.battlecards.impl.cards.IKingWither
+import me.gamercoder215.battlecards.impl.cards.*
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
+import org.bukkit.inventory.ItemStack
 import java.security.SecureRandom
 
 interface Wrapper {
@@ -21,6 +19,8 @@ interface Wrapper {
     fun setBossBarVisibility(boss: Wither, visible: Boolean)
 
     fun loadProperties(en: Creature, card: IBattleCard<*>)
+
+    fun getNBTWrapper(item: ItemStack): NBTWrapper
 
     companion object {
         val w = getWrapper()
@@ -52,10 +52,12 @@ interface Wrapper {
 
         @JvmStatic
         fun getWrapper(): Wrapper {
-            return Class.forName("${Wrapper::class.java.`package`.name}.v${getServerVersion()}.Wrapper${getServerVersion()}")
+            val constr = Class.forName("${Wrapper::class.java.`package`.name}.v${getServerVersion()}.Wrapper${getServerVersion()}")
                 .asSubclass(Wrapper::class.java)
                 .getDeclaredConstructor()
-                .newInstance()
+
+            constr.isAccessible = true
+            return constr.newInstance()
         }
 
         @JvmStatic
@@ -66,7 +68,9 @@ interface Wrapper {
             loaded.addAll(listOf(
                 IBasicCard::class.java,
                 IDiamondGolem::class.java,
-                IKingWither::class.java
+                IKingWither::class.java,
+                IWitherman::class.java,
+                ISniper::class.java
             ))
 
             versions.subList(0, versions.indexOf(current) + 1).forEach {

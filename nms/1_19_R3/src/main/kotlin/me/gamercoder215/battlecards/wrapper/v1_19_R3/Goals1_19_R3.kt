@@ -8,11 +8,9 @@ import net.minecraft.world.entity.ai.goal.target.TargetGoal
 import net.minecraft.world.entity.ai.targeting.TargetingConditions
 import net.minecraft.world.level.pathfinder.BlockPathTypes
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
-import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityTargetEvent
-import java.util.*
 
-class FollowCardOwner1_19_R3(
+internal class FollowCardOwner1_19_R3(
     private val creature: PathfinderMob,
     card: IBattleCard<*>
 ) : Goal() {
@@ -65,7 +63,7 @@ class FollowCardOwner1_19_R3(
 
 }
 
-class CardOwnerHurtTargetGoal1_19_R3(
+internal class CardOwnerHurtTargetGoal1_19_R3(
     private val creature: PathfinderMob,
     card: IBattleCard<*>
 ) : TargetGoal(creature, true, true) {
@@ -88,7 +86,7 @@ class CardOwnerHurtTargetGoal1_19_R3(
 
 }
 
-class CardOwnerHurtByTargetGoal1_19_R3(
+internal class CardOwnerHurtByTargetGoal1_19_R3(
     private val creature: PathfinderMob,
     card: IBattleCard<*>
 ) : TargetGoal(creature, true, true) {

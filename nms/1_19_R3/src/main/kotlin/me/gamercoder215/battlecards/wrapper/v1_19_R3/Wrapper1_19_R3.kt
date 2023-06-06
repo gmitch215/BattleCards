@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_19_R3
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
@@ -11,25 +12,18 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.AttributeMap
-import net.minecraft.world.entity.ai.goal.FloatGoal
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftCreature
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMob
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey
 import org.bukkit.entity.Creature
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
+import org.bukkit.inventory.ItemStack
 
 @Suppress("unchecked_cast")
-class Wrapper1_19_R3 : Wrapper {
+internal class Wrapper1_19_R3 : Wrapper {
 
     override fun sendActionbar(player: Player, component: BaseComponent) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component)
@@ -90,6 +84,10 @@ class Wrapper1_19_R3 : Wrapper {
         nms.targetSelector.addGoal(3, HurtByTargetGoal(nms))
 
         nms.addTag("battlecards")
+    }
+
+    override fun getNBTWrapper(item: ItemStack): NBTWrapper {
+        return NBTWrapper1_19_R3(item)
     }
 
 }
