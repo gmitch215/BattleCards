@@ -3,6 +3,15 @@
 #
 # Main Configuration File
 
+# The Language to use for BattleCards
+#
+# Available Languages:
+#
+# en - English
+# es - Spanish / Español
+# fr - French / Français
+Language: en
+
 # Card Configuration
 Cards:
   # A list of Disabled BattleCards with case insensitive names
