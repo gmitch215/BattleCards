@@ -1,7 +1,5 @@
 package me.gamercoder215.battlecards.api.card
 
-import kotlin.jvm.Throws
-
 /**
  * Represents a [BattleCard]'s Lifetime Statistics and Attributes
  */
@@ -156,11 +154,7 @@ interface BattleStatistics {
      * Fetches how much experience is needed for this BattleCard to advance to the next level.
      * @return Experience to next level
      */
-    fun getAdvancingExperience(): Double {
-        if (getCardLevel() >= BattleCard.MAX_LEVEL) return 0.0
-
-        return (BattleCard.toExperience(getCardLevel() + 1) - getCardExperience()) * getCard().getRarity().getExperienceModifier()
-    }
+    fun getRemainingExperience(): Double = getCard().getRemainingExperience()
 
     /**
      * Fetches the level that this Card is currently at.
@@ -191,6 +185,12 @@ interface BattleStatistics {
      * @return Max Card Experience
      */
     fun getMaxCardExperience(): Double = getCard().getMaxCardExperience()
+
+    /**
+     * Fetches the total amount of <strong>seconds</strong> this Card can be deployed for.
+     * @return Deploy Time
+     */
+    fun getDeployTime(): Int = getCard().getDeployTime()
 
 
 }
