@@ -24,6 +24,8 @@ interface Wrapper {
 
     fun isCard(en: Creature): Boolean
 
+    fun createInventory(id: String, name: String, size: Int): BattleInventory
+
     companion object {
         @JvmStatic
         val w = getWrapper()
