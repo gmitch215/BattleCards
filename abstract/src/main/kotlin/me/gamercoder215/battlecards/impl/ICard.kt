@@ -14,7 +14,7 @@ import java.util.*
 @Suppress("unchecked_cast")
 class ICard(
     val clazz: Class<out BattleCard<*>>,
-    val type: BattleCardType,
+    val ctype: BattleCardType,
     val creation: Long,
     var last: Long? = null,
     var lastPlayer: OfflinePlayer? = null
@@ -30,14 +30,14 @@ class ICard(
 
     override fun getLastUsedPlayer(): OfflinePlayer? = lastPlayer
 
-    override fun getType(): BattleCardType = type
+    override fun getType(): BattleCardType = ctype
 
     override fun getEntityCardClass(): Class<out BattleCard<*>> = clazz
 
     override fun serialize(): MutableMap<String, Any?> {
         return mutableMapOf(
             "clazz" to clazz.name,
-            "type" to type.name,
+            "type" to ctype.name,
             "creation_date" to creation,
             "last_used" to last,
             "last_used_player" to lastPlayer?.uniqueId.toString(),
