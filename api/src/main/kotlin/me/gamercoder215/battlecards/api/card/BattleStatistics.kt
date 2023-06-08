@@ -1,14 +1,14 @@
 package me.gamercoder215.battlecards.api.card
 
 /**
- * Represents a [BattleCard]'s Lifetime Statistics and Attributes
+ * Represents a [Card]'s Lifetime Statistics and Attributes
  */
 interface BattleStatistics {
 
     /**
-     * Fetches the [BattleCard] this [BattleStatistics] is for
+     * Fetches the [Card] this [BattleStatistics] is for
      */
-    fun getCard(): BattleCard<*>
+    fun getCard(): Card
 
     // Attributes
 
