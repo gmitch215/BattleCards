@@ -18,6 +18,8 @@ import org.bukkit.entity.Wither
 @Suppress("unchecked_cast")
 internal class Wrapper1_11_R1 : Wrapper {
 
+    override fun getCommandVersion(): Int = 1
+
     override fun sendActionbar(player: Player, message: String) {
         sendActionbar(player, TextComponent(message))
     }

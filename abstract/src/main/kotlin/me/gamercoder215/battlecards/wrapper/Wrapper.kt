@@ -2,12 +2,14 @@ package me.gamercoder215.battlecards.wrapper
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.cards.*
+import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import java.security.SecureRandom
 
 interface Wrapper {
@@ -25,6 +27,8 @@ interface Wrapper {
     fun isCard(en: Creature): Boolean
 
     fun createInventory(id: String, name: String, size: Int): BattleInventory
+
+    fun getCommandVersion(): Int = 2
 
     companion object {
         @JvmStatic
@@ -69,6 +73,23 @@ interface Wrapper {
         }
 
         @JvmStatic
+        fun getCommandWrapper(): CommandWrapper {
+            val cmdV: Int = when (BattleConfig.getConfiguration().getString("Functionality.CommandVersion")) {
+                "1" -> 1
+                "2" -> 2
+                "auto" -> w.getCommandVersion()
+                else -> throw IllegalStateException("Invalid Command Version '${BattleConfig.getConfiguration().getString("Functionality.CommandVersion")}'")
+            }
+
+            val constr = Class.forName("me.gamercoder215.battlecards.wrapper.commands.CommandWrapperV${cmdV}")
+                .asSubclass(CommandWrapper::class.java)
+                .getDeclaredConstructor(Plugin::class.java)
+
+            constr.isAccessible = true
+            return constr.newInstance(BattleConfig.getPlugin())
+        }
+
+        @JvmStatic
         fun loadCards() {
             val current = getServerVersion()
             val loaded: MutableList<Class<out IBattleCard<*>>> = mutableListOf()
@@ -108,6 +129,10 @@ interface Wrapper {
         fun getMessage(key: String): String {
             return BattleConfig.getConfig().getMessage(key)
         }
+
+        @JvmStatic
+        val legacy: Boolean
+            get() = w.getCommandVersion() == 1
 
     }
 
