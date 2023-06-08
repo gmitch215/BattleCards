@@ -16,6 +16,8 @@ import org.bukkit.entity.Wither
 @Suppress("unchecked_cast")
 internal class Wrapper1_8_R1 : Wrapper {
 
+    override fun getCommandVersion(): Int = 1
+
     override fun sendActionbar(player: Player, message: String) {
         val packet = PacketPlayOutChat(ChatComponentText(message), 2.toByte())
         (player as CraftPlayer).handle.playerConnection.sendPacket(packet)

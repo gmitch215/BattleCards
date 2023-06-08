@@ -74,6 +74,17 @@ internal class NBTWrapper1_8_R1(item: ItemStack) : NBTWrapper(item) {
         item = CraftItemStack.asBukkitCopy(nms)
     }
 
+    override fun set(key: String, value: ByteArray) {
+        val nms = CraftItemStack.asNMSCopy(item)
+        val tag = nms.tag ?: NBTTagCompound()
+        val battlecards = tag.getCompound(ROOT)
+
+        battlecards.setByteArray(key, value)
+        tag.set(ROOT, battlecards)
+        nms.tag = tag
+        item = CraftItemStack.asBukkitCopy(nms)
+    }
+
     override fun set(key: String, value: UUID) = set(key, value.toString())
 
     override fun getString(key: String): String = (CraftItemStack.asNMSCopy(item).tag ?: NBTTagCompound()).getCompound(ROOT).getString(key)
@@ -83,5 +94,6 @@ internal class NBTWrapper1_8_R1(item: ItemStack) : NBTWrapper(item) {
     override fun getLong(key: String): Long = (CraftItemStack.asNMSCopy(item).tag ?: NBTTagCompound()).getCompound(ROOT).getLong(key)
     override fun getFloat(key: String): Float = (CraftItemStack.asNMSCopy(item).tag ?: NBTTagCompound()).getCompound(ROOT).getFloat(key)
     override fun getUUID(key: String): UUID = UUID.fromString(getString(key))
+    override fun getByteArray(key: String): ByteArray = (CraftItemStack.asNMSCopy(item).tag ?: NBTTagCompound()).getCompound(ROOT).getByteArray(key) ?: throw NullPointerException()
 
 }

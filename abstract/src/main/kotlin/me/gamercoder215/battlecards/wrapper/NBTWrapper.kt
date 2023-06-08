@@ -1,7 +1,10 @@
 package me.gamercoder215.battlecards.wrapper
 
+import me.gamercoder215.battlecards.util.BattleMaterial
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import java.util.*
 
 abstract class NBTWrapper(
@@ -12,7 +15,39 @@ abstract class NBTWrapper(
         @JvmStatic
         protected val ROOT = "BattleCards"
 
+        @JvmStatic
         fun of(item: ItemStack) = w.getNBTWrapper(item)
+
+        @JvmStatic
+        fun builder(item: ItemStack, action: (NBTWrapper) -> Unit): ItemStack {
+            return of(item.clone()).apply {
+                action(this)
+            }.item
+        }
+
+        @JvmStatic
+        fun builder(material: Material, action: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material), action)
+
+        @JvmStatic
+        fun builder(material: BattleMaterial, action: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material.findStack()), action)
+
+        @JvmStatic
+        fun builder(item: ItemStack, meta: (ItemMeta) -> Unit, nbt: (NBTWrapper) -> Unit): ItemStack {
+            val item0 = item.clone()
+            item0.itemMeta = item0.itemMeta.apply {
+                meta(this)
+            }
+
+            return of(item0).apply {
+                nbt(this)
+            }.item
+        }
+
+        @JvmStatic
+        fun builder(material: Material, meta: (ItemMeta) -> Unit, nbt: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material), meta, nbt)
+
+        @JvmStatic
+        fun builder(material: BattleMaterial, meta: (ItemMeta) -> Unit, nbt: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material.findStack()), meta, nbt)
     }
 
 
@@ -55,5 +90,19 @@ abstract class NBTWrapper(
     abstract fun getUUID(key: String): UUID
 
     abstract operator fun set(key: String, value: UUID)
+
+    abstract fun getByteArray(key: String): ByteArray
+
+    abstract operator fun set(key: String, value: ByteArray)
+
+    operator fun set(key: String, value: Number) {
+        when (value) {
+            is Int -> set(key, value)
+            is Double -> set(key, value)
+            is Long -> set(key, value)
+            is Float -> set(key, value)
+            else -> set(key, value.toDouble())
+        }
+    }
 
 }
