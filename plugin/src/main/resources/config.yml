@@ -12,6 +12,16 @@
 # fr - French / Français
 Language: en
 
+# Plugin Functionality Configuration
+Functionality:
+
+  # The Command Wrapper Version to use. Requires a restart in order to load properly.
+  # Available Options:
+  # - auto | Automatically detect the Command Wrapper Version
+  # - 1 | Use Command Wrapper V1 (1.8+)
+  # - 2 | Use Command Wrapper V2 (1.13.2+)
+  CommandVersion: auto
+
 # Card Configuration
 Cards:
   # A list of Disabled BattleCards with case insensitive names
