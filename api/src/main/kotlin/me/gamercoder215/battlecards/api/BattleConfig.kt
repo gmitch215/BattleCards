@@ -1,8 +1,13 @@
 package me.gamercoder215.battlecards.api
 
+import com.google.common.collect.ImmutableSet
 import me.gamercoder215.battlecards.api.card.BattleCard
+import me.gamercoder215.battlecards.api.card.BattleCardType
+import me.gamercoder215.battlecards.api.card.Card
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.EntityType.*
 import org.bukkit.plugin.Plugin
 import java.io.File
 import java.util.*
@@ -14,8 +19,6 @@ import java.util.logging.Logger
 interface BattleConfig {
 
     companion object {
-        private val plugin: Plugin = getPlugin()
-
         /**
          * Fetches the BattleCards Plugin Instance.
          * @return Plugin
@@ -31,7 +34,7 @@ interface BattleConfig {
          */
         @JvmStatic
         fun getDataFolder(): File {
-            return plugin.dataFolder
+            return getPlugin().dataFolder
         }
 
         /**
@@ -49,7 +52,7 @@ interface BattleConfig {
          */
         @JvmStatic
         fun getConfig(): BattleConfig {
-            return plugin as BattleConfig
+            return getPlugin() as BattleConfig
         }
 
         /**
@@ -58,7 +61,7 @@ interface BattleConfig {
          */
         @JvmStatic
         fun getConfiguration(): FileConfiguration {
-            return plugin.config
+            return getPlugin().config
         }
 
         /**
@@ -67,7 +70,7 @@ interface BattleConfig {
          */
         @JvmStatic
         fun getLogger(): Logger {
-            return plugin.logger
+            return getPlugin().logger
         }
 
         /**
@@ -88,8 +91,13 @@ interface BattleConfig {
          */
         @JvmStatic
         fun loadConfig(): FileConfiguration {
-            plugin.saveDefaultConfig()
-            val config = plugin.config
+            getPlugin().saveDefaultConfig()
+            val config = getPlugin().config
+
+            if (!config.isString("Language")) config.set("Language", "en")
+
+            if (!config.isConfigurationSection("Functionality")) config.createSection("Functionality")
+            if (!config.isString("Functionality.CommandVersion") && !config.isInt("Functionality.CommandVersion")) config.set("Functionality.CommandVersion", "auto")
 
             if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
             if (!config.isList("Disabled")) config.set("Disabled", listOf<String>())
@@ -104,6 +112,51 @@ interface BattleConfig {
             if (!config.isBoolean("Cards.Display.Info.ShowStatistics")) config.set("Cards.Display.Info.ShowStatistics", true)
 
             return config
+        }
+
+        /**
+         * Fetches a set of all of the valid entity types that can drop Basic Cards.
+         * @return Valid Basic Card Entity Types
+         */
+        @JvmStatic
+        fun getValidBasicCards(): Set<EntityType> {
+            return ImmutableSet.copyOf(
+                setOf<Any>(
+                    SPIDER,
+                    CAVE_SPIDER,
+                    ENDERMAN,
+                    ENDERMITE,
+                    ZOMBIE,
+                    SKELETON,
+                    IRON_GOLEM,
+                    BLAZE,
+                    CREEPER,
+                    WITCH,
+                    WITHER,
+                    SLIME,
+                    MAGMA_CUBE,
+                    GUARDIAN,
+
+                    "wither_skeleton",
+                    "vindicator",
+                    "vex",
+                    "stray",
+                    "phantom",
+                    "drowned",
+                    "piglin",
+                    "hoglin",
+                    "evoker",
+                    "pillager",
+                    "elder_guardian",
+                    "polar_bear",
+                    "wolf"
+                ).mapNotNull {
+                    when (it) {
+                        is EntityType -> it
+                        is String -> try { valueOf(it.uppercase()) } catch (e: IllegalArgumentException) { null }
+                        else -> null
+                    }
+                })
         }
 
     }
@@ -144,14 +197,20 @@ interface BattleConfig {
     }
 
     /**
+     * Creates a Card Data object with no data.
+     * @param type Card Type
+     * @return Constructed Card Data
+     */
+    fun createCardData(type: BattleCardType): Card
+
+    /**
      * Fetches the plugin's locale.
      * @return Configured Locale
      */
-    fun getLocale(): Locale {
-        return when (getLanguage()) {
+    val locale: Locale
+        get() = when (getLanguage()) {
             "en" -> Locale.ENGLISH
             "fr" -> Locale.FRENCH
             else -> Locale(getLanguage())
         }
-    }
 }

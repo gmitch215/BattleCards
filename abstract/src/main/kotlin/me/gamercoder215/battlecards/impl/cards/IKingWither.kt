@@ -14,13 +14,14 @@ import org.bukkit.potion.PotionEffectType
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
+@Type(BattleCardType.WITHER_KING)
 @Attributes(3500.0, 55.5, 100.0, 0.15, 150.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 125.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 15.0)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.1)
 
 @BlockAttachment(Material.BEDROCK, 0.0, 2.5, 0.0, true)
-class IKingWither : IBattleCard<Wither>(BattleCardType.WITHER_KING) {
+class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
 
     override fun init() {
         super.init()

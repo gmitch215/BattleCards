@@ -2,8 +2,9 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
-import me.gamercoder215.battlecards.api.card.BattleCardType
+import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.IBattleStatistics
+import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.CardUtils
 import me.gamercoder215.battlecards.util.getEntity
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -16,7 +17,7 @@ import java.util.*
 import java.util.function.Supplier
 
 abstract class IBattleCard<T : Creature>(
-    protected val cardType: BattleCardType
+    protected val data: ICard
 ) : BattleCard<T> {
 
     companion object {
@@ -29,12 +30,6 @@ abstract class IBattleCard<T : Creature>(
         }
     }
 
-    val stats: MutableMap<String, Any> = mutableMapOf()
-
-    protected val creation: Long = System.currentTimeMillis()
-    protected var last: Long? = null
-    protected var lastPlayer: Player? = null
-
     protected lateinit var en: T
     lateinit var p: Player
 
@@ -43,8 +38,8 @@ abstract class IBattleCard<T : Creature>(
     fun spawn(player: Player, location: Location): T {
         if (!en.isDead) throw IllegalStateException("Entity already spawned")
 
-        lastPlayer = player
-        last = System.currentTimeMillis()
+        data.lastPlayer = player
+        data.last = System.currentTimeMillis()
         p = player
 
         en = location.world?.spawn(location, getEntityClass()) ?: throw IllegalStateException("Could not spawn entity")
@@ -94,18 +89,10 @@ abstract class IBattleCard<T : Creature>(
         if (!::en.isInitialized) throw IllegalStateException("Entity not spawned")
     }
 
-    final override fun getType(): BattleCardType = cardType
-
-    final override fun getStatistics(): IBattleStatistics {
-        return IBattleStatistics(this)
-    }
+    final override fun getStatistics(): IBattleStatistics = super.getStatistics() as IBattleStatistics
 
     final override fun getEntity(): T = en
 
-    final override fun getCreationDate(): Date = Date(creation)
-
-    override fun getLastUsed(): Date? = last?.let { Date(it) }
-
-    override fun getLastUsedPlayer(): Player? = lastPlayer
+    final override fun getData(): Card = data
 
 }

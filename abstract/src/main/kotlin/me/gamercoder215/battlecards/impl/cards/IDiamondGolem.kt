@@ -9,6 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 
+@Type(BattleCardType.DIAMOND_GOLEM)
 @Attributes(500.0, 15.3, 85.5, 0.3, 1.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD)
@@ -16,7 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 
 @BlockAttachment(Material.DIAMOND_BLOCK, 0.0, 0.0, 0.2)
 @Suppress("deprecation")
-class IDiamondGolem : IBattleCard<IronGolem>(BattleCardType.DIAMOND_GOLEM) {
+class IDiamondGolem(data: ICard) : IBattleCard<IronGolem>(data) {
 
     override fun init() {
         super.init()

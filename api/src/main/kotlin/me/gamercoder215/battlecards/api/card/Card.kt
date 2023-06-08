@@ -1,39 +1,15 @@
 package me.gamercoder215.battlecards.api.card
 
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.LivingEntity
+import org.bukkit.configuration.serialization.ConfigurationSerializable
 import java.util.*
+import kotlin.math.floor
+import kotlin.math.pow
 
 /**
- * Represents an instance of a Spawned or Killed Card in BattleCards
- * @param T The Entity type this BattleCard represents
+ * Represents a [BattleCard]'s Data before spawning.
  */
-@Suppress("unchecked_cast")
-interface BattleCard<T : LivingEntity> {
-
-    /**
-     * Fetches the Entity Class that this BattleCard represents.
-     * @return Entity Class
-     */
-    fun getEntityClass(): Class<T> = getType().getEntityClass() as Class<T>
-
-    /**
-     * Whether this BattleCard is currently spawend.
-     * @return true if spawned, false otherwise
-     */
-    fun isSpawned(): Boolean = getEntity() != null
-
-    /**
-     * Fetches the Entity that this BattleCard is spawned as, or null if not spawned.
-     * @return Spawned Entity
-     */
-    fun getEntity(): T?
-
-    /**
-     * Fetches this BattleCard's Card Data.
-     * @return [Card] Data
-     */
-    fun getData(): Card
+interface Card : ConfigurationSerializable {
 
     /**
      * Fetches the Card ID of this BattleCard.
@@ -51,25 +27,25 @@ interface BattleCard<T : LivingEntity> {
      * Fetches the Date this card was created.
      * @return Creation Date
      */
-    fun getCreationDate(): Date = getData().getCreationDate()
+    fun getCreationDate(): Date
 
     /**
      * Fetches the Statistics of this BattleCard instance.
      * @return BattleCard Statistics
      */
-    fun getStatistics(): BattleStatistics = getData().getStatistics()
+    fun getStatistics(): BattleStatistics
 
     /**
      * Fetches the Date this BattleCard was last used. Will return null if never used.
      * @return Last Used Date
      */
-    fun getLastUsed(): Date = getData().getLastUsed()
+    fun getLastUsed(): Date
 
     /**
      * Fetches the player that last used this BattleCard. Will return null if never used.
      * @return Last Used Player
      */
-    fun getLastUsedPlayer(): OfflinePlayer? = getData().getLastUsedPlayer()
+    fun getLastUsedPlayer(): OfflinePlayer?
 
     /**
      * Fetches the level of this BattleCard.
@@ -90,7 +66,7 @@ interface BattleCard<T : LivingEntity> {
     fun getRemainingExperience(): Double {
         if (getLevel() == getMaxCardLevel()) return 0.0
 
-        return toExperience(getLevel() + 1, getRarity()) - getExperience()
+        return BattleCard.toExperience(getLevel() + 1, getRarity()) - getExperience()
     }
 
     /**
@@ -115,7 +91,7 @@ interface BattleCard<T : LivingEntity> {
      * Fetches the BattleCardType of this BattleCard.
      * @return [BattleCardType]
      */
-    fun getType(): BattleCardType = getData().getType()
+    fun getType(): BattleCardType
 
     /**
      * Fetches the name of this BattleCard.
@@ -129,6 +105,20 @@ interface BattleCard<T : LivingEntity> {
      */
     fun getDeployTime(): Int = (getLevel() + 10).coerceAtMost(60)
 
+    /**
+     * Fetches the [BattleCard] class for this Card Data.
+     * @return BattleCard Class
+     */
+    fun getEntityCardClass(): Class<out BattleCard<*>>
+
+    // Serialization
+
+    /**
+     * Serializes this Card Data into a Byte Array.
+     * @return Serialized Card Data
+     */
+    fun toByteArray(): ByteArray
+
     // Static Methods
 
     companion object {
@@ -136,7 +126,7 @@ interface BattleCard<T : LivingEntity> {
         /**
          * The maximum level any BattleCard can be
          */
-        const val MAX_LEVEL = Card.MAX_LEVEL
+        const val MAX_LEVEL = 150
 
         /**
          * Converts a BattleCard's Experience to the corresponding level.
@@ -145,7 +135,17 @@ interface BattleCard<T : LivingEntity> {
          * @return BattleCard Level
          */
         @JvmStatic
-        fun toLevel(experience: Double, rarity: Rarity = Rarity.COMMON): Int = Card.toLevel(experience, rarity)
+        fun toLevel(experience: Double, rarity: Rarity = Rarity.COMMON): Int {
+            return when(experience) {
+                in Double.NEGATIVE_INFINITY..0.0 -> throw IllegalArgumentException("Experience must be positive!")
+                in 0.0..1350.0 -> 1
+                else -> {
+                    var level = 1
+                    while (toExperience(level, rarity) < experience) level++
+                    level
+                }
+            }
+        }
 
         /**
          * Converts a BattleCard's Level to the minimum experience required to reach that level.
@@ -154,7 +154,22 @@ interface BattleCard<T : LivingEntity> {
          * @return Minimum Experience required to reach Level
          */
         @JvmStatic
-        fun toExperience(level: Int, rarity: Rarity = Rarity.COMMON): Double = Card.toExperience(level, rarity)
+        fun toExperience(level: Int, rarity: Rarity = Rarity.COMMON): Double {
+            return when (level) {
+                in (MAX_LEVEL + 1)..Int.MAX_VALUE -> throw IllegalArgumentException("Level must be less than or equal to $MAX_LEVEL!")
+                in Int.MIN_VALUE.. 0 -> throw IllegalArgumentException("Level must be positive!")
+                1 -> 0.0
+                else -> {
+                    var exp = 0.0
+                    for (i in 2..level)
+                        exp += floor(1.3.pow(i - 1) * 1000)
+
+                    val rem = exp % 50
+
+                    if (exp >= 25) exp - rem + 50 else exp - rem
+                }
+            } * rarity.getExperienceModifier()
+        }
 
     }
 

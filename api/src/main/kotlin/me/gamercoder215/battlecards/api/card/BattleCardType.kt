@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.api.card
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import org.bukkit.entity.*
 import kotlin.reflect.KClass
 
@@ -82,6 +83,12 @@ enum class BattleCardType {
      * @return Entity Class found, or null if not found
      */
     fun getEntityClass(): Class<out LivingEntity>? = entityClass
+
+    /**
+     * Creates an empty card data object.
+     * @return New Card Data
+     */
+    fun createCardData(): Card = BattleConfig.getConfig().createCardData(this)
 
     companion object {
 

@@ -6,6 +6,10 @@ import com.jeff_media.updatechecker.UpdateChecker
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.BattleConfig.Companion.print
 import me.gamercoder215.battlecards.api.card.BattleCard
+import me.gamercoder215.battlecards.api.card.BattleCardType
+import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.impl.ICard
+import me.gamercoder215.battlecards.impl.Type
 import me.gamercoder215.battlecards.util.CardListener
 import org.bstats.bukkit.Metrics
 import org.bukkit.ChatColor
@@ -88,6 +92,14 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     override fun getLanguage(): String {
         return config.getString("Language", "en")
+    }
+
+    override fun createCardData(type: BattleCardType): Card {
+        return ICard(
+            getRegisteredCards().first { it.getAnnotation(Type::class.java).type == type },
+            type,
+            System.currentTimeMillis()
+        )
     }
 
 }

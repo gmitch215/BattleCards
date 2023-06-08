@@ -9,11 +9,12 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 
+@Type(BattleCardType.MESA_ZOMBIE)
 @Attributes(50.0, 2.3, 5.5, 0.3, 0.2)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 15.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD)
-class IMesaZombie : IBattleCard<Husk>(BattleCardType.MESA_ZOMBIE) {
+class IMesaZombie(data: ICard) : IBattleCard<Husk>(data) {
 
     override fun init() {
         super.init()

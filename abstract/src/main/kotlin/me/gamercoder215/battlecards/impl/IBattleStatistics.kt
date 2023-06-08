@@ -1,14 +1,12 @@
 package me.gamercoder215.battlecards.impl
 
-import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleStatistics
-import me.gamercoder215.battlecards.impl.cards.IBattleCard
 
 class IBattleStatistics(
-    private val card: IBattleCard<*>
+    private val card: ICard
 ) : BattleStatistics {
 
-    override fun getCard(): IBattleCard<*> = card
+    override fun getCard(): ICard = card
 
     override fun getPlayerKills(): Int = (card.stats["kills.player"] ?: 0) as Int
 
