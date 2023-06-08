@@ -1,9 +1,17 @@
 package me.gamercoder215.battlecards.impl
 
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import java.lang.annotation.Inherited
 import java.util.function.BiFunction
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class Type(
+    val type: BattleCardType
+)
 
 // Attributes
 
