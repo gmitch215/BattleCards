@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.util
 
+import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -10,6 +11,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.math.cos
+import kotlin.math.log10
+import kotlin.math.pow
 import kotlin.math.sin
 
 fun ItemStack.nbt(nbt: (NBTWrapper) -> Unit): ItemStack {
@@ -27,6 +30,16 @@ fun Entity.getCard(): IBattleCard<*>? {
     if (!isCard()) return null
     return IBattleCard.byEntity(this as Creature)
 }
+
+fun ItemStack.getCard(): ICard? {
+    val nbt = NBTWrapper.of(this)
+    val bytes = nbt.getByteArray("card")
+    if (bytes.isEmpty()) return null
+
+    return ICard.fromByteArray(bytes)
+}
+
+fun ItemStack.isCard(): Boolean = NBTWrapper.of(this).getByteArray("card").isNotEmpty()
 
 // Bukkit Extensions from Newer Version
 
@@ -64,26 +77,54 @@ fun Vector.rotateAroundNonUnitAxis(axis: Vector, angle: Double): Vector {
 
 // Kotlin Util
 
-fun Double.format(): String {
-    return CardUtils.format("%,.2f", this)
+fun Number.format(): String {
+    return when (this) {
+        is Int, is Long -> CardUtils.format("%,d", this)
+        else -> CardUtils.format("%,.2f", this)
+    }
 }
 
-fun Float.format(): String {
-    return CardUtils.format("%,.2f", this)
+fun Number.formatInt(): String {
+    return when (this) {
+        is Int, is Long -> format()
+        else -> CardUtils.format("%,.0f", this)
+    }
 }
 
-fun Double.formatInt(): String {
-    return CardUtils.format("%,.0f", this)
+private val ROMAN_NUMERALS = TreeMap<Long, String>().apply {
+    putAll(mutableMapOf(
+        1000L to "M",
+        900L to "CM",
+        500L to "D",
+        400L to "CD",
+        100L to "C",
+        90L to "XC",
+        50L to "L",
+        40L to "XL",
+        10L to "X",
+        9L to "IX",
+        5L to "V",
+        4L to "IV",
+        1L to "I"
+    ))
 }
 
-fun Float.formatInt(): String {
-    return CardUtils.format("%,.0f", this)
+fun Number.toRoman(): String {
+    val number = toLong()
+    val l: Long = ROMAN_NUMERALS.floorKey(number)
+    return if (number == l) ROMAN_NUMERALS[number]!! else ROMAN_NUMERALS[l] + (number - l).toRoman()
 }
 
-fun Int.format(): String {
-    return CardUtils.format("%,d", this)
+private const val SUFFIXES = "KMBTQEXSON"
+
+fun Number.withSuffix(): String {
+    val num = toDouble()
+    if (num < 0) return "-" + (-num).withSuffix()
+    if (num < 1000) return format()
+
+    val index = (log10(num) / 3).toInt()
+    val suffix = SUFFIXES[index - 1].toString()
+
+    return CardUtils.format("%.1f%s", num / 1000.0.pow(index), suffix)
 }
 
-fun Long.format(): String {
-    return CardUtils.format("%,d", this)
-}

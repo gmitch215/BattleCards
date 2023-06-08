@@ -45,7 +45,7 @@ object CardUtils {
 
     @JvmStatic
     fun format(string: String, vararg args: Any): String {
-        return String.format(BattleConfig.getConfig().getLocale(), string, *args)
+        return String.format(BattleConfig.getConfig().locale, string, *args)
     }
 
     @JvmStatic
@@ -56,8 +56,8 @@ object CardUtils {
        for (i in array.indices) {
            val value = array[i]
 
-           if (value.endsWith("%")) array[i] = "${ChatColor.GREEN}$value$prefix"
-           if (value.replace(",", "").toDoubleOrNull() != null) array[i] = "${ChatColor.RED}$value$prefix"
+           if (value.endsWith("%") || value.endsWith("s")) array[i] = "${ChatColor.GREEN}$value$prefix"
+           if (value.replace("[,KMBT]".toRegex(), "").toDoubleOrNull() != null) array[i] = "${ChatColor.RED}$value$prefix"
        }
 
        return ChatPaginator.wordWrap(
@@ -77,35 +77,10 @@ object CardUtils {
     @JvmStatic
     fun dateFormat(date: Date?): String? {
         if (date == null) return null
-        return SimpleDateFormat("MMM dd, yyyy", BattleConfig.getConfig().getLocale()).format(date)
+        return SimpleDateFormat("MMM dd, yyyy", BattleConfig.getConfig().locale).format(date)
     }
 
     // Other
-
-    @JvmStatic
-    private val ROMAN_NUMERALS = TreeMap<Long, String>().apply {
-        putAll(mutableMapOf(
-            1000L to "M",
-            900L to "CM",
-            500L to "D",
-            400L to "CD",
-            100L to "C",
-            90L to "XC",
-            50L to "L",
-            40L to "XL",
-            10L to "X",
-            9L to "IX",
-            5L to "V",
-            4L to "IV",
-            1L to "I"
-        ))
-    }
-
-    @JvmStatic
-    fun toRoman(number: Long): String {
-        val l: Long = ROMAN_NUMERALS.floorKey(number)
-        return if (number == l) ROMAN_NUMERALS[number]!! else ROMAN_NUMERALS[l] + toRoman(number - l)
-    }
 
     @JvmStatic
     fun getLocal(reference: Location, local: Vector): Vector {
@@ -120,6 +95,17 @@ object CardUtils {
         return Vector(reference.x, reference.y, reference.z).add(sway).add(heave).add(surge)
     }
 
+    @JvmStatic
+    fun createLine(level: Int): String {
+        val builder = StringBuilder()
+
+        for (i in 1..20) {
+            if (i * 5 <= level) builder.append("=")
+            else builder.append("-")
+        }
+
+        return builder.toString()
+    }
 
 
 }
