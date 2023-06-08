@@ -61,7 +61,7 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.0.1")
-        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.21")
+        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
 
         testImplementation("org.mockito:mockito-core:5.3.1")
         testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
