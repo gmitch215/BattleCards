@@ -7,12 +7,19 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.plugin.Plugin
 
 class CardListener(plugin: Plugin) : Listener {
 
     init {
         plugin.server.pluginManager.registerEvents(this, plugin)
+    }
+
+    @EventHandler
+    fun onTarget(event: EntityTargetEvent) {
+        if (event.entity.isCard() && event.entity.getCard()!!.p.uniqueId == event.target.uniqueId)
+            event.isCancelled = true
     }
 
     @EventHandler
