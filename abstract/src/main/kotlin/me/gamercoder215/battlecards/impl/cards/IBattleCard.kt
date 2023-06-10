@@ -22,7 +22,7 @@ abstract class IBattleCard<T : Creature>(
 
     companion object {
         @JvmStatic
-        private val spawned: MutableMap<UUID, IBattleCard<*>> = mutableMapOf()
+        val spawned: MutableMap<UUID, IBattleCard<*>> = mutableMapOf()
 
         @JvmStatic
         fun byEntity(entity: Creature): IBattleCard<*>? {
@@ -56,6 +56,12 @@ abstract class IBattleCard<T : Creature>(
         object : BukkitRunnable() {
             override fun run() {
                 if (en.isDead) {
+                    attachments.forEach {
+                        val entity = Bukkit.getServer().getEntity(it.key) ?: return@forEach
+                        entity.remove()
+                    }
+                    attachments.clear()
+
                     cancel()
                     return
                 }
