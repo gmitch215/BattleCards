@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Server
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import java.util.*
@@ -41,6 +42,13 @@ fun ItemStack.getCard(): ICard? {
 
 fun ItemStack.isCard(): Boolean = NBTWrapper.of(this).getByteArray("card").isNotEmpty()
 
+fun ItemStack.getID(): String? {
+    val id = NBTWrapper.of(this).getID()
+    if (id.isEmpty()) return null
+
+    return id
+}
+
 // Bukkit Extensions from Newer Version
 
 fun Server.getEntity(id: UUID): Entity? {
@@ -73,6 +81,14 @@ fun Vector.rotateAroundNonUnitAxis(axis: Vector, angle: Double): Vector {
     val zPrime = z2 * dot * (1.0 - cos) + z * cos + (-y2 * x + x2 * y) * sin
 
     return setX(xPrime).setY(yPrime).setZ(zPrime)
+}
+
+fun Player.playSuccess() {
+    playSound(location, BattleSound.ENTITY_ARROW_HIT_PLAYER.find(), 1F, 2F)
+}
+
+fun Player.playFailure() {
+    playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
 }
 
 // Kotlin Util
