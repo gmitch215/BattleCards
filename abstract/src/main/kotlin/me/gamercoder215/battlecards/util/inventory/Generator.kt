@@ -36,7 +36,7 @@ object Generator {
 
     @JvmStatic
     fun generatePluginInfo(): BattleInventory {
-        val inv = genGUI(26, get("menu.plugin-info"))
+        val inv = genGUI(26, get("menu.plugin_info"))
 
         return inv
     }
