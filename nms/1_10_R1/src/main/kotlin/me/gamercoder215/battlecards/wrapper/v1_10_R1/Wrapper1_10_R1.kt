@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_10_R1
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.BattleParticle
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
@@ -9,6 +10,8 @@ import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.server.v1_10_R1.*
+import org.bukkit.Location
+import org.bukkit.Particle
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftWither
 import org.bukkit.entity.Creature
@@ -97,6 +100,15 @@ internal class Wrapper1_10_R1 : Wrapper {
 
     override fun createInventory(id: String, name: String, size: Int): BattleInventory {
         return BattleInventory1_10_R1(id, name, size)
+    }
+
+    override fun spawnParticle(
+        particle: BattleParticle, location: Location, count: Int,
+        dX: Double, dY: Double, dZ: Double,
+        speed: Double, force: Boolean
+    ) {
+        if (location.world == null) return
+        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed, force)
     }
 
 }

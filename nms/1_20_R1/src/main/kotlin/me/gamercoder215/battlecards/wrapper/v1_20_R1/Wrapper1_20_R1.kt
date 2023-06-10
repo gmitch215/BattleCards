@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_20_R1
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.BattleParticle
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
@@ -14,7 +15,9 @@ import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.AttributeMap
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal
+import org.bukkit.Location
 import org.bukkit.NamespacedKey
+import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey
@@ -97,6 +100,15 @@ internal class Wrapper1_20_R1 : Wrapper {
 
     override fun createInventory(id: String, name: String, size: Int): BattleInventory {
         return BattleInventory1_20_R1(id, name, size)
+    }
+
+    override fun spawnParticle(
+        particle: BattleParticle, location: Location, count: Int,
+        dX: Double, dY: Double, dZ: Double,
+        speed: Double, force: Boolean
+    ) {
+        if (location.world == null) return
+        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed, force)
     }
 
 }
