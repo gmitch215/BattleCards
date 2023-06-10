@@ -10,6 +10,7 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.Type
+import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.CardListener
 import org.bstats.bukkit.Metrics
 import org.bukkit.ChatColor
@@ -17,15 +18,13 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.IOException
 import java.util.*
 
+private const val BSTATS_ID = 18166
 
 class BattleCards : JavaPlugin(), BattleConfig {
 
-    companion object {
-        const val BSTATS_ID = 18166
-    }
-
     fun loadListeners() {
         CardListener(this)
+        BattleGUIManager(this)
     }
 
     override fun onEnable() {
@@ -36,12 +35,13 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Loaded Files...")
 
         // UpdateChecker
-        UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, "GamerCoder215/BattleCards")
-            .setDownloadLink("https://github.com/GamerCoder215/BattleCards/releases/latest/")
+        val github = "GamerCoder215/BattleCards"
+        UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, github)
+            .setDownloadLink("https://github.com/$github/releases/latest/")
             .setSupportLink("https://discord.gg/WVFNWEvuqX")
             .setNotifyOpsOnJoin(true)
-            .setChangelogLink("https://github.com/GamerCoder215/BattleCards/releases/latest/")
-            .setUserAgent("GamerCoder/BattleCards v${BattleCards::class.java.`package`.implementationVersion}")
+            .setChangelogLink("https://github.com/$github/releases/latest/")
+            .setUserAgent("$github v${BattleCards::class.java.`package`.implementationVersion}")
             .setColoredConsoleOutput(true)
             .setDonationLink("https://www.patreon.com/teaminceptus")
             .setNotifyRequesters(true)
@@ -56,7 +56,12 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Finished!")
     }
 
-    override fun onDisable() {}
+    override fun onDisable() {
+        for (card in IBattleCard.spawned.values) card.despawn()
+        logger.info("Unloaded Cards...")
+
+        logger.info("Finished!")
+    }
 
     // BattleConfig Implementation
 
