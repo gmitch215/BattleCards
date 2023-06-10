@@ -4,8 +4,10 @@ import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.BattleStatistics
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import java.io.*
@@ -33,6 +35,16 @@ class ICard(
     override fun getType(): BattleCardType = ctype
 
     override fun getEntityCardClass(): Class<out BattleCard<*>> = clazz
+
+    override fun spawnCard(owner: Player): IBattleCard<*> {
+        val constr = clazz.asSubclass(IBattleCard::class.java).getDeclaredConstructor(ICard::class.java)
+        constr.isAccessible = true
+
+        val card = constr.newInstance(this)
+        card.spawn(owner, owner.location)
+
+        return card
+    }
 
     override fun serialize(): MutableMap<String, Any?> {
         return mutableMapOf(

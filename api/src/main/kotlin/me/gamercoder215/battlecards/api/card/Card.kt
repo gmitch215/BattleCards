@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.api.card
 
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.serialization.ConfigurationSerializable
+import org.bukkit.entity.Player
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.pow
@@ -110,6 +111,13 @@ interface Card : ConfigurationSerializable {
      * @return BattleCard Class
      */
     fun getEntityCardClass(): Class<out BattleCard<*>>
+
+    /**
+     * Spawns this Card Data into a BattleCard.
+     * @param owner The Player spawning this BattleCard
+     * @return Spawned BattleCard Instance
+     */
+    fun spawnCard(owner: Player): BattleCard<*>
 
     // Serialization
 
