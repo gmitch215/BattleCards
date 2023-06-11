@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.util.getID
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.wrapper.BattleInventory
+import me.gamercoder215.battlecards.wrapper.NBTWrapper
+import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.of
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -36,7 +38,6 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
         if (e.clickedInventory !is BattleInventory) return
         if (e.whoClicked !is Player) return
 
-        val p = e.whoClicked as Player
         val inv = e.clickedInventory as BattleInventory
         e.isCancelled = inv.isCancelled
 
@@ -48,8 +49,14 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
             return
         }
 
+        val w = of(item)
+
+        if (w.getBoolean("_cancel")) e.isCancelled = true
         if (CLICK_INVENTORIES.containsKey(inv.id)) CLICK_INVENTORIES[inv.id]!!(inv, e)
-        if (CLICK_ITEMS.containsKey(item.getID())) CLICK_ITEMS[item.getID()!!]!!(inv, e)
+        if (CLICK_ITEMS.containsKey(w.getID())) {
+            CLICK_ITEMS[w.getID()]!!(inv, e)
+            e.isCancelled = true
+        }
     }
 
     @EventHandler

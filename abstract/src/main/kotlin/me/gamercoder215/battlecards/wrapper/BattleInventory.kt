@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.wrapper
 
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 
 interface BattleInventory : Inventory {
 
@@ -24,5 +25,9 @@ interface BattleInventory : Inventory {
     operator fun <T> get(key: String, cast: Class<T>): T? = cast.cast(get(key))
 
     operator fun <T> get(key: String, cast: Class<T>, def: T) = get(key, cast) ?: def
+
+    operator fun get(index: Int): ItemStack? = getItem(index)
+
+    operator fun set(index: Int, item: ItemStack?) = setItem(index, item)
 
 }
