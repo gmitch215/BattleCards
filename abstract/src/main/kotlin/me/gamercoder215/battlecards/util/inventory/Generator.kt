@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.util.inventory
 
+import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -37,6 +38,26 @@ object Generator {
     @JvmStatic
     fun generatePluginInfo(): BattleInventory {
         val inv = genGUI(26, get("menu.plugin_info"))
+
+        return inv
+    }
+
+    @JvmStatic
+    fun generateCardInfo(card: Card): BattleInventory {
+        val inv = genGUI(27, get("menu.card.info"))
+        inv.isCancelled = true
+
+        val info = CardGenerator.generateCardInfo(card)
+        val stats = CardGenerator.generateCardStatistics(card)
+
+        if (stats != null) {
+            inv[12] = info
+            inv[14] = stats
+        } else
+            inv[13] = info
+
+        while (inv.firstEmpty() != -1)
+            inv.addItem(Items.GUI_BACKGROUND)
 
         return inv
     }
