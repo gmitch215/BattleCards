@@ -1,6 +1,12 @@
 package me.gamercoder215.battlecards.wrapper.commands
 
 import com.google.common.collect.ImmutableMap
+import me.gamercoder215.battlecards.util.getCard
+import me.gamercoder215.battlecards.util.inventory.Generator
+import me.gamercoder215.battlecards.util.isCard
+import me.gamercoder215.battlecards.util.playSuccess
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
+import org.bukkit.entity.Player
 
 interface CommandWrapper {
 
@@ -28,6 +34,22 @@ interface CommandWrapper {
             .put("bcard", "/bcard")
             .put("bquery", "/bquery <card>")
             .build()
+    }
+
+    fun cardInfo(p: Player) {
+        if (p.inventory.itemInHand == null) {
+            p.sendMessage(get("error.argument.item.held"))
+            return
+        }
+
+        val item = p.inventory.itemInHand
+        if (!item.isCard()) {
+            p.sendMessage(get("error.argument.item.held.card"))
+            return
+        }
+
+        p.openInventory(Generator.generateCardInfo(item.getCard()!!))
+        p.playSuccess()
     }
 
 }

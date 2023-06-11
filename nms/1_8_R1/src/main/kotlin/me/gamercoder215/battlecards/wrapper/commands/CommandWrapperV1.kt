@@ -8,6 +8,7 @@ import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.CO
 import org.bukkit.Bukkit
 import org.bukkit.Server
 import org.bukkit.command.*
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.lang.reflect.Constructor
 
@@ -67,7 +68,10 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
 
     override fun onCommand(sender: CommandSender, cmd: Command, label: String, args: Array<out String>): Boolean {
         when (cmd.name) {
-
+            "bcard" -> {
+                if (sender !is Player) return false
+                cardInfo(sender)
+            }
         }
 
         return true

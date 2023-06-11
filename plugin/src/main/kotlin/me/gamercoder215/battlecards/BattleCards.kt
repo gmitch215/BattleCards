@@ -12,6 +12,7 @@ import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.Type
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.CardListener
+import me.gamercoder215.battlecards.wrapper.Wrapper
 import org.bstats.bukkit.Metrics
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
@@ -33,6 +34,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
         BattleConfig.loadConfig()
         loadListeners()
+        Wrapper.getCommandWrapper()
         logger.info("Loaded Files...")
 
         // UpdateChecker
