@@ -3,7 +3,6 @@ package me.gamercoder215.battlecards.util
 import me.gamercoder215.battlecards.impl.Defensive
 import me.gamercoder215.battlecards.impl.Offensive
 import me.gamercoder215.battlecards.util.inventory.Generator
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.event.EventHandler
@@ -32,10 +31,7 @@ class CardListener(plugin: Plugin) : Listener {
 
         when (event.action) {
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> {
-                val info = Generator.genGUI(27, get("menu.card_info"))
-                info.isCancelled = true
-
-                p.openInventory(info)
+                p.openInventory(Generator.generateCardInfo(card))
                 p.playSuccess()
             }
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {
