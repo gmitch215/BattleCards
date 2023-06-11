@@ -19,6 +19,7 @@ import java.io.IOException
 import java.util.*
 
 private const val BSTATS_ID = 18166
+private const val github = "GamerCoder215/BattleCards"
 
 class BattleCards : JavaPlugin(), BattleConfig {
 
@@ -35,7 +36,6 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Loaded Files...")
 
         // UpdateChecker
-        val github = "GamerCoder215/BattleCards"
         UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, github)
             .setDownloadLink("https://github.com/$github/releases/latest/")
             .setSupportLink("https://discord.gg/WVFNWEvuqX")
@@ -78,7 +78,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     override fun get(key: String): String {
         val p = Properties()
-        val lang = if (getLanguage().equals("en", ignoreCase = true)) "" else "_" + getLanguage()
+        val lang = if (getLanguage().equals("en", ignoreCase = true)) "" else "_${getLanguage()}"
 
         return try {
             javaClass.getResourceAsStream("/lang/battlecards$lang.properties").use { str ->
