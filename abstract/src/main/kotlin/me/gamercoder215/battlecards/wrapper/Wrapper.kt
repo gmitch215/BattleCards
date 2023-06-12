@@ -121,7 +121,7 @@ interface Wrapper {
 
         @JvmStatic
         fun getServerVersion(): String {
-            return Bukkit.getServer().javaClass.`package`.name.split("\\.")[3].substring(1)
+            return Bukkit.getServer().javaClass.`package`.name.split(".")[3].substring(1)
         }
 
         @JvmStatic
