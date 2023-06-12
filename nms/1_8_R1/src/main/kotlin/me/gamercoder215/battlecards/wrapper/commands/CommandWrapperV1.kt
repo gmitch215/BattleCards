@@ -72,6 +72,7 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
                 if (sender !is Player) return false
                 cardInfo(sender)
             }
+            "cardreload" -> reloadPlugin(sender)
         }
 
         return true
