@@ -1,5 +1,5 @@
 name: BattleCards
-version: ${project.version}
+version: ${project.ext.plugin_version}
 api-version: 1.13
 main: me.gamercoder215.battlecards.BattleCards
 author: GamerCoder
@@ -8,9 +8,9 @@ description: ${project.description}
 softdepend: [Kotlin]
 load: POSTWORLD
 libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.8.21
+  - org.jetbrains.kotlin:kotlin-stdlib:${project.ext.kotlin_version}
 permissions:
-  battlecard.*:
+  battlecards.*:
     description: Gives access to all BattleCards commands
     default: op
     children:
@@ -18,18 +18,23 @@ permissions:
       battlecard.user: true
 
   # Admin Permissions
-  battlecard.admin:
+  battlecards.admin:
     description: Gives access to all BattleCards admin commands
     default: op
+
+  battlecards.admin.reload:
+    description: Access to reload plugin configuration/metadata
+    default: op
+
   # User Permissions
-  battlecard.user:
+  battlecards.user:
     description: Gives access to all BattleCards user commands
     default: true
 
-  battlecard.user.card:
+  battlecards.user.card:
     description: Gives access to the /bcard command and other basic card actions
     default: true
 
-  battlecard.user.query:
+  battlecards.user.query:
     description: Gives access to the /bquery command
     default: true

@@ -49,6 +49,8 @@ allprojects {
         maven("https://libraries.minecraft.net/")
         maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
+
+    project.ext["plugin_version"] = pVersion.split("-")[0]
 }
 
 val jvmVersion = JavaVersion.VERSION_1_8
@@ -61,7 +63,8 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.0.1")
-        compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
+        val kotlin = compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
+        project.ext["kotlin_version"] = kotlin!!.version
 
         testImplementation("org.mockito:mockito-core:5.3.1")
         testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
@@ -117,9 +120,9 @@ subprojects {
             }
             exclude("META-INF", "META-INF/**")
 
-            relocate("revxrsal.commands", "me.gamercoder215.shaded.lamp")
-            relocate("org.bstats", "me.gamercoder215.shaded.bstats")
-            relocate("com.jeff_media.updatechecker", "me.gamercoder215.shaded.updatechecker")
+            relocate("revxrsal.commands", "me.gamercoder215.battlecards.shaded.lamp")
+            relocate("org.bstats", "me.gamercoder215.battlecards.shaded.bstats")
+            relocate("com.jeff_media.updatechecker", "me.gamercoder215.battlecards.shaded.updatechecker")
 
             archiveClassifier.set("")
         }
