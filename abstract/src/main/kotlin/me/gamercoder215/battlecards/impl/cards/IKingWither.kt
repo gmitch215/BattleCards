@@ -16,8 +16,8 @@ import kotlin.math.roundToInt
 
 @Type(BattleCardType.WITHER_KING)
 @Attributes(3500.0, 55.5, 100.0, 0.15, 150.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 125.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 15.0)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 25.5)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 9.6)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.1)
 
 @BlockAttachment(Material.BEDROCK, 0.0, 2.5, 0.0, true)

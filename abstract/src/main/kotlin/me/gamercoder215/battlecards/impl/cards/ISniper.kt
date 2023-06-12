@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack
 @Attributes(25.0, 3.5, 5.5, 0.4, 0.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 5.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.5)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.5)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.55)
 
 @CardAbility("card.sniper.ability.triple_shot", ChatColor.GREEN)
 class ISniper(data: ICard) : IBattleCard<Skeleton>(data) {

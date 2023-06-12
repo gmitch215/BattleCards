@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffectType
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 35.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 6.5)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 4.5)
-@AttributesModifier(CardAttribute.SPEED, CardOperation.MULTIPLY, 1.02)
+@AttributesModifier(CardAttribute.SPEED, CardOperation.MULTIPLY, 1.01)
 class IWitherman(data: ICard) : IBattleCard<Enderman>(data) {
 
     @Offensive(0.5, CardOperation.ADD, 0.05)
