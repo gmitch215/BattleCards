@@ -1,6 +1,8 @@
 package me.gamercoder215.battlecards.wrapper.v1_16_R3
 
+import com.google.common.collect.ImmutableSet
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
+import net.minecraft.server.v1_16_R3.NBTTagString
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
 import java.util.*
@@ -103,5 +105,44 @@ internal class NBTWrapper1_16_R3(item: ItemStack) : NBTWrapper(item) {
     override fun getFloat(key: String): Float = CraftItemStack.asNMSCopy(item).orCreateTag.getCompound(ROOT).getFloat(key)
     override fun getUUID(key: String): UUID = CraftItemStack.asNMSCopy(item).orCreateTag.getCompound(ROOT).a(key)
     override fun getByteArray(key: String): ByteArray = CraftItemStack.asNMSCopy(item).orCreateTag.getCompound(ROOT).getByteArray(key)
+    override fun getTags(): Set<String> = ImmutableSet.copyOf(CraftItemStack.asNMSCopy(item).orCreateTag.getCompound(ROOT).getList(TAGS_KEY, 8).map { it.asString() })
 
+    override fun addTag(tag: String) {
+        val nms = CraftItemStack.asNMSCopy(item)
+        val nmsT = nms.orCreateTag
+        val battlecards = nmsT.getCompound(ROOT)
+
+        val tags = battlecards.getList(TAGS_KEY, 8)
+        tags.add(NBTTagString.a(tag))
+        battlecards[TAGS_KEY] = tags
+        nmsT[ROOT] = battlecards
+        nms.tag = nmsT
+        item = CraftItemStack.asBukkitCopy(nms)
+    }
+
+    override fun removeTag(tag: String) {
+        val nms = CraftItemStack.asNMSCopy(item)
+        val nmsT = nms.orCreateTag
+        val battlecards = nmsT.getCompound(ROOT)
+
+        val tags = battlecards.getList(TAGS_KEY, 8)
+        tags.removeIf { it.asString() == tag }
+        battlecards[TAGS_KEY] = tags
+        nmsT[ROOT] = battlecards
+        nms.tag = nmsT
+        item = CraftItemStack.asBukkitCopy(nms)
+    }
+
+    override fun removeTags(tags: Collection<String>) {
+        val nms = CraftItemStack.asNMSCopy(item)
+        val nmsT = nms.orCreateTag
+        val battlecards = nmsT.getCompound(ROOT)
+
+        val btags = battlecards.getList(TAGS_KEY, 8)
+        btags.removeIf { tags.contains(it.asString()) }
+        battlecards[TAGS_KEY] = btags
+        nmsT[ROOT] = battlecards
+        nms.tag = nmsT
+        item = CraftItemStack.asBukkitCopy(nms)
+    }
 }

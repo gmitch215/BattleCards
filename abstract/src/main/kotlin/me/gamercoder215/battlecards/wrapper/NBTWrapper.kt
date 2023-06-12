@@ -16,6 +16,9 @@ abstract class NBTWrapper(
         protected val ROOT = "BattleCards"
 
         @JvmStatic
+        protected val TAGS_KEY = "tags"
+
+        @JvmStatic
         fun of(item: ItemStack) = w.getNBTWrapper(item)
 
         @JvmStatic
@@ -94,6 +97,18 @@ abstract class NBTWrapper(
     abstract fun getByteArray(key: String): ByteArray
 
     abstract operator fun set(key: String, value: ByteArray)
+
+    abstract fun getTags(): Set<String>
+
+    abstract fun addTag(tag: String)
+
+    fun hasTag(tag: String): Boolean = getTags().contains(tag)
+
+    abstract fun removeTag(tag: String)
+
+    fun removeTags(vararg tags: String) = removeTags(tags.toList())
+
+    abstract fun removeTags(tags: Collection<String>)
 
     operator fun set(key: String, value: Number) {
         when (value) {
