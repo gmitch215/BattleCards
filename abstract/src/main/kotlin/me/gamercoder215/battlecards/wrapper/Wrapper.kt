@@ -108,11 +108,12 @@ interface Wrapper {
 
             versions.subList(0, versions.indexOf(current) + 1).forEach {
                 try {
-                    loaded.addAll(Class.forName("${IBattleCard::class.java.`package`.name}.CardLoader$it")
+                    val constr = Class.forName("${IBattleCard::class.java.`package`.name}.CardLoader$it")
                         .asSubclass(CardLoader::class.java)
                         .getDeclaredConstructor()
-                        .newInstance()
-                        .loadedCards())
+                    constr.isAccessible = true
+
+                    loaded.addAll(constr.newInstance().loadedCards())
                 } catch (ignored: ClassNotFoundException) {}
             }
 
