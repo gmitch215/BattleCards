@@ -44,6 +44,11 @@ enum class BattleCardType {
      * Represents an Enderman BattleCard.
      */
     WITHERMAN(1, Enderman::class, Rarity.LEGEND),
+
+    /**
+     * Represents a Drowned BattleCard.
+     */
+    LAPIS_DROWNED(1, "Drowned", Rarity.UNCOMMON)
     ;
 
     private val generation: Int
