@@ -46,3 +46,15 @@ Cards:
 
       # Whether to display a BattleCard's Statistics in the Info Menu
       ShowStatistics: true
+
+  # Management for Basic Cards, dropped from Vanilla Entities
+  Basic:
+    # Settings for Basic Card Drops from Entities
+    Drops:
+      # Whether to enable Basic Cards
+      # NOTE: Most ways of fetching a regular BattleCard within the plugin rely on a Basic Card. Please keep this enabled unless you know what you are doing.
+      Enabled: true
+
+      # RegEx Pattern against an entity name to match for it to not drop a Basic Card
+      # RegEx Tutorial: https://www.sitepoint.com/learn-regex/
+      Ignore: ""

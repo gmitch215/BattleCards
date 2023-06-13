@@ -69,9 +69,8 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     val cards: MutableSet<Class<out BattleCard<*>>> = mutableSetOf()
 
-    override fun getRegisteredCards(): Set<Class<out BattleCard<*>>> {
-        return ImmutableSet.copyOf(cards)
-    }
+    override val registeredCards: Set<Class<out BattleCard<*>>>
+        get() = ImmutableSet.copyOf(cards)
 
     override fun registerCard(card: Class<out BattleCard<*>>) {
         if (cards.contains(card)) throw IllegalArgumentException("Card ${card.simpleName} already registered")
@@ -80,7 +79,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     override fun get(key: String): String {
         val p = Properties()
-        val lang = if (getLanguage().equals("en", ignoreCase = true)) "" else "_${getLanguage()}"
+        val lang = if (language.equals("en", ignoreCase = true)) "" else "_$language"
 
         return try {
             javaClass.getResourceAsStream("/lang/battlecards$lang.properties").use { str ->
@@ -97,13 +96,9 @@ class BattleCards : JavaPlugin(), BattleConfig {
         }
     }
 
-    override fun getLanguage(): String {
-        return config.getString("Language", "en")
-    }
-
     override fun createCardData(type: BattleCardType): Card {
         return ICard(
-            getRegisteredCards().first { it.getAnnotation(Type::class.java).type == type },
+            registeredCards.first { it.getAnnotation(Type::class.java).type == type },
             type,
             System.currentTimeMillis()
         )

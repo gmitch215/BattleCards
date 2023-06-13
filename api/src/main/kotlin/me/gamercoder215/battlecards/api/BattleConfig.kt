@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.api.card.Rarity
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.EntityType
@@ -111,6 +112,12 @@ interface BattleConfig {
             if (!config.isBoolean("Cards.Display.Info.ShowAbilities")) config.set("Cards.Display.Info.ShowAbilities", true)
             if (!config.isBoolean("Cards.Display.Info.ShowStatistics")) config.set("Cards.Display.Info.ShowStatistics", true)
 
+            if (!config.isConfigurationSection("Cards.Basic")) config.createSection("Cards.Basic")
+
+            if (!config.isConfigurationSection("Cards.Basic.Drops")) config.createSection("Cards.Basic.Drops")
+            if (!config.isBoolean("Cards.Basic.Drops.Enabled")) config.set("Cards.Basic.Drops.Enabled", true)
+            if (!config.isString("Cards.Basic.Drops.Ignore")) config.set("Cards.Basic.Drops.Ignore", "")
+
             return config
         }
 
@@ -164,7 +171,7 @@ interface BattleConfig {
     /**
      * Fetches an immutable set of all of the registered BattleCards.
      */
-    fun getRegisteredCards(): Set<Class<out BattleCard<*>>>
+    val registeredCards: Set<Class<out BattleCard<*>>>
 
     /**
      * Registers a BattleCard.
@@ -185,7 +192,8 @@ interface BattleConfig {
      * Fetches the plugin's language.
      * @return Language Identifier
      */
-    fun getLanguage(): String
+    val language: String
+        get() = getConfiguration().getString("Language", "en")
 
     /**
      * Fetches a localized message from the plugin's language file, with the plugin prefix.
@@ -208,9 +216,20 @@ interface BattleConfig {
      * @return Configured Locale
      */
     val locale: Locale
-        get() = when (getLanguage()) {
+        get() = when (language) {
             "en" -> Locale.ENGLISH
             "fr" -> Locale.FRENCH
-            else -> Locale(getLanguage())
+            else -> Locale(language)
+        }
+
+    /**
+     * Fetches whether cards of the [Rarity.BASIC] rarity can be dropped by mobs.
+     * @return true if can be dropped, false otherwise
+     */
+    var isBasicDropsEnabled: Boolean
+        get() = getConfiguration().getBoolean("Cards.Basic.Drops.Enabled")
+        set(value) {
+            getConfiguration().set("Cards.Basic.Drops.Enabled", value)
+            getPlugin().saveConfig()
         }
 }
