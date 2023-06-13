@@ -167,7 +167,7 @@ interface Card : ConfigurationSerializable {
         /**
          * Converts a BattleCard's Level to the minimum experience required to reach that level.
          * @param level Level to convert
-         * @param rarity Rarity of the BattleCard to use for [Rarity.getExperienceModifier]
+         * @param rarity Rarity of the BattleCard to use for [Rarity.experienceModifier]
          * @return Minimum Experience required to reach Level
          */
         @JvmStatic
@@ -185,7 +185,7 @@ interface Card : ConfigurationSerializable {
 
                     if (exp >= 25) exp - rem + 50 else exp - rem
                 }
-            } * rarity.getExperienceModifier()
+            } * rarity.experienceModifier
         }
 
     }

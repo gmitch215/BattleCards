@@ -52,7 +52,7 @@ internal class Wrapper1_8_R2 : Wrapper {
         val drops = dropsF.get(nms) as MutableList<ItemStack>
         drops.clear()
 
-        for (entry in card.getStatistics().getAttributes()) {
+        for (entry in card.statistics.attributes) {
             if (entry.key == CardAttribute.DEFENSE) continue // TODO Finish Defense Calculation for 1.8
             val attribute = toNMS(entry.key)
             val value = entry.value

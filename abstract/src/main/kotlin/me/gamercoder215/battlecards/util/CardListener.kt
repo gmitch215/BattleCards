@@ -66,7 +66,7 @@ class CardListener(plugin: Plugin) : Listener {
                     var chance = annotation.chance
 
                     if (!annotation.value.isNaN())
-                        for (i in 1 until card.getLevel()) chance = annotation.operation.apply(chance, annotation.value)
+                        for (i in 1 until card.level) chance = annotation.operation.apply(chance, annotation.value)
 
                     chance = chance.coerceAtMost(annotation.max)
                     if ((r.nextDouble() * annotation.max) <= chance)
@@ -84,7 +84,7 @@ class CardListener(plugin: Plugin) : Listener {
                     var chance = annotation.chance
 
                     if (!annotation.value.isNaN())
-                        for (i in 1 until card.getLevel()) chance = annotation.operation.apply(chance, annotation.value)
+                        for (i in 1 until card.level) chance = annotation.operation.apply(chance, annotation.value)
 
                     chance = chance.coerceAtMost(annotation.max)
                     if ((r.nextDouble() * annotation.max) <= chance)

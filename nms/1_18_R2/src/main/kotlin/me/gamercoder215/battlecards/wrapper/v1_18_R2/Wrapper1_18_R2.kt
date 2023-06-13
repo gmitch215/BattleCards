@@ -63,7 +63,7 @@ internal class Wrapper1_18_R2 : Wrapper {
 
         nms.drops.clear()
 
-        for (entry in card.getStatistics().getAttributes()) {
+        for (entry in card.statistics.attributes) {
             val attribute = toNMS(toBukkit(entry.key))
             val value = entry.value
 

@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
+import me.gamercoder215.battlecards.impl.IBattleStatistics
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.CardUtils
 import me.gamercoder215.battlecards.util.getEntity
@@ -15,7 +16,7 @@ import java.util.*
 import java.util.function.Supplier
 
 abstract class IBattleCard<T : Creature>(
-    override val data: ICard
+    final override val data: ICard
 ) : BattleCard<T> {
 
     companion object {
@@ -92,5 +93,8 @@ abstract class IBattleCard<T : Creature>(
     open fun uninit() {
         if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
     }
+
+    final override val statistics: IBattleStatistics
+        get() = data.statistics
 
 }

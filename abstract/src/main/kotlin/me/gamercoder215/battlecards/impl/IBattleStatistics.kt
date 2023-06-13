@@ -79,14 +79,13 @@ class IBattleStatistics(
     override val knockbackResistance: Double
         get() = find(CardAttribute.KNOCKBACK_RESISTANCE)
 
-    fun getAttributes(): Map<CardAttribute, Double> {
-        return mapOf(
+    val attributes: Map<CardAttribute, Double>
+        get() = mapOf(
             CardAttribute.MAX_HEALTH to maxHealth,
             CardAttribute.ATTACK_DAMAGE to attackDamage,
             CardAttribute.DEFENSE to defense,
             CardAttribute.SPEED to speed,
             CardAttribute.KNOCKBACK_RESISTANCE to knockbackResistance
         )
-    }
 
 }

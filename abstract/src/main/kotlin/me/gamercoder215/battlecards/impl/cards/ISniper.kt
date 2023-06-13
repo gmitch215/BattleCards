@@ -37,9 +37,9 @@ class ISniper(data: ICard) : IBattleCard<Skeleton>(data) {
     fun onShoot(event: EntityShootBowEvent) {
         if (event.entity != entity) return
 
-        event.projectile.velocity.multiply(1 + (getLevel() / 50.0))
+        event.projectile.velocity.multiply(1 + (level / 50.0))
 
-        if (r.nextInt(100) < (20 + (getLevel() * 5))) {
+        if (r.nextInt(100) < (20 + (level * 5))) {
             entity.world.spawn(event.projectile.location.apply { yaw += 30 }, event.projectile::class.java)
             entity.world.spawn(event.projectile.location.apply { yaw -= 30 }, event.projectile::class.java)
         }
