@@ -22,7 +22,7 @@ class ISniper(data: ICard) : IBattleCard<Skeleton>(data) {
     override fun init() {
         super.init()
 
-        en.equipment.helmet = ItemStack(Material.IRON_HELMET).apply {
+        entity.equipment.helmet = ItemStack(Material.IRON_HELMET).apply {
             itemMeta = itemMeta.apply {
                 try {
                     spigot().isUnbreakable = true
@@ -35,13 +35,13 @@ class ISniper(data: ICard) : IBattleCard<Skeleton>(data) {
 
     @Listener
     fun onShoot(event: EntityShootBowEvent) {
-        if (event.entity != en) return
+        if (event.entity != entity) return
 
         event.projectile.velocity.multiply(1 + (getLevel() / 50.0))
 
         if (r.nextInt(100) < (20 + (getLevel() * 5))) {
-            en.world.spawn(event.projectile.location.apply { yaw += 30 }, event.projectile::class.java)
-            en.world.spawn(event.projectile.location.apply { yaw -= 30 }, event.projectile::class.java)
+            entity.world.spawn(event.projectile.location.apply { yaw += 30 }, event.projectile::class.java)
+            entity.world.spawn(event.projectile.location.apply { yaw -= 30 }, event.projectile::class.java)
         }
     }
 

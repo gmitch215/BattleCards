@@ -2,7 +2,6 @@ package me.gamercoder215.battlecards.impl
 
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
-import me.gamercoder215.battlecards.api.card.BattleStatistics
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import org.bukkit.Bukkit
@@ -15,29 +14,26 @@ import java.util.*
 
 @Suppress("unchecked_cast")
 class ICard(
-    val clazz: Class<out BattleCard<*>>,
-    val ctype: BattleCardType,
+    override val entityCardClass: Class<out BattleCard<*>>,
+    override val type: BattleCardType,
     val creation: Long,
     var last: Long? = null,
-    var lastPlayer: OfflinePlayer? = null
+    override var lastUsedPlayer: OfflinePlayer? = null
 ) : Card, Serializable {
 
     val stats: MutableMap<String, Number> = mutableMapOf()
 
-    override fun getCreationDate(): Date = Date(creation)
+    override val creationDate: Date
+        get() = Date(creation)
 
-    override fun getStatistics(): BattleStatistics = IBattleStatistics(this)
+    override val statistics: IBattleStatistics
+        get() = IBattleStatistics(this)
 
-    override fun getLastUsed(): Date = Date(last ?: 0)
-
-    override fun getLastUsedPlayer(): OfflinePlayer? = lastPlayer
-
-    override fun getType(): BattleCardType = ctype
-
-    override fun getEntityCardClass(): Class<out BattleCard<*>> = clazz
+    override val lastUsed: Date
+        get() = Date(last ?: 0)
 
     override fun spawnCard(owner: Player): IBattleCard<*> {
-        val constr = clazz.asSubclass(IBattleCard::class.java).getDeclaredConstructor(ICard::class.java)
+        val constr = entityCardClass.asSubclass(IBattleCard::class.java).getDeclaredConstructor(ICard::class.java)
         constr.isAccessible = true
 
         val card = constr.newInstance(this)
@@ -48,11 +44,11 @@ class ICard(
 
     override fun serialize(): MutableMap<String, Any?> {
         return mutableMapOf(
-            "clazz" to clazz.name,
-            "type" to ctype.name,
+            "clazz" to entityCardClass.name,
+            "type" to type.name,
             "creation_date" to creation,
             "last_used" to last,
-            "last_used_player" to lastPlayer?.uniqueId.toString(),
+            "last_used_player" to lastUsedPlayer?.uniqueId.toString(),
             "stats" to stats
         )
     }

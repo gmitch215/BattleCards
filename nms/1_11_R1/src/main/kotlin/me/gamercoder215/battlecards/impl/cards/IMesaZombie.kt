@@ -19,14 +19,14 @@ class IMesaZombie(data: ICard) : IBattleCard<Husk>(data) {
     override fun init() {
         super.init()
 
-        en.equipment.helmet = ItemStack(Material.RED_SANDSTONE)
+        entity.equipment.helmet = ItemStack(Material.RED_SANDSTONE)
     }
 
     @CardAbility("card.mesa_zombie.ability.fire_aspect", ChatColor.GOLD)
     @Offensive(0.5)
     private fun fireAspect(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
-        val ticks: Int = (getLevel() * 4) + 16
+        val ticks: Int = (level * 4) + 16
 
         target.fireTicks += ticks
     }

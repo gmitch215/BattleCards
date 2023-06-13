@@ -21,11 +21,11 @@ object CardUtils {
     @JvmStatic
     fun createAttachments(card: IBattleCard<*>) {
         val attachments = card.javaClass.getAnnotationsByType(BlockAttachment::class.java)
-        val reference = card.getEntity().location
+        val reference = card.entity.location
 
         for (attachment in attachments) {
             val newLocation = reference.add(getLocal(reference, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)))
-            val entity: ArmorStand = card.getEntity().world.spawn(newLocation, ArmorStand::class.java)
+            val entity: ArmorStand = card.entity.world.spawn(newLocation, ArmorStand::class.java)
 
             entity.isSmall = attachment.small
             entity.isVisible = false
@@ -35,7 +35,7 @@ object CardUtils {
             entity.helmet = ItemStack(attachment.material)
 
             card.attachments[entity.uniqueId] = Supplier{
-                val ref = card.getEntity().location
+                val ref = card.entity.location
                 ref.add(getLocal(ref, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)))
             }
         }

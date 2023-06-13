@@ -25,9 +25,9 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
 
     override fun init() {
         super.init()
-        w.setBossBarVisibility(getEntity(), false)
+        w.setBossBarVisibility(entity, false)
 
-        p.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, Int.MAX_VALUE, getLevel() / 3, true, false))
+        p.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, Int.MAX_VALUE, level / 3, true, false))
     }
 
     override fun uninit() {
@@ -39,8 +39,8 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
     @Defensive(0.2, CardOperation.ADD, 0.01)
     private fun posionThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
-        val duration = getStatistics().getAttackDamage() * 1.5
-        val amp = floor(getLevel() / 6.0).toInt()
+        val duration = statistics.attackDamage * 1.5
+        val amp = floor(level / 6.0).toInt()
 
         attacker.addPotionEffect(PotionEffect(PotionEffectType.WITHER, duration.roundToInt(), amp, false))
     }

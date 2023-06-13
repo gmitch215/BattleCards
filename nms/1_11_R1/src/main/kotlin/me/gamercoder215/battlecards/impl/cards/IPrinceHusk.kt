@@ -19,7 +19,7 @@ class IPrinceHusk(data: ICard) : IBattleCard<Husk>(data) {
     override fun init() {
         super.init()
 
-        en.equipment.helmet = ItemStack(Material.GOLD_HELMET).apply {
+        entity.equipment.helmet = ItemStack(Material.GOLD_HELMET).apply {
             itemMeta = itemMeta.apply {
                 isUnbreakable = true
             }

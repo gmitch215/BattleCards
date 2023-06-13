@@ -51,9 +51,7 @@ enum class BattleCardType {
     LAPIS_DROWNED(1, "Drowned", Rarity.UNCOMMON)
     ;
 
-    private val generation: Int
     private val entityClass: Class<out LivingEntity>?
-    private val rarity: Rarity
 
     constructor(generation: Int, entityClass: String, rarity: Rarity) : this(generation, getBukkitClass(entityClass), rarity)
 
@@ -69,19 +67,20 @@ enum class BattleCardType {
      * Fetches the generation of this BattleCardType.
      * @return BattleCard Generation
      */
-    fun getGeneration(): Int = generation
+    val generation: Int
 
     /**
      * Fetches the Card ID of this BattleCardType.
      * @return BattleCard ID
      */
-    fun getCardID(): String = name.lowercase()
+    val cardID: String
+        get() = name.lowercase()
 
     /**
      * Fetches the Rarity of this BattleCardType.
      * @return BattleCard Rarity
      */
-    fun getRarity(): Rarity = rarity
+    val rarity: Rarity
 
     /**
      * Fetches the Entity Class that this BattleCardType uses.
@@ -105,8 +104,13 @@ enum class BattleCardType {
             }
         }
 
-        fun fromClass(clazz: Class<out BattleCard<*>>): BattleCardType {
-            return values().first { it.getEntityClass() == clazz }
+        /**
+         * Fetches a BattleCardType from a BattleCard Class.
+         * @param clazz BattleCard Class
+         * @return BattleCardType found, or null if not found
+         */
+        fun fromClass(clazz: Class<out BattleCard<*>>): BattleCardType? {
+            return values().firstOrNull { it.getEntityClass() == clazz }
         }
 
     }

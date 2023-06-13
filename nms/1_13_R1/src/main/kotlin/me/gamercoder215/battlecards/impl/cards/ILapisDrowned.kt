@@ -20,7 +20,7 @@ class ILapisDrowned(data: ICard) : IBattleCard<Drowned>(data) {
     override fun init() {
         super.init()
 
-        en.equipment.helmet = ItemStack(Material.LAPIS_BLOCK)
+        entity.equipment.helmet = ItemStack(Material.LAPIS_BLOCK)
     }
 
     @CardAbility("card.lapis_drowned.ability.disenchantment", ChatColor.DARK_AQUA)

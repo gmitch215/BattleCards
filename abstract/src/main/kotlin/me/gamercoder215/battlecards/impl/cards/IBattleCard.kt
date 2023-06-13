@@ -2,8 +2,6 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
-import me.gamercoder215.battlecards.api.card.Card
-import me.gamercoder215.battlecards.impl.IBattleStatistics
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.CardUtils
 import me.gamercoder215.battlecards.util.getEntity
@@ -17,7 +15,7 @@ import java.util.*
 import java.util.function.Supplier
 
 abstract class IBattleCard<T : Creature>(
-    protected val data: ICard
+    override val data: ICard
 ) : BattleCard<T> {
 
     companion object {
@@ -30,32 +28,32 @@ abstract class IBattleCard<T : Creature>(
         }
     }
 
-    protected lateinit var en: T
+    override lateinit var entity: T
     lateinit var p: Player
 
     val attachments: MutableMap<UUID, Supplier<Location>> = mutableMapOf()
 
     fun spawn(player: Player, location: Location): T {
-        if (!en.isDead) throw IllegalStateException("Entity already spawned")
+        if (!entity.isDead) throw IllegalStateException("Entity already spawned")
 
-        data.lastPlayer = player
+        data.lastUsedPlayer = player
         data.last = System.currentTimeMillis()
         p = player
 
-        en = location.world?.spawn(location, getEntityClass()) ?: throw IllegalStateException("Could not spawn entity")
+        entity = location.world?.spawn(location, entityClass) ?: throw IllegalStateException("Could not spawn entity")
 
-        en.isCustomNameVisible = true
-        en.customName = "${getRarity().getColor()}${player.displayName ?: player.name}'s ${getRarity().getColor()}${getName()}"
+        entity.isCustomNameVisible = true
+        entity.customName = "${rarity.color}${player.displayName ?: player.name}'s ${rarity.color}$name"
 
-        en.equipment.helmetDropChance = 0.0f
-        en.equipment.chestplateDropChance = 0.0f
-        en.equipment.leggingsDropChance = 0.0f
-        en.equipment.bootsDropChance = 0.0f
+        entity.equipment.helmetDropChance = 0.0f
+        entity.equipment.chestplateDropChance = 0.0f
+        entity.equipment.leggingsDropChance = 0.0f
+        entity.equipment.bootsDropChance = 0.0f
 
         CardUtils.createAttachments(this)
         object : BukkitRunnable() {
             override fun run() {
-                if (en.isDead) {
+                if (entity.isDead) {
                     attachments.forEach {
                         val entity = Bukkit.getServer().getEntity(it.key) ?: return@forEach
                         entity.remove()
@@ -73,32 +71,26 @@ abstract class IBattleCard<T : Creature>(
             }
         }.runTaskTimer(BattleConfig.getPlugin(), 0, 1)
 
-        w.loadProperties(en, this)
+        w.loadProperties(entity, this)
         init()
-        spawned[en.uniqueId] = this
-        return en
+        spawned[entity.uniqueId] = this
+        return entity
     }
 
     fun despawn() {
         uninit()
-        en.remove()
-        spawned.remove(en.uniqueId)
+        entity.remove()
+        spawned.remove(entity.uniqueId)
     }
 
     // Implementation
 
     open fun init() {
-        if (!::en.isInitialized) throw IllegalStateException("Entity not spawned")
+        if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
     }
 
     open fun uninit() {
-        if (!::en.isInitialized) throw IllegalStateException("Entity not spawned")
+        if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
     }
-
-    final override fun getStatistics(): IBattleStatistics = super.getStatistics() as IBattleStatistics
-
-    final override fun getEntity(): T = en
-
-    final override fun getData(): Card = data
 
 }

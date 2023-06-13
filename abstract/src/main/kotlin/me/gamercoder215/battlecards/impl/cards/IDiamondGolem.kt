@@ -21,26 +21,26 @@ class IDiamondGolem(data: ICard) : IBattleCard<IronGolem>(data) {
 
     override fun init() {
         super.init()
-        en.isPlayerCreated = true
+        entity.isPlayerCreated = true
     }
 
     @CardAbility("card.diamond_golem.ability.launch", ChatColor.YELLOW)
     @Offensive(0.15, CardOperation.ADD, 0.025)
     private fun launch(event: EntityDamageByEntityEvent) {
         val target = event.entity as? Player ?: return
-        val amplifier: Double = (getLevel() / 5) + 1.25
+        val amplifier: Double = (level / 5) + 1.25
 
-        target.velocity = en.location.direction.multiply(amplifier)
+        target.velocity = entity.location.direction.multiply(amplifier)
     }
 
     @CardAbility("card.diamond_golem.ability.thorns", ChatColor.RED)
     @Defensive(0.1)
     private fun thorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
-        val dmg = getStatistics().getAttackDamage() * 0.2
+        val dmg = statistics.attackDamage * 0.2
 
-        attacker.damage(dmg, en)
-        attacker.lastDamageCause = EntityDamageByEntityEvent(attacker, en, EntityDamageEvent.DamageCause.THORNS, dmg)
+        attacker.damage(dmg, entity)
+        attacker.lastDamageCause = EntityDamageByEntityEvent(attacker, entity, EntityDamageEvent.DamageCause.THORNS, dmg)
     }
 
 }

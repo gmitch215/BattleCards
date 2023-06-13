@@ -3,85 +3,89 @@ package me.gamercoder215.battlecards.impl
 import me.gamercoder215.battlecards.api.card.BattleStatistics
 
 class IBattleStatistics(
-    private val card: ICard
+    override val card: ICard
 ) : BattleStatistics {
 
-    override fun getCard(): ICard = card
+    override var playerKills: Int
+        get() = (card.stats["kills.player"] ?: 0).toInt()
+        set(value) {
+            if (value < 0) throw IllegalArgumentException("Kills must be greater than 0")
+            card.stats["kills.player"] = value
+        }
 
-    override fun getPlayerKills(): Int = (card.stats["kills.player"] ?: 0) as Int
+    override var cardKills: Int
+        get() = (card.stats["kills.card"] ?: 0).toInt()
+        set(value) {
+            if (value < 0) throw IllegalArgumentException("Kills must be greater than 0")
+            card.stats["kills.card"] = value
+        }
 
-    override fun setPlayerKills(kills: Int) {
-        card.stats["kills.player"] = kills
-    }
+    override var entityKills: Int
+        get() = (card.stats["kills.entity"] ?: 0).toInt()
+        set(value) {
+            if (value < 0) throw IllegalArgumentException("Kills must be greater than 0")
+            card.stats["kills.entity"] = value
+        }
 
-    override fun getCardKills(): Int = (card.stats["kills.card"] ?: 0) as Int
+    override var damageDealt: Int
+        get() = (card.stats["damage.dealt"] ?: 0).toInt()
+        set(value) {
+            if (value < 0) throw IllegalArgumentException("Damage must be greater than 0")
+            card.stats["damage.dealt"] = value
+        }
 
-    override fun setCardKills(kills: Int) {
-        if (kills < 0) throw IllegalArgumentException("Kills must be greater than 0")
-        card.stats["kills.card"] = kills
-    }
+    override var damageReceived: Int
+        get() = (card.stats["damage.received"] ?: 0).toInt()
+        set(value) {
+            if (value < 0) throw IllegalArgumentException("Damage must be greater than 0")
+            card.stats["damage.received"] = value
+        }
 
-    override fun getEntityKills(): Int = (card.stats["kills.entity"] ?: 0) as Int
+    override var cardExperience: Double
+        get() = (card.stats["experience"] ?: 0.0).toDouble()
+        set(value) {
+            if (value < 0 || value > maxCardExperience) throw IllegalArgumentException("Experience must be between 0 and $maxCardExperience")
+            card.stats["experience"] = value
+        }
 
-    override fun setEntityKills(kills: Int) {
-        if (kills < 0) throw IllegalArgumentException("Kills must be greater than 0")
-        card.stats["kills.entity"] = kills
-    }
-
-    override fun getDamageDealt(): Int = (card.stats["damage.dealt"] ?: 0) as Int
-
-    override fun setDamageDealt(damage: Int) {
-        if (damage < 0) throw IllegalArgumentException("Damage must be greater than 0")
-        card.stats["damage.dealt"] = damage
-    }
-
-    override fun getDamageReceived(): Int = (card.stats["damage.received"] ?: 0) as Int
-
-    override fun setDamageReceived(damage: Int) {
-        if (damage < 0) throw IllegalArgumentException("Damage must be greater than 0")
-        card.stats["damage.received"] = damage
-    }
-
-    override fun getCardExperience(): Double = (card.stats["experience"] ?: 0.0) as Double
-
-    override fun setCardExperience(experience: Double) {
-        if (experience < 0 || experience > getMaxCardExperience()) throw IllegalArgumentException("Experience must be between 0 and ${getMaxCardExperience()}")
-        card.stats["experience"] = experience
-    }
-
-    // Logic
+    // Logic & Attributes
 
     private fun find(attribute: CardAttribute): Double {
-        val base = getCard()::class.java.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
-        val mod = getCard()::class.java.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == attribute }
+        val base = card.javaClass.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
+        val mod = card.javaClass.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == attribute }
 
         if (mod.value.isNaN()) return base
 
         var value = base
 
-        for (i in 0 until getCardLevel())
+        for (i in 0 until cardLevel)
             value = mod.operation.apply(value, mod.value)
 
         return value
     }
 
-    override fun getMaxHealth(): Double = find(CardAttribute.MAX_HEALTH)
+    override val maxHealth: Double
+        get() = find(CardAttribute.MAX_HEALTH)
 
-    override fun getAttackDamage(): Double = find(CardAttribute.ATTACK_DAMAGE)
+    override val attackDamage: Double
+        get() = find(CardAttribute.ATTACK_DAMAGE)
 
-    override fun getDefense(): Double = find(CardAttribute.DEFENSE)
+    override val defense: Double
+        get() = find(CardAttribute.DEFENSE)
 
-    override fun getSpeed(): Double = find(CardAttribute.SPEED)
+    override val speed: Double
+        get() = find(CardAttribute.SPEED)
 
-    override fun getKnockbackResistance(): Double = find(CardAttribute.KNOCKBACK_RESISTANCE)
+    override val knockbackResistance: Double
+        get() = find(CardAttribute.KNOCKBACK_RESISTANCE)
 
     fun getAttributes(): Map<CardAttribute, Double> {
         return mapOf(
-            CardAttribute.MAX_HEALTH to getMaxHealth(),
-            CardAttribute.ATTACK_DAMAGE to getAttackDamage(),
-            CardAttribute.DEFENSE to getDefense(),
-            CardAttribute.SPEED to getSpeed(),
-            CardAttribute.KNOCKBACK_RESISTANCE to getKnockbackResistance()
+            CardAttribute.MAX_HEALTH to maxHealth,
+            CardAttribute.ATTACK_DAMAGE to attackDamage,
+            CardAttribute.DEFENSE to defense,
+            CardAttribute.SPEED to speed,
+            CardAttribute.KNOCKBACK_RESISTANCE to knockbackResistance
         )
     }
 

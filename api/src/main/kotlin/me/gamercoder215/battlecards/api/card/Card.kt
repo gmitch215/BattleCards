@@ -16,101 +16,110 @@ interface Card : ConfigurationSerializable {
      * Fetches the Card ID of this BattleCard.
      * @return BattleCard ID
      */
-    fun getCardID(): String = getType().getCardID()
+    val cardID: String
+        get() = type.cardID
 
     /**
      * Fetches the Rarity of this BattleCard.
      * @return BattleCard Rarity
      */
-    fun getRarity(): Rarity = getType().getRarity()
+    val rarity: Rarity
+        get() = type.rarity
 
     /**
      * Fetches the Date this card was created.
      * @return Creation Date
      */
-    fun getCreationDate(): Date
+    val creationDate: Date
 
     /**
      * Fetches the Statistics of this BattleCard instance.
      * @return BattleCard Statistics
      */
-    fun getStatistics(): BattleStatistics
+    val statistics: BattleStatistics
 
     /**
      * Fetches the Date this BattleCard was last used. Will return null if never used.
-     * @return Last Used Date
+     * @return Last Used Date, or `Date(0)` if never used
      */
-    fun getLastUsed(): Date
+    val lastUsed: Date
 
     /**
      * Fetches the player that last used this BattleCard. Will return null if never used.
      * @return Last Used Player
      */
-    fun getLastUsedPlayer(): OfflinePlayer?
+    val lastUsedPlayer: OfflinePlayer?
 
     /**
      * Fetches the level of this BattleCard.
      * @return BattleCard Level
      */
-    fun getLevel(): Int = getStatistics().getCardLevel()
+    val level: Int
+        get() = statistics.cardLevel
 
     /**
      * Fetches the experience of this BattleCard.
      * @return BattleCard Experience
      */
-    fun getExperience(): Double = getStatistics().getCardExperience()
+    val experience: Double
+        get() = statistics.cardExperience
 
     /**
      * Fetches the experience required to reach the next level.
      * @return Experience to next level
      */
-    fun getRemainingExperience(): Double {
-        if (getLevel() == getMaxCardLevel()) return 0.0
-
-        return BattleCard.toExperience(getLevel() + 1, getRarity()) - getExperience()
-    }
+    val remainingExperience: Double
+        get() {
+            if (level == maxCardLevel) return 0.0
+            return BattleCard.toExperience(level + 1, rarity) - experience
+        }
 
     /**
      * Fetches the maximum level that this Card can be.
      * @return Max Card Level
      */
-    fun getMaxCardLevel(): Int = getRarity().getMaxCardLevel()
+    val maxCardLevel: Int
+        get() = statistics.maxCardLevel
 
     /**
      * Fetches the maximum experience that this Card can have.
      * @return Max Card Experience
      */
-    fun getMaxCardExperience(): Double = getRarity().getMaxCardExperience()
+    val maxCardExperience: Double
+        get() = statistics.maxCardExperience
 
     /**
      * Fetches the numerical identifier for the generation of BattleCards this card is from.
      * @return BattleCard Generation
      */
-    fun getGeneration(): Int = getType().getGeneration()
+    val generation: Int
+        get() = type.generation
 
     /**
      * Fetches the BattleCardType of this BattleCard.
      * @return [BattleCardType]
      */
-    fun getType(): BattleCardType
+    val type: BattleCardType
 
     /**
      * Fetches the name of this BattleCard.
      * @return BattleCard Name
      */
-    fun getName(): String = getType().name.lowercase().replaceFirstChar { it.uppercase() }
+    val name: String
+        get() = type.name.lowercase().replaceFirstChar { it.uppercase() }
 
     /**
      * Fetches the amount of <strong>seconds</strong> this card can be deployed for.
      * @return BattleCard Deploy Time
      */
-    fun getDeployTime(): Int = (getLevel() + 10).coerceAtMost(60)
+    val deployTime: Int
+        get() = statistics.deployTime
 
     /**
      * Fetches the [BattleCard] class for this Card Data.
      * @return BattleCard Class
      */
-    fun getEntityCardClass(): Class<out BattleCard<*>>
+    val entityCardClass: Class<out BattleCard<*>>
 
     /**
      * Spawns this Card Data into a BattleCard.
