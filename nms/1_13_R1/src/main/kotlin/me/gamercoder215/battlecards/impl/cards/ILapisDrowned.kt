@@ -4,7 +4,9 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Drowned
+import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 
@@ -24,7 +26,15 @@ class ILapisDrowned(data: ICard) : IBattleCard<Drowned>(data) {
     @CardAbility("card.lapis_drowned.ability.disenchantment", ChatColor.DARK_AQUA)
     @Defensive
     private fun disenchantment(event: EntityDamageByEntityEvent) {
-        TODO("Not yet implemented")
+        if (event.damager !is LivingEntity) return
+        val attacker = event.damager as LivingEntity
+
+        val item = attacker.equipment.itemInMainHand
+        if (!item.hasItemMeta()) return
+        if (!item.itemMeta.hasEnchant(Enchantment.DAMAGE_UNDEAD)) return
+
+        val level = item.itemMeta.getEnchantLevel(Enchantment.DAMAGE_UNDEAD)
+        event.damage -= level * 2.5
     }
 
 }
