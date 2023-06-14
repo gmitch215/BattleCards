@@ -63,6 +63,12 @@ interface BattleStatistics {
     var entityKills: Int
 
     /**
+     * Fetches the total amount of times this Card has died
+     * @return Deaths
+     */
+    var deaths: Int
+
+    /**
      * Fetches the total amount of kills this Card has Collected
      * @return Total Kills
      */
@@ -73,13 +79,13 @@ interface BattleStatistics {
      * Fetches the total amount of damage this Card has dealt
      * @return Damage Dealt
      */
-    var damageDealt: Int
+    var damageDealt: Double
 
     /**
      * Fetches the total amount of damage this Card has received
      * @return Damage Received
      */
-    var damageReceived: Int
+    var damageReceived: Double
 
     /**
      * Fetches the total amount of experience this Card has

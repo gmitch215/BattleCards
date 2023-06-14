@@ -27,15 +27,22 @@ class IBattleStatistics(
             card.stats["kills.entity"] = value
         }
 
-    override var damageDealt: Int
-        get() = (card.stats["damage.dealt"] ?: 0).toInt()
+    override var deaths: Int
+        get() = (card.stats["deaths"] ?: 0).toInt()
+        set(value) {
+            if (value < 0) throw IllegalArgumentException("Deaths must be greater than 0")
+            card.stats["deaths"] = value
+        }
+
+    override var damageDealt: Double
+        get() = (card.stats["damage.dealt"] ?: 0).toDouble()
         set(value) {
             if (value < 0) throw IllegalArgumentException("Damage must be greater than 0")
             card.stats["damage.dealt"] = value
         }
 
-    override var damageReceived: Int
-        get() = (card.stats["damage.received"] ?: 0).toInt()
+    override var damageReceived: Double
+        get() = (card.stats["damage.received"] ?: 0).toDouble()
         set(value) {
             if (value < 0) throw IllegalArgumentException("Damage must be greater than 0")
             card.stats["damage.received"] = value

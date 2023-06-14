@@ -18,7 +18,7 @@ import java.util.stream.Collectors
 object CardGenerator {
 
     @JvmStatic
-    fun createItem(card: Card): ItemStack {
+    fun toItem(card: Card): ItemStack {
         val config = BattleConfig.getConfiguration()
 
         return ItemStack(Material.PAPER).apply {
@@ -52,7 +52,7 @@ object CardGenerator {
     fun createBasicCard(entity: Creature): ItemStack {
         if (!BattleConfig.getValidBasicCards().contains(entity.type)) throw IllegalArgumentException("Invalid Entity Type: ${entity.type}")
         val card = BattleCardType.BASIC.createCardData()
-        return createItem(card)
+        return toItem(card)
     }
 
     @JvmStatic
@@ -129,6 +129,7 @@ object CardGenerator {
                     "${ChatColor.RED}${format(get("constants.card.statistics.card_kills"), "${ChatColor.DARK_RED}${statistics.cardKills.format()}")}",
                     "${ChatColor.RED}${format(get("constants.card.statistics.entity_kills"),"${ChatColor.DARK_RED}${statistics.entityKills.format()}")}",
                     "${ChatColor.RED}${format(get("constants.card.statistics.total_kills"), "${ChatColor.DARK_RED}${statistics.kills.format()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.total_deaths"), "${ChatColor.DARK_RED}${statistics.deaths.format()}")}",
                     " ",
                     "${ChatColor.DARK_RED}${format(get("constants.card.statistics.total_damage_dealt"), "${ChatColor.BLUE}${statistics.damageDealt.format()}")}",
                     "${ChatColor.DARK_RED}${format(get("constants.card.statistics.total_damage_received"), "${ChatColor.BLUE}${statistics.damageReceived.format()}")}",
