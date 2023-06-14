@@ -6,5 +6,4 @@ $dokka.location:me.gamercoder215.battlecards.api.card/Card.Companion///PointingT
 $dokka.location:me.gamercoder215.battlecards.api/BattleConfig.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/BattleConfig.Companion.html
 me.gamercoder215.battlecards.api
 me.gamercoder215.battlecards.api.card
-me.gamercoder215.battlecards.api.player
 

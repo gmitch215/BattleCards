@@ -245,14 +245,6 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                                         </tr>
                                         
                                         <tr id="i0" class="altColor">
-                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out <a href=card/BattleCard.html>BattleCard</a>&lt;?&gt;&gt;&gt;</code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getRegisteredCards()>getRegisteredCards</a>() </code>
-                                            </th>
-                                            <td class="colLast">Fetches an immutable set of all of the registered BattleCards.</td>
-                                        </tr>
-                                        
-                                        <tr id="i1" class="rowColor">
                                             <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleConfig.html#registerCard(java.lang.Class)>registerCard</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out <a href=card/BattleCard.html>BattleCard</a>&lt;?&gt;&gt; card) </code>
@@ -260,7 +252,7 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                                             <td class="colLast">Registers a BattleCard.</td>
                                         </tr>
                                         
-                                        <tr id="i2" class="altColor">
+                                        <tr id="i1" class="rowColor">
                                             <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleConfig.html#get(java.lang.String)>get</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> key) </code>
@@ -268,15 +260,7 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                                             <td class="colLast">Fetches a localized message from the plugin's language file.</td>
                                         </tr>
                                         
-                                        <tr id="i3" class="rowColor">
-                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getLanguage()>getLanguage</a>() </code>
-                                            </th>
-                                            <td class="colLast">Fetches the plugin's language.</td>
-                                        </tr>
-                                        
-                                        <tr id="i4" class="altColor">
+                                        <tr id="i2" class="altColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getMessage(java.lang.String)>getMessage</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> key) </code>
@@ -284,7 +268,7 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                                             <td class="colLast">Fetches a localized message from the plugin's language file, with the plugin prefix.</td>
                                         </tr>
                                         
-                                        <tr id="i5" class="rowColor">
+                                        <tr id="i3" class="rowColor">
                                             <td class="colFirst"><code>abstract <a href=card/Card.html>Card</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleConfig.html#createCardData(me.gamercoder215.battlecards.api.card.BattleCardType)>createCardData</a>(<a href=card/BattleCardType.html>BattleCardType</a> type) </code>
@@ -292,12 +276,172 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                                             <td class="colLast">Creates a Card Data object with no data.</td>
                                         </tr>
                                         
+                                        <tr id="i4" class="altColor">
+                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out <a href=card/BattleCard.html>BattleCard</a>&lt;?&gt;&gt;&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getRegisteredCards()>getRegisteredCards</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches an immutable set of all of the registered BattleCards.</td>
+                                        </tr>
+                                        
+                                        <tr id="i5" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getLanguage()>getLanguage</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the plugin's language.</td>
+                                        </tr>
+                                        
                                         <tr id="i6" class="altColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html>Locale</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getLocale()>getLocale</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Fetches the plugin's locale.</td>
+                                        </tr>
+                                        
+                                        <tr id="i7" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#isBasicDropsEnabled()>isBasicDropsEnabled</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches whether cards of the <a href=card/Rarity.html#BASIC>Rarity.BASIC</a> rarity can be dropped by mobs.</td>
+                                        </tr>
+                                        
+                                        <tr id="i8" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setBasicDropsEnabled(java.lang.Boolean)>setBasicDropsEnabled</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> isBasicDropsEnabled) </code>
+                                            </th>
+                                            <td class="colLast">Sets whether cards of the <a href=card/Rarity.html#BASIC>Rarity.BASIC</a> rarity can be dropped by mobs.</td>
+                                        </tr>
+                                        
+                                        <tr id="i9" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getGrowthPassiveAmount()>getGrowthPassiveAmount</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the amount of set experience added to cards in a player's inventory every hour.</td>
+                                        </tr>
+                                        
+                                        <tr id="i10" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setGrowthPassiveAmount(java.lang.Double)>setGrowthPassiveAmount</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthPassiveAmount) </code>
+                                            </th>
+                                            <td class="colLast">Sets the amount of set experience added to cards in a player's inventory every hour.</td>
+                                        </tr>
+                                        
+                                        <tr id="i11" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getGrowthUseMultiplier()>getGrowthUseMultiplier</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the multiplier by the Card's Level for how much experience will be added upon this card being used.</td>
+                                        </tr>
+                                        
+                                        <tr id="i12" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setGrowthUseMultiplier(java.lang.Double)>setGrowthUseMultiplier</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthUseMultiplier) </code>
+                                            </th>
+                                            <td class="colLast">Sets the multiplier by the Card's Level for how much experience will be added upon this card being used.</td>
+                                        </tr>
+                                        
+                                        <tr id="i13" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getGrowthKillMultiplier()>getGrowthKillMultiplier</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.</td>
+                                        </tr>
+                                        
+                                        <tr id="i14" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setGrowthKillMultiplier(java.lang.Double)>setGrowthKillMultiplier</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthKillMultiplier) </code>
+                                            </th>
+                                            <td class="colLast">Sets the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.</td>
+                                        </tr>
+                                        
+                                        <tr id="i15" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getGrowthKillCardMultiplier()>getGrowthKillCardMultiplier</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the multiplier for the kill multiplier when the target is a Battle Card.</td>
+                                        </tr>
+                                        
+                                        <tr id="i16" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setGrowthKillCardMultiplier(java.lang.Double)>setGrowthKillCardMultiplier</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthKillCardMultiplier) </code>
+                                            </th>
+                                            <td class="colLast">Sets the multiplier for the kill multiplier when the target is a Battle Card.</td>
+                                        </tr>
+                                        
+                                        <tr id="i17" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getCardCooldown()>getCardCooldown</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the cooldown, in seconds, between when the same BattleCard can be deployed again</td>
+                                        </tr>
+                                        
+                                        <tr id="i18" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setCardCooldown(java.lang.Integer)>setCardCooldown</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> cardCooldown) </code>
+                                            </th>
+                                            <td class="colLast">Sets the cooldown, in seconds, between when the same BattleCard can be deployed again</td>
+                                        </tr>
+                                        
+                                        <tr id="i19" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getPlayerCooldownCount()>getPlayerCooldownCount</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the number of cards that can be deployed by a player before the cooldown is activated.</td>
+                                        </tr>
+                                        
+                                        <tr id="i20" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setPlayerCooldownCount(java.lang.Integer)>setPlayerCooldownCount</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> playerCooldownCount) </code>
+                                            </th>
+                                            <td class="colLast">Sets the number of cards that can be deployed by a player before the cooldown is activated.</td>
+                                        </tr>
+                                        
+                                        <tr id="i21" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getPlayerCooldownTime()>getPlayerCooldownTime</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.</td>
+                                        </tr>
+                                        
+                                        <tr id="i22" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setPlayerCooldownTime(java.lang.Integer)>setPlayerCooldownTime</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> playerCooldownTime) </code>
+                                            </th>
+                                            <td class="colLast">Sets the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.</td>
+                                        </tr>
+                                        
+                                        <tr id="i23" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/util/List.html>List</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#getPlayerCooldownIgnored()>getPlayerCooldownIgnored</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.</td>
+                                        </tr>
+                                        
+                                        <tr id="i24" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleConfig.html#setPlayerCooldownIgnored(java.util.List)>setPlayerCooldownIgnored</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/util/List.html>List</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; playerCooldownIgnored) </code>
+                                            </th>
+                                            <td class="colLast">Sets a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -344,21 +488,6 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                             </a>
                                 <h3>Method Detail</h3>
                                 
-                                <a id="getRegisteredCards()">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>getRegisteredCards</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out <a href=card/BattleCard.html>BattleCard</a>&lt;?&gt;&gt;&gt; <a href=BattleConfig.html#getRegisteredCards()>getRegisteredCards</a>()</pre>
-                                        <div class="block"><p>Fetches an immutable set of all of the registered BattleCards.</p></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
                                 <a id="registerCard(java.lang.Class)">
                                     <!--   -->
                                 </a>
@@ -402,21 +531,6 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                                             
                                             
                                         </dl>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
-                                <a id="getLanguage()">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>getLanguage</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=BattleConfig.html#getLanguage()>getLanguage</a>()</pre>
-                                        <div class="block"><p>Fetches the plugin's language.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -470,16 +584,397 @@ public interface <span class="typeNameLabel"><a href=BattleConfig.html>BattleCon
                                     </li>
                                 </ul>
                                 
+                                <a id="getRegisteredCards()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getRegisteredCards</h4>
+                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out <a href=card/BattleCard.html>BattleCard</a>&lt;?&gt;&gt;&gt; <a href=BattleConfig.html#getRegisteredCards()>getRegisteredCards</a>()</pre>
+                                        <div class="block"><p>Fetches an immutable set of all of the registered BattleCards.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getLanguage()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getLanguage</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=BattleConfig.html#getLanguage()>getLanguage</a>()</pre>
+                                        <div class="block"><p>Fetches the plugin's language.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
                                 <a id="getLocale()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getLocale</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html>Locale</a> <a href=BattleConfig.html#getLocale()>getLocale</a>()</pre>
+                                        <div class="block"><p>Fetches the plugin's locale.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="isBasicDropsEnabled()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>isBasicDropsEnabled</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> <a href=BattleConfig.html#isBasicDropsEnabled()>isBasicDropsEnabled</a>()</pre>
+                                        <div class="block"><p>Fetches whether cards of the <a href=card/Rarity.html#BASIC>Rarity.BASIC</a> rarity can be dropped by mobs.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setBasicDropsEnabled(java.lang.Boolean)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setBasicDropsEnabled</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setBasicDropsEnabled(java.lang.Boolean)>setBasicDropsEnabled</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> isBasicDropsEnabled)</pre>
+                                        <div class="block"><p>Sets whether cards of the <a href=card/Rarity.html#BASIC>Rarity.BASIC</a> rarity can be dropped by mobs.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>isBasicDropsEnabled</code> - true if can be dropped, false otherwise</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getGrowthPassiveAmount()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getGrowthPassiveAmount</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleConfig.html#getGrowthPassiveAmount()>getGrowthPassiveAmount</a>()</pre>
+                                        <div class="block"><p>Fetches the amount of set experience added to cards in a player's inventory every hour.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setGrowthPassiveAmount(java.lang.Double)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setGrowthPassiveAmount</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setGrowthPassiveAmount(java.lang.Double)>setGrowthPassiveAmount</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthPassiveAmount)</pre>
+                                        <div class="block"><p>Sets the amount of set experience added to cards in a player's inventory every hour.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>growthPassiveAmount</code> - Experience Amount</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getGrowthUseMultiplier()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getGrowthUseMultiplier</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleConfig.html#getGrowthUseMultiplier()>getGrowthUseMultiplier</a>()</pre>
+                                        <div class="block"><p>Fetches the multiplier by the Card's Level for how much experience will be added upon this card being used.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setGrowthUseMultiplier(java.lang.Double)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setGrowthUseMultiplier</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setGrowthUseMultiplier(java.lang.Double)>setGrowthUseMultiplier</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthUseMultiplier)</pre>
+                                        <div class="block"><p>Sets the multiplier by the Card's Level for how much experience will be added upon this card being used.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>growthUseMultiplier</code> - Use Multiplier</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getGrowthKillMultiplier()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getGrowthKillMultiplier</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleConfig.html#getGrowthKillMultiplier()>getGrowthKillMultiplier</a>()</pre>
+                                        <div class="block"><p>Fetches the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setGrowthKillMultiplier(java.lang.Double)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setGrowthKillMultiplier</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setGrowthKillMultiplier(java.lang.Double)>setGrowthKillMultiplier</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthKillMultiplier)</pre>
+                                        <div class="block"><p>Sets the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>growthKillMultiplier</code> - Kill Multiplier</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getGrowthKillCardMultiplier()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getGrowthKillCardMultiplier</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleConfig.html#getGrowthKillCardMultiplier()>getGrowthKillCardMultiplier</a>()</pre>
+                                        <div class="block"><p>Fetches the multiplier for the kill multiplier when the target is a Battle Card.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setGrowthKillCardMultiplier(java.lang.Double)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setGrowthKillCardMultiplier</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setGrowthKillCardMultiplier(java.lang.Double)>setGrowthKillCardMultiplier</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> growthKillCardMultiplier)</pre>
+                                        <div class="block"><p>Sets the multiplier for the kill multiplier when the target is a Battle Card.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>growthKillCardMultiplier</code> - Kill Card Multiplier</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getCardCooldown()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getCardCooldown</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleConfig.html#getCardCooldown()>getCardCooldown</a>()</pre>
+                                        <div class="block"><p>Fetches the cooldown, in seconds, between when the same BattleCard can be deployed again</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setCardCooldown(java.lang.Integer)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setCardCooldown</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setCardCooldown(java.lang.Integer)>setCardCooldown</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> cardCooldown)</pre>
+                                        <div class="block"><p>Sets the cooldown, in seconds, between when the same BattleCard can be deployed again</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>cardCooldown</code> - Cooldown</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getPlayerCooldownCount()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getPlayerCooldownCount</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleConfig.html#getPlayerCooldownCount()>getPlayerCooldownCount</a>()</pre>
+                                        <div class="block"><p>Fetches the number of cards that can be deployed by a player before the cooldown is activated.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setPlayerCooldownCount(java.lang.Integer)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setPlayerCooldownCount</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setPlayerCooldownCount(java.lang.Integer)>setPlayerCooldownCount</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> playerCooldownCount)</pre>
+                                        <div class="block"><p>Sets the number of cards that can be deployed by a player before the cooldown is activated.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>playerCooldownCount</code> - Card Count</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getPlayerCooldownTime()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getPlayerCooldownTime</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleConfig.html#getPlayerCooldownTime()>getPlayerCooldownTime</a>()</pre>
+                                        <div class="block"><p>Fetches the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setPlayerCooldownTime(java.lang.Integer)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setPlayerCooldownTime</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setPlayerCooldownTime(java.lang.Integer)>setPlayerCooldownTime</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> playerCooldownTime)</pre>
+                                        <div class="block"><p>Sets the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>playerCooldownTime</code> - Cooldown Time</dd>
+                                            
+                                            
+                                        </dl>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getPlayerCooldownIgnored()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getPlayerCooldownIgnored</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/util/List.html>List</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=BattleConfig.html#getPlayerCooldownIgnored()>getPlayerCooldownIgnored</a>()</pre>
+                                        <div class="block"><p>Fetches a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setPlayerCooldownIgnored(java.util.List)">
                                     <!--   -->
                                 </a>
                                 <ul class=
                                               "blockListLast"
                                           >
                                     <li class="blockList">
-                                        <h4>getLocale</h4>
-                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html>Locale</a> <a href=BattleConfig.html#getLocale()>getLocale</a>()</pre>
-                                        <div class="block"></div>
+                                        <h4>setPlayerCooldownIgnored</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleConfig.html#setPlayerCooldownIgnored(java.util.List)>setPlayerCooldownIgnored</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/util/List.html>List</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; playerCooldownIgnored)</pre>
+                                        <div class="block"><p>Sets a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>playerCooldownIgnored</code> - List of Players</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>

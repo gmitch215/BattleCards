@@ -180,12 +180,30 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                         </tr>
                                         
                                         <tr class="altColor">
+                                            <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code></td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#generation>generation</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code></td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#cardID>cardID</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private final <a href=Rarity.html>Rarity</a></code></td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#rarity>rarity</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
                                             <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code></td>
                                             <th class="colSecond" scope="row"><code><a href=Rarity.html#name>name</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr class="rowColor">
+                                        <tr class="altColor">
                                             <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code></td>
                                             <th class="colSecond" scope="row"><code><a href=Rarity.html#ordinal>ordinal</a></code></th>
                                             <td class="colLast"></td>
@@ -286,6 +304,12 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                         <td class="colLast"><p>Represents a Drowned BattleCard.</p></td>
                                     </tr>
                                     
+                                    <tr class="altColor">
+                                        <th class="colFirst" scope="row"><code><span class="memberNameLink"><a
+                                                href="TODO"><a href=BattleCardType.html#GOLD_SKELETON>GOLD_SKELETON</a></a></span></code></th>
+                                        <td class="colLast"><p>Represents a Wither Skeleton BattleCard.</p></td>
+                                    </tr>
+                                    
                                 </table>
                             </li>
                         </ul>
@@ -313,30 +337,6 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                         </tr>
                                         
                                         <tr id="i0" class="altColor">
-                                            <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#getGeneration()>getGeneration</a>() </code>
-                                            </th>
-                                            <td class="colLast">Fetches the generation of this BattleCardType.</td>
-                                        </tr>
-                                        
-                                        <tr id="i1" class="rowColor">
-                                            <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#getCardID()>getCardID</a>() </code>
-                                            </th>
-                                            <td class="colLast">Fetches the Card ID of this BattleCardType.</td>
-                                        </tr>
-                                        
-                                        <tr id="i2" class="altColor">
-                                            <td class="colFirst"><code>final <a href=Rarity.html>Rarity</a></code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#getRarity()>getRarity</a>() </code>
-                                            </th>
-                                            <td class="colLast">Fetches the Rarity of this BattleCardType.</td>
-                                        </tr>
-                                        
-                                        <tr id="i3" class="rowColor">
                                             <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out LivingEntity&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleCardType.html#getEntityClass()>getEntityClass</a>() </code>
@@ -344,7 +344,7 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                             <td class="colLast">Fetches the Entity Class that this BattleCardType uses.</td>
                                         </tr>
                                         
-                                        <tr id="i4" class="altColor">
+                                        <tr id="i1" class="rowColor">
                                             <td class="colFirst"><code>final <a href=Card.html>Card</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleCardType.html#createCardData()>createCardData</a>() </code>
@@ -352,7 +352,7 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                             <td class="colLast">Creates an empty card data object.</td>
                                         </tr>
                                         
-                                        <tr id="i5" class="rowColor">
+                                        <tr id="i2" class="altColor">
                                             <td class="colFirst"><code>final <a href=BattleCardType.html>BattleCardType</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleCardType.html#valueOf(java.lang.String)>valueOf</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> value) </code>
@@ -360,12 +360,36 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                             <td class="colLast">Returns the enum constant of this type with the specified name.</td>
                                         </tr>
                                         
-                                        <tr id="i6" class="altColor">
+                                        <tr id="i3" class="rowColor">
                                             <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=BattleCardType.html>BattleCardType</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleCardType.html#values()>values</a>() </code>
                                             </th>
                                             <td class="colLast">Returns an array containing the constants of this enum type, in the order they're declared.</td>
+                                        </tr>
+                                        
+                                        <tr id="i4" class="altColor">
+                                            <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#getGeneration()>getGeneration</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the generation of this BattleCardType.</td>
+                                        </tr>
+                                        
+                                        <tr id="i5" class="rowColor">
+                                            <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#getCardID()>getCardID</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i6" class="altColor">
+                                            <td class="colFirst"><code>final <a href=Rarity.html>Rarity</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleCardType.html#getRarity()>getRarity</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the Rarity of this BattleCardType.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -418,51 +442,6 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                             </a>
                                 <h3>Method Detail</h3>
                                 
-                                <a id="getGeneration()">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>getGeneration</h4>
-                                        <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleCardType.html#getGeneration()>getGeneration</a>()</pre>
-                                        <div class="block"><p>Fetches the generation of this BattleCardType.</p></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
-                                <a id="getCardID()">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>getCardID</h4>
-                                        <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=BattleCardType.html#getCardID()>getCardID</a>()</pre>
-                                        <div class="block"><p>Fetches the Card ID of this BattleCardType.</p></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
-                                <a id="getRarity()">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>getRarity</h4>
-                                        <pre class="methodSignature"> final <a href=Rarity.html>Rarity</a> <a href=BattleCardType.html#getRarity()>getRarity</a>()</pre>
-                                        <div class="block"><p>Fetches the Rarity of this BattleCardType.</p></div>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
                                 <a id="getEntityClass()">
                                     <!--   -->
                                 </a>
@@ -512,12 +491,57 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                     <!--   -->
                                 </a>
                                 <ul class=
-                                              "blockListLast"
+                                              "blockList"
                                           >
                                     <li class="blockList">
                                         <h4>values</h4>
                                         <pre class="methodSignature"> final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=BattleCardType.html>BattleCardType</a>&gt; <a href=BattleCardType.html#values()>values</a>()</pre>
                                         <div class="block"><p>Returns an array containing the constants of this enum type, in the order they're declared.</p><p>This method may be used to iterate over the constants.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getGeneration()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getGeneration</h4>
+                                        <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleCardType.html#getGeneration()>getGeneration</a>()</pre>
+                                        <div class="block"><p>Fetches the generation of this BattleCardType.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getCardID()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getCardID</h4>
+                                        <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=BattleCardType.html#getCardID()>getCardID</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getRarity()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockListLast"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getRarity</h4>
+                                        <pre class="methodSignature"> final <a href=Rarity.html>Rarity</a> <a href=BattleCardType.html#getRarity()>getRarity</a>()</pre>
+                                        <div class="block"><p>Fetches the Rarity of this BattleCardType.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>

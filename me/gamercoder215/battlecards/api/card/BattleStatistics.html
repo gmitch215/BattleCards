@@ -296,9 +296,9 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                         <tr id="i7" class="rowColor">
                                             <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setPlayerKills(java.lang.Integer)>setPlayerKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> kills) </code>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setPlayerKills(java.lang.Integer)>setPlayerKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> playerKills) </code>
                                             </th>
-                                            <td class="colLast">Sets the total amount of players this Card has killed</td>
+                                            <td class="colLast">Fetches the total amount of players this Card has killed</td>
                                         </tr>
                                         
                                         <tr id="i8" class="altColor">
@@ -312,9 +312,9 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                         <tr id="i9" class="rowColor">
                                             <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setCardKills(java.lang.Integer)>setCardKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> kills) </code>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setCardKills(java.lang.Integer)>setCardKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> cardKills) </code>
                                             </th>
-                                            <td class="colLast">Sets the total amount of other BattleCards this Card has killed</td>
+                                            <td class="colLast">Fetches the total amount of other BattleCards this Card has killed</td>
                                         </tr>
                                         
                                         <tr id="i10" class="altColor">
@@ -328,52 +328,68 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                         <tr id="i11" class="rowColor">
                                             <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setEntityKills(java.lang.Integer)>setEntityKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> kills) </code>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setEntityKills(java.lang.Integer)>setEntityKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> entityKills) </code>
                                             </th>
-                                            <td class="colLast">Sets the total amount of entities this Card has killed</td>
+                                            <td class="colLast">Fetches the total amount of entities this Card has killed</td>
                                         </tr>
                                         
                                         <tr id="i12" class="altColor">
+                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getDeaths()>getDeaths</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the total amount of times this Card has died</td>
+                                        </tr>
+                                        
+                                        <tr id="i13" class="rowColor">
+                                            <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setDeaths(java.lang.Integer)>setDeaths</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> deaths) </code>
+                                            </th>
+                                            <td class="colLast">Fetches the total amount of times this Card has died</td>
+                                        </tr>
+                                        
+                                        <tr id="i14" class="altColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getKills()>getKills</a>() </code>
                                             </th>
-                                            <td class="colLast">Fetches the total amount of kills this Card has Collected</td>
+                                            <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr id="i13" class="rowColor">
-                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                        <tr id="i15" class="rowColor">
+                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getDamageDealt()>getDamageDealt</a>() </code>
                                             </th>
                                             <td class="colLast">Fetches the total amount of damage this Card has dealt</td>
                                         </tr>
                                         
-                                        <tr id="i14" class="altColor">
+                                        <tr id="i16" class="altColor">
                                             <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setDamageDealt(java.lang.Integer)>setDamageDealt</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> damage) </code>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setDamageDealt(java.lang.Double)>setDamageDealt</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> damageDealt) </code>
                                             </th>
-                                            <td class="colLast">Sets the total amount of damage this Card has dealt</td>
+                                            <td class="colLast">Fetches the total amount of damage this Card has dealt</td>
                                         </tr>
                                         
-                                        <tr id="i15" class="rowColor">
-                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                        <tr id="i17" class="rowColor">
+                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getDamageReceived()>getDamageReceived</a>() </code>
                                             </th>
                                             <td class="colLast">Fetches the total amount of damage this Card has received</td>
                                         </tr>
                                         
-                                        <tr id="i16" class="altColor">
+                                        <tr id="i18" class="altColor">
                                             <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setDamageReceived(java.lang.Integer)>setDamageReceived</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> damage) </code>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setDamageReceived(java.lang.Double)>setDamageReceived</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> damageReceived) </code>
                                             </th>
-                                            <td class="colLast">Sets the total amount of damage this Card has received</td>
+                                            <td class="colLast">Fetches the total amount of damage this Card has received</td>
                                         </tr>
                                         
-                                        <tr id="i17" class="rowColor">
+                                        <tr id="i19" class="rowColor">
                                             <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getCardExperience()>getCardExperience</a>() </code>
@@ -381,28 +397,12 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                             <td class="colLast">Fetches the total amount of experience this Card has</td>
                                         </tr>
                                         
-                                        <tr id="i18" class="altColor">
-                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#addCardExperience(java.lang.Double)>addCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> experience) </code>
-                                            </th>
-                                            <td class="colLast">Adds experience to this BattleCard.</td>
-                                        </tr>
-                                        
-                                        <tr id="i19" class="rowColor">
-                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
-                                            </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#removeCardExperience(java.lang.Double)>removeCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> experience) </code>
-                                            </th>
-                                            <td class="colLast">Removes experience from this BattleCard.</td>
-                                        </tr>
-                                        
                                         <tr id="i20" class="altColor">
                                             <td class="colFirst"><code>abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setCardExperience(java.lang.Double)>setCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> experience) </code>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setCardExperience(java.lang.Double)>setCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> cardExperience) </code>
                                             </th>
-                                            <td class="colLast">Sets the total amount of experience this Card has</td>
+                                            <td class="colLast">Fetches the total amount of experience this Card has</td>
                                         </tr>
                                         
                                         <tr id="i21" class="rowColor">
@@ -410,7 +410,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getRemainingExperience()>getRemainingExperience</a>() </code>
                                             </th>
-                                            <td class="colLast">Fetches how much experience is needed for this BattleCard to advance to the next level.</td>
+                                            <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr id="i22" class="altColor">
@@ -418,15 +418,15 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getCardLevel()>getCardLevel</a>() </code>
                                             </th>
-                                            <td class="colLast">Fetches the level that this Card is currently at.</td>
+                                            <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr id="i23" class="rowColor">
                                             <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setCardLevel(java.lang.Integer)>setCardLevel</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> level) </code>
+                                            <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#setCardLevel(java.lang.Integer)>setCardLevel</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> cardLevel) </code>
                                             </th>
-                                            <td class="colLast">Sets the level that this Card is currently at.</td>
+                                            <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr id="i24" class="altColor">
@@ -434,7 +434,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getMaxCardLevel()>getMaxCardLevel</a>() </code>
                                             </th>
-                                            <td class="colLast">Fetches the maximum level that this Card can be.</td>
+                                            <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr id="i25" class="rowColor">
@@ -442,7 +442,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getMaxCardExperience()>getMaxCardExperience</a>() </code>
                                             </th>
-                                            <td class="colLast">Fetches the maximum experience that this Card can have.</td>
+                                            <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr id="i26" class="altColor">
@@ -450,7 +450,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=BattleStatistics.html#getDeployTime()>getDeployTime</a>() </code>
                                             </th>
-                                            <td class="colLast">Fetches the total amount of &lt;strong&gt;seconds&lt;/strong&gt; this Card can be deployed for.</td>
+                                            <td class="colLast"></td>
                                         </tr>
                                         
                                         </tbody>
@@ -610,17 +610,8 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>setPlayerKills</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setPlayerKills(java.lang.Integer)>setPlayerKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> kills)</pre>
-                                        <div class="block"><p>Sets the total amount of players this Card has killed</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>kills</code> - Player Kills</dd>
-                                            
-                                            
-                                        </dl>
+                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setPlayerKills(java.lang.Integer)>setPlayerKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> playerKills)</pre>
+                                        <div class="block"><p>Fetches the total amount of players this Card has killed</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -649,17 +640,8 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>setCardKills</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setCardKills(java.lang.Integer)>setCardKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> kills)</pre>
-                                        <div class="block"><p>Sets the total amount of other BattleCards this Card has killed</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>kills</code> - Card Kills</dd>
-                                            
-                                            
-                                        </dl>
+                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setCardKills(java.lang.Integer)>setCardKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> cardKills)</pre>
+                                        <div class="block"><p>Fetches the total amount of other BattleCards this Card has killed</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -688,17 +670,38 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>setEntityKills</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setEntityKills(java.lang.Integer)>setEntityKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> kills)</pre>
-                                        <div class="block"><p>Sets the total amount of entities this Card has killed</p></div>
+                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setEntityKills(java.lang.Integer)>setEntityKills</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> entityKills)</pre>
+                                        <div class="block"><p>Fetches the total amount of entities this Card has killed</p></div>
                                         
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>kills</code> - Entity Kills</dd>
-                                            
-                                            
-                                        </dl>
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getDeaths()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getDeaths</h4>
+                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleStatistics.html#getDeaths()>getDeaths</a>()</pre>
+                                        <div class="block"><p>Fetches the total amount of times this Card has died</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setDeaths(java.lang.Integer)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setDeaths</h4>
+                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setDeaths(java.lang.Integer)>setDeaths</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> deaths)</pre>
+                                        <div class="block"><p>Fetches the total amount of times this Card has died</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -713,7 +716,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                     <li class="blockList">
                                         <h4>getKills</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleStatistics.html#getKills()>getKills</a>()</pre>
-                                        <div class="block"><p>Fetches the total amount of kills this Card has Collected</p></div>
+                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -727,14 +730,14 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>getDamageDealt</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleStatistics.html#getDamageDealt()>getDamageDealt</a>()</pre>
+                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleStatistics.html#getDamageDealt()>getDamageDealt</a>()</pre>
                                         <div class="block"><p>Fetches the total amount of damage this Card has dealt</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
                                 </ul>
                                 
-                                <a id="setDamageDealt(java.lang.Integer)">
+                                <a id="setDamageDealt(java.lang.Double)">
                                     <!--   -->
                                 </a>
                                 <ul class=
@@ -742,17 +745,8 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>setDamageDealt</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setDamageDealt(java.lang.Integer)>setDamageDealt</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> damage)</pre>
-                                        <div class="block"><p>Sets the total amount of damage this Card has dealt</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>damage</code> - Damage Dealt</dd>
-                                            
-                                            
-                                        </dl>
+                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setDamageDealt(java.lang.Double)>setDamageDealt</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> damageDealt)</pre>
+                                        <div class="block"><p>Fetches the total amount of damage this Card has dealt</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -766,14 +760,14 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>getDamageReceived</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleStatistics.html#getDamageReceived()>getDamageReceived</a>()</pre>
+                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleStatistics.html#getDamageReceived()>getDamageReceived</a>()</pre>
                                         <div class="block"><p>Fetches the total amount of damage this Card has received</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
                                 </ul>
                                 
-                                <a id="setDamageReceived(java.lang.Integer)">
+                                <a id="setDamageReceived(java.lang.Double)">
                                     <!--   -->
                                 </a>
                                 <ul class=
@@ -781,17 +775,8 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>setDamageReceived</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setDamageReceived(java.lang.Integer)>setDamageReceived</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> damage)</pre>
-                                        <div class="block"><p>Sets the total amount of damage this Card has received</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>damage</code> - Damage Received</dd>
-                                            
-                                            
-                                        </dl>
+                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setDamageReceived(java.lang.Double)>setDamageReceived</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> damageReceived)</pre>
+                                        <div class="block"><p>Fetches the total amount of damage this Card has received</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -812,54 +797,6 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                     </li>
                                 </ul>
                                 
-                                <a id="addCardExperience(java.lang.Double)">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>addCardExperience</h4>
-                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#addCardExperience(java.lang.Double)>addCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> experience)</pre>
-                                        <div class="block"><p>Adds experience to this BattleCard.</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>experience</code> - Experience to add</dd>
-                                            
-                                            
-                                        </dl>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
-                                <a id="removeCardExperience(java.lang.Double)">
-                                    <!--   -->
-                                </a>
-                                <ul class=
-                                              "blockList"
-                                          >
-                                    <li class="blockList">
-                                        <h4>removeCardExperience</h4>
-                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#removeCardExperience(java.lang.Double)>removeCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> experience)</pre>
-                                        <div class="block"><p>Removes experience from this BattleCard.</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>experience</code> - Experience to remove</dd>
-                                            
-                                            
-                                        </dl>
-                                        
-                                        <!-- TODO missing return annotation -->
-                                    </li>
-                                </ul>
-                                
                                 <a id="setCardExperience(java.lang.Double)">
                                     <!--   -->
                                 </a>
@@ -868,17 +805,8 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>setCardExperience</h4>
-                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setCardExperience(java.lang.Double)>setCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> experience)</pre>
-                                        <div class="block"><p>Sets the total amount of experience this Card has</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>experience</code> - Card Experience</dd>
-                                            
-                                            
-                                        </dl>
+                                        <pre class="methodSignature"> abstract <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setCardExperience(java.lang.Double)>setCardExperience</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> cardExperience)</pre>
+                                        <div class="block"><p>Fetches the total amount of experience this Card has</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -893,7 +821,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                     <li class="blockList">
                                         <h4>getRemainingExperience</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleStatistics.html#getRemainingExperience()>getRemainingExperience</a>()</pre>
-                                        <div class="block"><p>Fetches how much experience is needed for this BattleCard to advance to the next level.</p></div>
+                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -908,7 +836,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                     <li class="blockList">
                                         <h4>getCardLevel</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleStatistics.html#getCardLevel()>getCardLevel</a>()</pre>
-                                        <div class="block"><p>Fetches the level that this Card is currently at.</p></div>
+                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -922,17 +850,8 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                           >
                                     <li class="blockList">
                                         <h4>setCardLevel</h4>
-                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setCardLevel(java.lang.Integer)>setCardLevel</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> level)</pre>
-                                        <div class="block"><p>Sets the level that this Card is currently at.</p></div>
-                                        
-                                        <dl>
-                                            <dt><span class="paramLabel">Parameters:</span></dt>
-                                            
-                                            
-                                            <dd><code>level</code> - Card Level</dd>
-                                            
-                                            
-                                        </dl>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=BattleStatistics.html#setCardLevel(java.lang.Integer)>setCardLevel</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> cardLevel)</pre>
+                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -947,7 +866,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                     <li class="blockList">
                                         <h4>getMaxCardLevel</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleStatistics.html#getMaxCardLevel()>getMaxCardLevel</a>()</pre>
-                                        <div class="block"><p>Fetches the maximum level that this Card can be.</p></div>
+                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -962,7 +881,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                     <li class="blockList">
                                         <h4>getMaxCardExperience</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Double.html>Double</a> <a href=BattleStatistics.html#getMaxCardExperience()>getMaxCardExperience</a>()</pre>
-                                        <div class="block"><p>Fetches the maximum experience that this Card can have.</p></div>
+                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -977,7 +896,7 @@ public interface <span class="typeNameLabel"><a href=BattleStatistics.html>Battl
                                     <li class="blockList">
                                         <h4>getDeployTime</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=BattleStatistics.html#getDeployTime()>getDeployTime</a>()</pre>
-                                        <div class="block"><p>Fetches the total amount of &lt;strong&gt;seconds&lt;/strong&gt; this Card can be deployed for.</p></div>
+                                        <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
