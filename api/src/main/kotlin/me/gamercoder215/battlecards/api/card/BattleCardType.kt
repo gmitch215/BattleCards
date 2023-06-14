@@ -48,7 +48,12 @@ enum class BattleCardType {
     /**
      * Represents a Drowned BattleCard.
      */
-    LAPIS_DROWNED(1, "Drowned", Rarity.UNCOMMON)
+    LAPIS_DROWNED(1, "Drowned", Rarity.UNCOMMON),
+
+    /**
+     * Represents a Wither Skeleton BattleCard.
+     */
+    GOLD_SKELETON(1, "WitherSkeleton", Rarity.RARE),
     ;
 
     private val entityClass: Class<out LivingEntity>?
