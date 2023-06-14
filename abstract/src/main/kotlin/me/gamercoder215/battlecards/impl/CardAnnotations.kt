@@ -103,9 +103,9 @@ annotation class Offensive(
 annotation class Passive(
     val interval: Long,
     val operation: CardOperation = CardOperation.ADD,
-    val value: Double = Double.NaN,
-    val max: Double = 1.0,
-    val min: Double = 0.0
+    val value: Long = Long.MIN_VALUE,
+    val max: Long = Long.MAX_VALUE,
+    val min: Long = 1
 )
 
 @Inherited
