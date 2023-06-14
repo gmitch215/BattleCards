@@ -12,6 +12,7 @@ dependencies {
 
     // Soft Dependencies
     compileOnly("me.clip:placeholderapi:2.11.3")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
 
     // API
     api(project(":battlecards-api"))
