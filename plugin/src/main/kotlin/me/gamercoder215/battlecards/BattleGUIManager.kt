@@ -1,7 +1,7 @@
 package me.gamercoder215.battlecards
 
 import com.google.common.collect.ImmutableMap
-import me.gamercoder215.battlecards.util.getID
+import me.gamercoder215.battlecards.util.id
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.of
@@ -67,7 +67,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
         for (item in e.newItems.values) {
             if (item == null) continue
             if (item.isSimilar(GUI_BACKGROUND)) e.isCancelled = true
-            if (CLICK_ITEMS.containsKey(item.getID())) e.isCancelled = true
+            if (CLICK_ITEMS.containsKey(item.id)) e.isCancelled = true
         }
     }
 
@@ -82,7 +82,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
         e.isCancelled = inv.isCancelled
 
         if (item.isSimilar(GUI_BACKGROUND)) e.isCancelled = true
-        if (CLICK_ITEMS.containsKey(item.getID())) e.isCancelled = true
+        if (CLICK_ITEMS.containsKey(item.id)) e.isCancelled = true
     }
 
 }

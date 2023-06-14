@@ -11,22 +11,66 @@ import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.Type
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
-import me.gamercoder215.battlecards.util.CardListener
+import me.gamercoder215.battlecards.impl.cards.IBattleCardListener
+import me.gamercoder215.battlecards.placeholderapi.BattlePlaceholders
+import me.gamercoder215.battlecards.util.cards
+import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import org.bstats.bukkit.Metrics
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitRunnable
+import org.bukkit.scheduler.BukkitTask
 import java.io.IOException
 import java.util.*
 
-private const val BSTATS_ID = 18166
+private const val bstats = 18166
 private const val github = "GamerCoder215/BattleCards"
+private const val hourTicks: Long = 20 * 60 * 60
 
 class BattleCards : JavaPlugin(), BattleConfig {
 
     fun loadListeners() {
-        CardListener(this)
+        BattleCardListener(this)
         BattleGUIManager(this)
+
+        IBattleCardListener(this)
+    }
+
+    val tasks: MutableSet<BukkitTask> = mutableSetOf()
+
+    fun loadTasks() {
+        tasks.addAll(listOf(
+                object : BukkitRunnable() {
+                    override fun run() {
+                        Bukkit.getOnlinePlayers().forEach {
+                            it.inventory.cards.forEach { (slot, card) ->
+                                card.statistics.cardExperience += this@BattleCards.growthPassiveAmount
+                                it.inventory.setItem(slot, card.itemStack)
+                            }
+                        }
+                    }
+                }.runTaskTimer(this, hourTicks, hourTicks)
+            )
+        )
+    }
+
+    fun checkIntegrations() {
+        if (hasVault()) {
+            logger.info("Vault Integration Found!")
+            VaultChat.loadChat()
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            logger.info("Placeholder API Found! Hooking...")
+            BattlePlaceholders(this)
+            logger.info("Hooked into Placeholder API!")
+        }
+    }
+
+    internal fun hasVault(): Boolean {
+        return Bukkit.getPluginManager().getPlugin("Vault") != null
     }
 
     override fun onEnable() {
@@ -36,6 +80,9 @@ class BattleCards : JavaPlugin(), BattleConfig {
         loadListeners()
         Wrapper.getCommandWrapper()
         logger.info("Loaded Files...")
+
+        loadTasks()
+        logger.info("Loaded Tasks...")
 
         // UpdateChecker
         UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, github)
@@ -51,8 +98,11 @@ class BattleCards : JavaPlugin(), BattleConfig {
             .checkNow()
 
         // bStats
-        Metrics(this, BSTATS_ID)
+        Metrics(this, bstats)
 
+        logger.info("Loaded Dependencies...")
+
+        checkIntegrations()
         logger.info("Loaded Addons...")
 
         logger.info("Finished!")
@@ -61,6 +111,9 @@ class BattleCards : JavaPlugin(), BattleConfig {
     override fun onDisable() {
         for (card in IBattleCard.spawned.values) card.despawn()
         logger.info("Unloaded Cards...")
+
+        tasks.forEach(BukkitTask::cancel)
+        logger.info("Stopping Tasks...")
 
         logger.info("Finished!")
     }
