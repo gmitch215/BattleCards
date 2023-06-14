@@ -24,10 +24,15 @@ class IPrinceHusk(data: ICard) : IBattleCard<Husk>(data) {
                 isUnbreakable = true
             }
         }
+        entity.equipment.chestplate = ItemStack(Material.GOLD_CHESTPLATE).apply {
+            itemMeta = itemMeta.apply {
+                isUnbreakable = true
+            }
+        }
     }
 
     @CardAbility("card.prince_husk.ability.royal_guard", ChatColor.DARK_BLUE)
-    @Passive(600, CardOperation.SUBTRACT, 5.0, 600.0, 100.0)
+    @Passive(600, CardOperation.SUBTRACT, 5, 600, 100)
     private fun royalGuard() {
         // TODO Add Minion Spawning
     }
