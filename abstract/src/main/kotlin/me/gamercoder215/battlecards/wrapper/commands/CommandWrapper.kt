@@ -2,7 +2,11 @@ package me.gamercoder215.battlecards.wrapper.commands
 
 import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.api.BattleConfig
-import me.gamercoder215.battlecards.util.getCard
+import me.gamercoder215.battlecards.api.card.BattleCardType
+import me.gamercoder215.battlecards.util.CardUtils.format
+import me.gamercoder215.battlecards.util.card
+import me.gamercoder215.battlecards.util.formatName
+import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.isCard
 import me.gamercoder215.battlecards.util.playSuccess
@@ -74,7 +78,18 @@ interface CommandWrapper {
             return
         }
 
-        p.openInventory(Generator.generateCardInfo(item.getCard()!!))
+        p.openInventory(Generator.generateCardInfo(item.card!!))
+        p.playSuccess()
+    }
+    
+    fun createCard(p: Player, type: BattleCardType) {
+        if (p.inventory.firstEmpty() == -1) {
+            p.sendMessage(getError("error.inventory.full"))
+            return
+        }
+        
+        p.inventory.addItem(CardGenerator.toItem(type.createCardData()))
+        p.sendMessage(format(getSuccess("success.card.created"), type.formatName()))
         p.playSuccess()
     }
 
