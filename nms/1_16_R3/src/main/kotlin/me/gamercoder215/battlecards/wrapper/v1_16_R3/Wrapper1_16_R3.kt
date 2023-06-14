@@ -20,7 +20,7 @@ import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 
-@Suppress("unchecked_cast")
+@Suppress("unchecked_cast", "KotlinConstantConditions")
 internal class Wrapper1_16_R3 : Wrapper {
 
     override fun sendActionbar(player: Player, component: BaseComponent) {
@@ -78,8 +78,16 @@ internal class Wrapper1_16_R3 : Wrapper {
             handle.value = value
         }
 
+        val goals = PathfinderGoalSelector::class.java.getDeclaredField("d").apply { isAccessible = true }.get(nms.goalSelector) as Set<PathfinderGoalWrapped>
+        goals.map { it.j() }.filter {
+            it is PathfinderGoalAvoidTarget<*> || it is PathfinderGoalRestrictSun || it is PathfinderGoalFleeSun || it is PathfinderGoalBeg || it is PathfinderGoalBreed
+        }.forEach { nms.goalSelector.a(it) }
         nms.goalSelector.a(2, FollowCardOwner1_16_R3(nms, card))
 
+        val targets = PathfinderGoalSelector::class.java.getDeclaredField("d").apply { isAccessible = true }.get(nms.targetSelector) as Set<PathfinderGoalWrapped>
+        targets.map { it.j() }.filter {
+            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*>
+        }.forEach { nms.targetSelector.a(it) }
         nms.targetSelector.a(1, CardOwnerHurtByTargetGoal1_16_R3(nms, card))
         nms.targetSelector.a(2, CardOwnerHurtTargetGoal1_16_R3(nms, card))
         nms.targetSelector.a(3, PathfinderGoalHurtByTarget(nms))

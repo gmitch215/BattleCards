@@ -14,7 +14,11 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.AttributeMap
+import net.minecraft.world.entity.ai.goal.*
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableWitchTargetGoal
+import net.minecraft.world.entity.ai.goal.target.NearestHealableRaiderTargetGoal
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
@@ -26,7 +30,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 import org.bukkit.inventory.ItemStack
 
-@Suppress("unchecked_cast")
+@Suppress("unchecked_cast", "KotlinConstantConditions")
 internal class Wrapper1_20_R1 : Wrapper {
 
     override fun sendActionbar(player: Player, component: BaseComponent) {
@@ -81,8 +85,14 @@ internal class Wrapper1_20_R1 : Wrapper {
             handle.baseValue = value
         }
 
+        nms.goalSelector.removeAllGoals {
+            it is AvoidEntityGoal<*> || it is RestrictSunGoal || it is FleeSunGoal || it is BegGoal || it is BreedGoal
+        }
         nms.goalSelector.addGoal(2, FollowCardOwner1_20_R1(nms, card))
 
+        nms.targetSelector.removeAllGoals {
+            it is NearestAttackableTargetGoal<*> || it is NearestAttackableWitchTargetGoal<*> || it is NearestHealableRaiderTargetGoal<*>
+        }
         nms.targetSelector.addGoal(1, CardOwnerHurtByTargetGoal1_20_R1(nms, card))
         nms.targetSelector.addGoal(2, CardOwnerHurtTargetGoal1_20_R1(nms, card))
         nms.targetSelector.addGoal(3, HurtByTargetGoal(nms))

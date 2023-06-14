@@ -76,8 +76,18 @@ internal class Wrapper1_9_R1 : Wrapper {
             handle.value = value
         }
 
+        val goals = PathfinderGoalSelector::class.java.getDeclaredField("b").apply { isAccessible = true }.get(nms.goalSelector).run {
+            (this as Set<Any>).map { it::class.java.getDeclaredField("a").apply { isAccessible = true }.get(it).run { this as PathfinderGoal } }
+        }
+        goals.filter {
+            it is PathfinderGoalAvoidTarget<*> || it is PathfinderGoalRestrictSun || it is PathfinderGoalFleeSun || it is PathfinderGoalBeg || it is PathfinderGoalBreed
+        }.forEach { nms.goalSelector.a(it) }
         nms.goalSelector.a(2, FollowCardOwner1_9_R1(nms, card))
 
+        val targets = PathfinderGoalSelector::class.java.getDeclaredField("b").apply { isAccessible = true }.get(nms.targetSelector).run {
+            (this as Set<Any>).map { it::class.java.getDeclaredField("a").apply { isAccessible = true }.get(it).run { this as PathfinderGoal } }
+        }
+        targets.filterIsInstance<PathfinderGoalNearestAttackableTarget<*>>().forEach { nms.targetSelector.a(it) }
         nms.targetSelector.a(1, CardOwnerHurtByTargetGoal1_9_R1(nms, card))
         nms.targetSelector.a(2, CardOwnerHurtTargetGoal1_9_R1(nms, card))
         nms.targetSelector.a(3, PathfinderGoalHurtByTarget(nms, true))

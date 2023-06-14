@@ -15,7 +15,11 @@ import net.minecraft.world.entity.EntityCreature
 import net.minecraft.world.entity.ai.attributes.AttributeBase
 import net.minecraft.world.entity.ai.attributes.AttributeMapBase
 import net.minecraft.world.entity.ai.attributes.AttributeModifiable
+import net.minecraft.world.entity.ai.goal.*
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTargetWitch
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestHealableRaider
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
@@ -27,7 +31,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 import org.bukkit.inventory.ItemStack
 
-@Suppress("unchecked_cast")
+@Suppress("unchecked_cast", "KotlinConstantConditions")
 internal class Wrapper1_17_R1 : Wrapper {
 
     override fun sendActionbar(player: Player, component: BaseComponent) {
@@ -81,9 +85,15 @@ internal class Wrapper1_17_R1 : Wrapper {
 
             handle.value = value
         }
-
+        
+        nms.bP.c().map { it.j() }.filter {
+            it is PathfinderGoalAvoidTarget<*> || it is PathfinderGoalRestrictSun || it is PathfinderGoalFleeSun || it is PathfinderGoalBeg || it is PathfinderGoalBreed
+        }.forEach { nms.bP.a(it) }
         nms.bP.a(2, FollowCardOwner1_17_R1(nms, card))
 
+        nms.bQ.c().map { it.j() }.filter {
+            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*>
+        }.forEach { nms.bQ.a(it) }
         nms.bQ.a(1, CardOwnerHurtByTargetGoal1_17_R1(nms, card))
         nms.bQ.a(2, CardOwnerHurtTargetGoal1_17_R1(nms, card))
         nms.bQ.a(3, PathfinderGoalHurtByTarget(nms))
