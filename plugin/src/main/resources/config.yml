@@ -30,6 +30,34 @@ Cards:
   # - prince_husk
   Disabled: []
 
+  # The Cooldown, in seconds, for the same BattleCard to be deployed again.
+  Cooldown: 30
+
+  # Configuration for Player-specific Cooldowns
+  PlayerCooldown:
+    # The amount of cards needed to trigger the player cooldown
+    Count: 5
+
+    # The amount of time, in seconds, to cooldown a player for
+    Cooldown: 180
+
+    # A list of players, permissions, or Vault Groups who are ignored by the player cooldown. Supports RegEx Patterns.
+    Ignore: []
+
+  # Settings for Cards Gaining Experience Naturally
+  Growth:
+    # A Card will gain experience from killing a player, another card, or an entity. This is multiplied by the target's Max Health.
+    KillMultiplier: 1.0
+
+    # Works like the setting above, except this is multiplied again if the target is another BattleCard.
+    KillCardMultiplier: 2.0
+
+    # A Card will gain a set amount of experience when being used. This is multiplied by the Card's Level.
+    UseMultiplier: 5.0
+
+    # A Card will gain a specific amount of experience when held in a player's inventory every hour (60 minutes). This is multiplied by the Card's Level.
+    PassiveAmount: 2.0
+
   # Display Settings for a BattleCard
   Display:
 
