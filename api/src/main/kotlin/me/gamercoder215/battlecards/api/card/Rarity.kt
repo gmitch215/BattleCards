@@ -63,11 +63,11 @@ enum class Rarity(
      */
     val maxCardLevel: Int
 
-    /**
-     * Fetches the maximum experience a BattleCard can have for this rarity.
-     * @return Maximum Card Experience
-     */
     val maxCardExperience: Double
+        /**
+         * Fetches the maximum experience a BattleCard can have for this rarity.
+         * @return Maximum Card Experience
+         */
         get() = BattleCard.toExperience(maxCardLevel, this)
 
     init {

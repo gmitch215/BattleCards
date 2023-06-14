@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.api.card
 
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.LivingEntity
+import org.bukkit.inventory.ItemStack
 import java.util.*
 
 /**
@@ -11,18 +12,18 @@ import java.util.*
 @Suppress("unchecked_cast")
 interface BattleCard<T : LivingEntity> {
 
-    /**
-     * Fetches the Entity Class that this BattleCard represents.
-     * @return Entity Class
-     */
     val entityClass: Class<T>
+        /**
+         * Fetches the Entity Class that this BattleCard represents.
+         * @return Entity Class
+         */
         get() = type.getEntityClass() as Class<T>
 
-    /**
-     * Whether this BattleCard is currently spawend.
-     * @return true if spawned, false otherwise
-     */
     val isSpawned: Boolean
+        /**
+         * Whether this BattleCard is currently spawend.
+         * @return true if spawned, false otherwise
+         */
         get() = entity != null
 
     /**
@@ -38,109 +39,121 @@ interface BattleCard<T : LivingEntity> {
     val data: Card
 
     /**
-     * Fetches the Card ID of this BattleCard.
-     * @return BattleCard ID
+     * Fetches the Original ItemStack Card used to spawn this BattleCard.
+     * @return Spawned Card
      */
-    val cardID: String 
+    val itemUsed: ItemStack
+
+    /**
+     * Fetches the ItemStack Card that is currenly attached to this BattleCard. This may contained modified statistics based off of [itemUsed].
+     * @return Current Card
+     */
+    val currentItem: ItemStack
+
+    val cardID: String
+        /**
+         * Fetches the Card ID of this BattleCard.
+         * @return BattleCard ID
+         */
         get() = type.cardID
 
-    /**
-     * Fetches the Rarity of this BattleCard.
-     * @return BattleCard Rarity
-     */
-    val rarity: Rarity 
+    val rarity: Rarity
+        /**
+         * Fetches the Rarity of this BattleCard.
+         * @return BattleCard Rarity
+         */
         get() = type.rarity
 
-    /**
-     * Fetches the Date this card was created.
-     * @return Creation Date
-     */
-    val creationDate: Date 
+    val creationDate: Date
+        /**
+         * Fetches the Date this card was created.
+         * @return Creation Date
+         */
         get() = data.creationDate
 
-    /**
-     * Fetches the Statistics of this BattleCard instance.
-     * @return BattleCard Statistics
-     */
     val statistics: BattleStatistics
+        /**
+         * Fetches the Statistics of this BattleCard instance.
+         * @return BattleCard Statistics
+         */
         get() = data.statistics
 
-    /**
-     * Fetches the Date this BattleCard was last used. Will return null if never used.
-     * @return Last Used Date
-     */
-    val lastUsed: Date?
+    val lastUsed: Date
+        /**
+         * Fetches the Date this BattleCard was last used. Will return null if never used.
+         * @return Last Used Date
+         */
         get() = data.lastUsed
 
-    /**
-     * Fetches the level of this BattleCard.
-     * @return BattleCard Level
-     */
     val level: Int
+        /**
+         * Fetches the level of this BattleCard.
+         * @return BattleCard Level
+         */
         get() = data.level
 
-    /**
-     * Fetches the player that last used this BattleCard. Will return null if never used.
-     * @return Last Used Player
-     */
-    val lastUsedPlayer: OfflinePlayer? 
+    val lastUsedPlayer: OfflinePlayer?
+        /**
+         * Fetches the player that last used this BattleCard. Will return null if never used.
+         * @return Last Used Player
+         */
         get() = data.lastUsedPlayer
 
-    /**
-     * Fetches the experience of this BattleCard.
-     * @return BattleCard Experience
-     */
     val experience: Double
+        /**
+         * Fetches the experience of this BattleCard.
+         * @return BattleCard Experience
+         */
         get() = data.experience
 
-    /**
-     * Fetches the experience required to reach the next level.
-     * @return Experience to next level
-     */
     val remainingExperience: Double
+        /**
+         * Fetches the experience required to reach the next level.
+         * @return Experience to next level
+         */
         get() = data.remainingExperience
 
-    /**
-     * Fetches the maximum level that this Card can be.
-     * @return Max Card Level
-     */
     val maxCardLevel: Int
+        /**
+         * Fetches the maximum level that this Card can be.
+         * @return Max Card Level
+         */
         get() = data.maxCardLevel
 
-    /**
-     * Fetches the maximum experience that this Card can have.
-     * @return Max Card Experience
-     */
     val maxCardExperience: Double
+        /**
+         * Fetches the maximum experience that this Card can have.
+         * @return Max Card Experience
+         */
         get() = data.maxCardExperience
 
-    /**
-     * Fetches the numerical identifier for the generation of BattleCards this card is from.
-     * @return BattleCard Generation
-     */
     val generation: Int
+        /**
+         * Fetches the numerical identifier for the generation of BattleCards this card is from.
+         * @return BattleCard Generation
+         */
         get() = data.generation
 
-    /**
-     * Fetches the BattleCardType of this BattleCard.
-     * @return [BattleCardType]
-     */
     val type: BattleCardType
+        /**
+         * Fetches the BattleCardType of this BattleCard.
+         * @return [BattleCardType]
+         */
         get() = data.type
 
-    /**
-     * Fetches the name of this BattleCard.
-     * @return BattleCard Name
-     */
-    val name: String 
-        get() = type.name.lowercase().replaceFirstChar { it.uppercase() }
+    val name: String
+        /**
+         * Fetches the name of this BattleCard.
+         * @return BattleCard Name
+         */
+        get() = data.name
 
-    /**
-     * Fetches the amount of <strong>seconds</strong> this card can be deployed for.
-     * @return BattleCard Deploy Time
-     */
-    val deployTime: Int 
-        get() = (level + 10).coerceAtMost(60)
+    val deployTime: Int
+        /**
+         * Fetches the amount of <strong>seconds</strong> this card can be deployed for.
+         * @return BattleCard Deploy Time
+         */
+        get() = data.deployTime
 
     // Static Methods
 

@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.util
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
@@ -9,6 +10,7 @@ import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.math.cos
@@ -27,26 +29,51 @@ fun Entity.isCard(): Boolean {
     return w.isCard(this)
 }
 
-fun Entity.getCard(): IBattleCard<*>? {
-    if (!isCard()) return null
-    return IBattleCard.byEntity(this as Creature)
-}
+inline val Entity.card: IBattleCard<*>?
+    get() {
+        if (!isCard()) return null
+        return IBattleCard.byEntity(this as Creature)
+    }
 
-fun ItemStack.getCard(): ICard? {
-    val nbt = NBTWrapper.of(this)
-    val bytes = nbt.getByteArray("card")
-    if (bytes.isEmpty()) return null
+inline val ItemStack.card: ICard?
+    get() {
+        val nbt = NBTWrapper.of(this)
+        val bytes = nbt.getByteArray("card")
+        if (bytes.isEmpty()) return null
 
-    return ICard.fromByteArray(bytes)
-}
+        return ICard.fromByteArray(bytes)
+    }
 
 fun ItemStack.isCard(): Boolean = NBTWrapper.of(this).getByteArray("card").isNotEmpty()
 
-fun ItemStack.getID(): String? {
-    val id = NBTWrapper.of(this).getID()
-    if (id.isEmpty()) return null
+inline val ItemStack.id: String?
+    get() {
+        val id = NBTWrapper.of(this).getID()
+        if (id.isEmpty()) return null
 
-    return id
+        return id
+    }
+
+inline val Player.spawnedCards: List<IBattleCard<*>>
+    get() = IBattleCard.spawned.values.filter { it.p == this }
+
+inline val PlayerInventory.cards: Map<Int, ICard>
+    get() {
+        val cards = mutableMapOf<Int, ICard>()
+        for (i in 0 until size) {
+            val item = getItem(i)
+            cards[i] = item.card ?: continue
+        }
+
+        return cards
+    }
+
+fun Player.playSuccess() {
+    playSound(location, BattleSound.ENTITY_ARROW_HIT_PLAYER.find(), 1F, 2F)
+}
+
+fun Player.playFailure() {
+    playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
 }
 
 // Bukkit Extensions from Newer Version
@@ -81,14 +108,6 @@ fun Vector.rotateAroundNonUnitAxis(axis: Vector, angle: Double): Vector {
     val zPrime = z2 * dot * (1.0 - cos) + z * cos + (-y2 * x + x2 * y) * sin
 
     return setX(xPrime).setY(yPrime).setZ(zPrime)
-}
-
-fun Player.playSuccess() {
-    playSound(location, BattleSound.ENTITY_ARROW_HIT_PLAYER.find(), 1F, 2F)
-}
-
-fun Player.playFailure() {
-    playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
 }
 
 // Kotlin Util
@@ -142,5 +161,9 @@ fun Number.withSuffix(): String {
     val suffix = SUFFIXES[index - 1].toString()
 
     return CardUtils.format("%.1f%s", num / 1000.0.pow(index), suffix)
+}
+
+fun Enum<*>.formatName(): String {
+    return name.lowercase(BattleConfig.getConfig().locale).split("_").joinToString(" ") { s -> s.replaceFirstChar { it.uppercase() } }
 }
 

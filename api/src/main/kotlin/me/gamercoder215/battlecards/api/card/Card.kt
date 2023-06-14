@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.api.card
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.entity.Player
@@ -12,18 +13,18 @@ import kotlin.math.pow
  */
 interface Card : ConfigurationSerializable {
 
-    /**
-     * Fetches the Card ID of this BattleCard.
-     * @return BattleCard ID
-     */
     val cardID: String
+        /**
+         * Fetches the Card ID of this BattleCard.
+         * @return BattleCard ID
+         */
         get() = type.cardID
 
-    /**
-     * Fetches the Rarity of this BattleCard.
-     * @return BattleCard Rarity
-     */
     val rarity: Rarity
+        /**
+         * Fetches the Rarity of this BattleCard.
+         * @return BattleCard Rarity
+         */
         get() = type.rarity
 
     /**
@@ -50,49 +51,57 @@ interface Card : ConfigurationSerializable {
      */
     val lastUsedPlayer: OfflinePlayer?
 
-    /**
-     * Fetches the level of this BattleCard.
-     * @return BattleCard Level
-     */
     val level: Int
+        /**
+         * Fetches the level of this BattleCard.
+         * @return BattleCard Level
+         */
         get() = statistics.cardLevel
 
-    /**
-     * Fetches the experience of this BattleCard.
-     * @return BattleCard Experience
-     */
-    val experience: Double
-        get() = statistics.cardExperience
 
-    /**
-     * Fetches the experience required to reach the next level.
-     * @return Experience to next level
-     */
+    var experience: Double
+        /**
+         * Fetches the experience of this BattleCard.
+         * @return BattleCard Experience
+         */
+        get() = statistics.cardExperience
+        /**
+         * Sets the experience of this BattleCard.
+         * @param value New Experience
+         */
+        set(value) {
+            statistics.cardExperience = value
+        }
+
     val remainingExperience: Double
+        /**
+         * Fetches the experience required to reach the next level.
+         * @return Experience to next level
+         */
         get() {
             if (level == maxCardLevel) return 0.0
             return BattleCard.toExperience(level + 1, rarity) - experience
         }
 
-    /**
-     * Fetches the maximum level that this Card can be.
-     * @return Max Card Level
-     */
     val maxCardLevel: Int
+        /**
+         * Fetches the maximum level that this Card can be.
+         * @return Max Card Level
+         */
         get() = statistics.maxCardLevel
 
-    /**
-     * Fetches the maximum experience that this Card can have.
-     * @return Max Card Experience
-     */
     val maxCardExperience: Double
+        /**
+         * Fetches the maximum experience that this Card can have.
+         * @return Max Card Experience
+         */
         get() = statistics.maxCardExperience
 
-    /**
-     * Fetches the numerical identifier for the generation of BattleCards this card is from.
-     * @return BattleCard Generation
-     */
     val generation: Int
+        /**
+         * Fetches the numerical identifier for the generation of BattleCards this card is from.
+         * @return BattleCard Generation
+         */
         get() = type.generation
 
     /**
@@ -101,18 +110,18 @@ interface Card : ConfigurationSerializable {
      */
     val type: BattleCardType
 
-    /**
-     * Fetches the name of this BattleCard.
-     * @return BattleCard Name
-     */
     val name: String
+        /**
+         * Fetches the name of this BattleCard.
+         * @return BattleCard Name
+         */
         get() = type.name.lowercase().replaceFirstChar { it.uppercase() }
 
-    /**
-     * Fetches the amount of <strong>seconds</strong> this card can be deployed for.
-     * @return BattleCard Deploy Time
-     */
     val deployTime: Int
+        /**
+         * Fetches the amount of <strong>seconds</strong> this card can be deployed for.
+         * @return BattleCard Deploy Time
+         */
         get() = statistics.deployTime
 
     /**
@@ -122,11 +131,27 @@ interface Card : ConfigurationSerializable {
     val entityCardClass: Class<out BattleCard<*>>
 
     /**
-     * Spawns this Card Data into a BattleCard.
+     * Spawns this Card Data into a BattleCard. The Player must be holding a BattleCard Item.
      * @param owner The Player spawning this BattleCard
      * @return Spawned BattleCard Instance
+     * @throws IllegalStateException if the player already has 2 BattleCards deployed
      */
+    @Throws(IllegalStateException::class)
     fun spawnCard(owner: Player): BattleCard<*>
+
+    val cooldownTime: Long
+        /**
+         * Fetches how many milliseconds until this BattleCard can be deployed again.
+         * @return Cooldown Time
+         */
+        get() = (BattleConfig.getConfig().cardCooldown.times(1000) - (System.currentTimeMillis() - lastUsed.time)).coerceAtLeast(0)
+
+    val canUse: Boolean
+        /**
+         * Whether this card can be deployed if [cooldownTime] is `0`.
+         * @return Whether this card can be deployed based on the cooldown
+         */
+        get() = cooldownTime == 0L
 
     // Serialization
 
@@ -148,7 +173,7 @@ interface Card : ConfigurationSerializable {
         /**
          * Converts a BattleCard's Experience to the corresponding level.
          * @param experience Experience to convert
-         * @param rarity Rarity of the BattleCard to use for [Rarity.getExperienceModifier]
+         * @param rarity Rarity of the BattleCard to use for [Rarity.experienceModifier]
          * @return BattleCard Level
          */
         @JvmStatic

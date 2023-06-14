@@ -39,15 +39,6 @@ interface BattleConfig {
         }
 
         /**
-         * Fetches the directory that all player information is stored in.
-         * @return Player Directory
-         */
-        @JvmStatic
-        fun getPlayerDirectory(): File {
-            return File(getDataFolder(), "players").apply { if (!this.exists()) mkdirs() }
-        }
-
-        /**
          * Fetches the BattleConfig Instance.
          * @return BattleConfig
          */
@@ -101,7 +92,8 @@ interface BattleConfig {
             if (!config.isString("Functionality.CommandVersion") && !config.isInt("Functionality.CommandVersion")) config.set("Functionality.CommandVersion", "auto")
 
             if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
-            if (!config.isList("Disabled")) config.set("Disabled", listOf<String>())
+            if (!config.isList("Cards.Disabled")) config.set("Cards.Disabled", listOf<String>())
+            if (!config.isInt("Cards.Cooldown")) config.set("Cards.Cooldown", 30)
 
             if (!config.isConfigurationSection("Cards.Display")) config.createSection("Cards.Display")
 
@@ -112,6 +104,12 @@ interface BattleConfig {
             if (!config.isBoolean("Cards.Display.Info.ShowAbilities")) config.set("Cards.Display.Info.ShowAbilities", true)
             if (!config.isBoolean("Cards.Display.Info.ShowStatistics")) config.set("Cards.Display.Info.ShowStatistics", true)
 
+            if (!config.isConfigurationSection("Cards.Growth")) config.createSection("Cards.Growth")
+            if (!config.isNumber("Cards.Growth.KillMultiplier")) config.set("Cards.Growth.KillMultiplier", 1.0)
+            if (!config.isNumber("Cards.Growth.KillCardMultiplier")) config.set("Cards.Growth.KillCardMultiplier", 2.0)
+            if (!config.isNumber("Cards.Growth.UseMultiplier")) config.set("Cards.Growth.UseMultiplier", 5.0)
+            if (!config.isNumber("Cards.Growth.PassiveAmount")) config.set("Cards.Growth.PassiveAmount", 2.0)
+
             if (!config.isConfigurationSection("Cards.Basic")) config.createSection("Cards.Basic")
 
             if (!config.isConfigurationSection("Cards.Basic.Drops")) config.createSection("Cards.Basic.Drops")
@@ -120,6 +118,8 @@ interface BattleConfig {
 
             return config
         }
+
+        private fun FileConfiguration.isNumber(path: String): Boolean = this.isInt(path) || this.isDouble(path) || this.isLong(path)
 
         /**
          * Fetches a set of all of the valid entity types that can drop Basic Cards.
@@ -188,11 +188,11 @@ interface BattleConfig {
      */
     fun get(key: String): String
 
-    /**
-     * Fetches the plugin's language.
-     * @return Language Identifier
-     */
     val language: String
+        /**
+         * Fetches the plugin's language.
+         * @return Language Identifier
+         */
         get() = getConfiguration().getString("Language", "en")
 
     /**
@@ -211,25 +211,133 @@ interface BattleConfig {
      */
     fun createCardData(type: BattleCardType): Card
 
-    /**
-     * Fetches the plugin's locale.
-     * @return Configured Locale
-     */
+
     val locale: Locale
+        /**
+         * Fetches the plugin's locale.
+         * @return Configured Locale
+         */
         get() = when (language) {
             "en" -> Locale.ENGLISH
             "fr" -> Locale.FRENCH
             else -> Locale(language)
         }
 
-    /**
-     * Fetches whether cards of the [Rarity.BASIC] rarity can be dropped by mobs.
-     * @return true if can be dropped, false otherwise
-     */
+    private fun setConfig(key: String, value: Any) {
+        getConfiguration().set(key, value)
+        getPlugin().saveConfig()
+    }
+
+
     var isBasicDropsEnabled: Boolean
+        /**
+         * Fetches whether cards of the [Rarity.BASIC] rarity can be dropped by mobs.
+         * @return true if can be dropped, false otherwise
+         */
         get() = getConfiguration().getBoolean("Cards.Basic.Drops.Enabled")
-        set(value) {
-            getConfiguration().set("Cards.Basic.Drops.Enabled", value)
-            getPlugin().saveConfig()
-        }
+        /**
+         * Sets whether cards of the [Rarity.BASIC] rarity can be dropped by mobs.
+         * @param value true if can be dropped, false otherwise
+         */
+        set(value) = setConfig("Cards.Basic.Drops.Enabled", value)
+
+    var growthPassiveAmount: Double
+        /**
+         * Fetches the amount of set experience added to cards in a player's inventory every hour.
+         * @return Experience Amount
+         */
+        get() = getConfiguration().getDouble("Cards.Growth.PassiveAmount")
+        /**
+         * Sets the amount of set experience added to cards in a player's inventory every hour.
+         * @param value Experience Amount
+         */
+        set(value) = setConfig("Cards.Growth.PassiveAmount", value)
+
+    var growthUseMultiplier: Double
+        /**
+         * Fetches the multiplier by the Card's Level for how much experience will be added upon this card being used.
+         * @return Use Multiplier
+         */
+        get() = getConfiguration().getDouble("Cards.Growth.UseMultiplier")
+        /**
+         * Sets the multiplier by the Card's Level for how much experience will be added upon this card being used.
+         * @param value Use Multiplier
+         */
+        set(value) = setConfig("Cards.Growth.UseMultiplier", value)
+
+    var growthKillMultiplier: Double
+        /**
+         * Fetches the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.
+         * @return Kill Multiplier
+         */
+        get() = getConfiguration().getDouble("Cards.Growth.KillMultiplier")
+        /**
+         * Sets the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.
+         * @param value Kill Multiplier
+         */
+        set(value) = setConfig("Cards.Growth.KillMultiplier", value)
+
+    var growthKillCardMultiplier: Double
+        /**
+         * Fetches the multiplier for the kill multiplier when the target is a Battle Card.
+         * @return Kill Card Multiplier
+         * @see [growthKillMultiplier]
+         */
+        get() = getConfiguration().getDouble("Cards.Growth.KillCardMultiplier")
+        /**
+         * Sets the multiplier for the kill multiplier when the target is a Battle Card.
+         * @param value Kill Card Multiplier
+         * @see [growthKillMultiplier]
+         */
+        set(value) = setConfig("Cards.Growth.KillCardMultiplier", value)
+
+    var cardCooldown: Int
+        /**
+         * Fetches the cooldown, in seconds, between when the same BattleCard can be deployed again
+         * @return Cooldown
+         */
+        get() = getConfiguration().getInt("Cards.Cooldown")
+        /**
+         * Sets the cooldown, in seconds, between when the same BattleCard can be deployed again
+         * @param value Cooldown
+         * @see [cardCooldown]
+         */
+        set(value) = setConfig("Cards.Cooldown", value)
+
+    var playerCooldownCount: Int
+        /**
+         * Fetches the number of cards that can be deployed by a player before the cooldown is activated.
+         * @return Card Count
+         */
+        get() = getConfiguration().getInt("Cards.PlayerCooldown.Count")
+        /**
+         * Sets the number of cards that can be deployed by a player before the cooldown is activated.
+         * @param value Card Count
+         */
+        set(value) = setConfig("Cards.PlayerCooldown.Count", value)
+
+    var playerCooldownTime: Int
+        /**
+         * Fetches the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.
+         * @return Cooldown Time
+         */
+        get() = getConfiguration().getInt("Cards.PlayerCooldown.Cooldown")
+        /**
+         * Sets the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.
+         * @param value Cooldown Time
+         */
+        set(value) = setConfig("Cards.PlayerCooldown.Cooldown", value)
+
+    var playerCooldownIgnored: List<String>
+        /**
+         * Fetches a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.
+         * @return List of Players
+         */
+        get() = getConfiguration().getStringList("Cards.PlayerCooldown.Ignored")
+        /**
+         * Sets a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.
+         * @param value List of Players
+         */
+        set(value) = setConfig("Cards.PlayerCooldown.Ignored", value)
+
 }

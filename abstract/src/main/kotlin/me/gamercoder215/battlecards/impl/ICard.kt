@@ -4,9 +4,12 @@ import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.inventory.CardGenerator
+import me.gamercoder215.battlecards.util.spawnedCards
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import java.io.*
@@ -21,6 +24,9 @@ class ICard(
     override var lastUsedPlayer: OfflinePlayer? = null
 ) : Card, Serializable {
 
+    val itemStack: ItemStack
+        get() = CardGenerator.toItem(this)
+
     val stats: MutableMap<String, Number> = mutableMapOf()
 
     override val creationDate: Date
@@ -32,12 +38,16 @@ class ICard(
     override val lastUsed: Date
         get() = Date(last ?: 0)
 
-    override fun spawnCard(owner: Player): IBattleCard<*> {
+    override fun spawnCard(owner: Player): IBattleCard<*> = spawnCard(owner, itemStack)
+
+    fun spawnCard(owner: Player, itemUsed: ItemStack): IBattleCard<*> {
+        if (owner.spawnedCards.size >= 2) throw IllegalStateException("Player already has 2 spawned cards")
+
         val constr = entityCardClass.asSubclass(IBattleCard::class.java).getDeclaredConstructor(ICard::class.java)
         constr.isAccessible = true
 
         val card = constr.newInstance(this)
-        card.spawn(owner, owner.location)
+        card.spawn(owner, itemUsed, owner.location)
 
         return card
     }
