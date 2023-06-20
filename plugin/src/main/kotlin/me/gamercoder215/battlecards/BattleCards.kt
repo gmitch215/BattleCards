@@ -84,6 +84,9 @@ class BattleCards : JavaPlugin(), BattleConfig {
         loadTasks()
         logger.info("Loaded Tasks...")
 
+        Wrapper.loadCards()
+        logger.info("Registered ${registeredCards.size} Cards")
+
         // UpdateChecker
         UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, github)
             .setDownloadLink("https://github.com/$github/releases/latest/")
