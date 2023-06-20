@@ -115,7 +115,7 @@ interface Card : ConfigurationSerializable {
          * Fetches the name of this BattleCard.
          * @return BattleCard Name
          */
-        get() = type.name.lowercase().replaceFirstChar { it.uppercase() }
+        get() = type.name.lowercase(BattleConfig.getConfig().locale).split("_").joinToString(" ") { s -> s.replaceFirstChar { it.uppercase() } }
 
     val deployTime: Int
         /**
@@ -178,9 +178,9 @@ interface Card : ConfigurationSerializable {
          */
         @JvmStatic
         fun toLevel(experience: Double, rarity: Rarity = Rarity.COMMON): Int {
-            return when(experience) {
-                in Double.NEGATIVE_INFINITY..0.0 -> throw IllegalArgumentException("Experience must be positive!")
+            return when (experience) {
                 in 0.0..1350.0 -> 1
+                in Double.NEGATIVE_INFINITY..0.0 -> throw IllegalArgumentException("Experience cannot be negative!")
                 else -> {
                     var level = 1
                     while (toExperience(level, rarity) < experience) level++
