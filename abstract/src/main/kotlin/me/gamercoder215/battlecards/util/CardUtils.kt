@@ -50,20 +50,26 @@ object CardUtils {
 
     @JvmStatic
     fun color(s: String): Array<String> {
-       val array: Array<String> = s.trim().split("\\s+".toRegex()).toTypedArray()
-       val prefix = if (array[0].startsWith("&")) array[0].substring(1) else ChatColor.GRAY
+        val array = s.trim().split("\\s".toRegex()).toTypedArray()
 
-       for (i in array.indices) {
-           val value = array[i]
+        val list: MutableList<String> = mutableListOf()
 
-           if (value.endsWith("%") || value.endsWith("s")) array[i] = "${ChatColor.GREEN}$value$prefix"
-           if (value.replace("[,KMBT]".toRegex(), "").toDoubleOrNull() != null) array[i] = "${ChatColor.RED}$value$prefix"
-       }
+        for (i in array.indices) {
+            var str = array[i].replace("&", "${ChatColor.COLOR_CHAR}")
 
-       return ChatPaginator.wordWrap(
-           StringBuilder().append(prefix).append(array.joinToString(" ")).toString(),
-           30
-       )
+            if (!str.startsWith(ChatColor.COLOR_CHAR)) {
+                str = when {
+                    str.toDoubleOrNull() != null -> "${ChatColor.RED}$str"
+                    str.endsWith("s") -> "${ChatColor.GOLD}$str"
+                    str.endsWith("x") -> "${ChatColor.BLUE}$str"
+                    else -> "${ChatColor.GRAY}$str"
+                }
+            }
+
+            list.add(str)
+        }
+
+        return ChatPaginator.wordWrap(list.joinToString(" "), 40)
     }
 
     @JvmStatic
