@@ -58,7 +58,15 @@ enum class BattleCardType {
 
     private val entityClass: Class<out LivingEntity>?
 
-    constructor(generation: Int, entityClass: String, rarity: Rarity) : this(generation, getBukkitClass(entityClass), rarity)
+    constructor(generation: Int, entityClass: String, rarity: Rarity) : this(
+        generation,
+        try {
+            Class.forName("org.bukkit.entity.${entityClass}") as Class<out LivingEntity>
+        } catch (e: ClassNotFoundException) {
+            null
+        },
+        rarity
+    )
 
     constructor(generation: Int, entityClass: KClass<out LivingEntity>, rarity: Rarity) : this(generation, entityClass.java, rarity)
 
@@ -101,19 +109,12 @@ enum class BattleCardType {
 
     companion object {
 
-        private fun getBukkitClass(clazz: String): Class<out LivingEntity>? {
-            return try {
-                Class.forName("org.bukkit.entity.${clazz}") as Class<out LivingEntity>
-            } catch (e: ClassNotFoundException) {
-                null
-            }
-        }
-
         /**
          * Fetches a BattleCardType from a BattleCard Class.
          * @param clazz BattleCard Class
          * @return BattleCardType found, or null if not found
          */
+        @JvmStatic
         fun fromClass(clazz: Class<out BattleCard<*>>): BattleCardType? {
             return values().firstOrNull { it.getEntityClass() == clazz }
         }
