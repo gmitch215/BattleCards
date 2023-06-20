@@ -31,14 +31,14 @@ object CardGenerator {
                 if (config.getBoolean("Cards.Display.Inventory.ShowLevel"))
                     cardL.addAll(listOf(
                         " ",
-                        "${format(get("constants.level"), card.level)} | ${format(get("constants.card.deploy"), card.deployTime)}",
+                        "${ChatColor.YELLOW}${format(get("constants.level"), card.level)} | ${format(get("constants.card.deploy"), card.deployTime)}",
                         "${createLine(card.level)} | ${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
                     ))
 
                 cardL.addAll(listOf(
                     " ",
-                    get("constants.card.left_click_view"),
-                    get("constants.card.right_click_deploy")
+                    "${ChatColor.YELLOW}${get("constants.card.left_click_view")}",
+                    "${ChatColor.YELLOW}${get("constants.card.right_click_deploy")}",
                 ))
 
                 lore = CardUtils.color(cardL)
