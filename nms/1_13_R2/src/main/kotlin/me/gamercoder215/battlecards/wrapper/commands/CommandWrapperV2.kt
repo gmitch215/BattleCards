@@ -1,10 +1,12 @@
 package me.gamercoder215.battlecards.wrapper.commands
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import revxrsal.commands.annotation.Command
+import revxrsal.commands.annotation.DefaultFor
 import revxrsal.commands.annotation.Description
 import revxrsal.commands.annotation.Subcommand
 import revxrsal.commands.annotation.Usage
@@ -45,7 +47,11 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
     private class CardCommands(private val wrapper: CommandWrapperV2) {
 
         @Subcommand("info")
+        @DefaultFor("bcard", "card", "battlecard")
         fun cardInfo(p: Player) = wrapper.cardInfo(p)
+
+        @Subcommand("create")
+        fun cardCreate(p: Player, type: BattleCardType) = wrapper.createCard(p, type)
 
     }
 
