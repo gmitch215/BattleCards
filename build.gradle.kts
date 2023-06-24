@@ -105,9 +105,9 @@ subprojects {
             finalizedBy(jacocoTestReport)
         }
 
-        jar.configure {
-            enabled = false
+        jar {
             dependsOn("shadowJar")
+            archiveClassifier.set("dev")
         }
 
         withType<ShadowJar> {
@@ -118,13 +118,16 @@ subprojects {
                     "Implementation-Vendor" to pAuthor
                 )
             }
-            exclude("META-INF", "META-INF/**")
-
             relocate("revxrsal.commands", "me.gamercoder215.battlecards.shaded.lamp")
             relocate("org.bstats", "me.gamercoder215.battlecards.shaded.bstats")
             relocate("com.jeff_media.updatechecker", "me.gamercoder215.battlecards.shaded.updatechecker")
 
             archiveClassifier.set("")
+            archiveFileName.set("${project.name}-${project.version}.jar")
         }
+    }
+
+    artifacts {
+        add("default", tasks.getByName<ShadowJar>("shadowJar"))
     }
 }

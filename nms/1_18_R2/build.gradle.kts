@@ -32,7 +32,7 @@ tasks {
     }
 
     remap {
-        dependsOn("shadowJar")
+        dependsOn("jar")
 
         version.set(mcVersion)
         action.set(RemapTask.Action.MOJANG_TO_SPIGOT)
