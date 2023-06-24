@@ -54,6 +54,46 @@ enum class BattleCardType {
      * Represents a Wither Skeleton BattleCard.
      */
     GOLD_SKELETON(1, "WitherSkeleton", Rarity.RARE),
+
+    /**
+     * Represents a Zombie BattleCard.
+     */
+    REDSTONE_ZOMBIE(1, Zombie::class, Rarity.UNCOMMON),
+
+    /**
+     * Represents a Skeleton BattleCard.
+     */
+    UNDEAD_LUMBERJACK(1, Skeleton::class, Rarity.RARE),
+
+    /**
+     * Represents a Zombie Villager BattleCard.
+     */
+    MINER(1, "ZombieVillager", Rarity.UNCOMMON),
+
+    /**
+     * Represents a Warden BattleCard.
+     */
+    GRAND_WARDEN(1, "Warden", Rarity.ULTIMATE),
+
+    /**
+     * Represents an Enderman BattleCard.
+     */
+    EYE_OF_ENDERMAN(1, Enderman::class, Rarity.LEGEND),
+
+    /**
+     * Represents a Polar Bear BattleCard.
+     */
+    FROST_BEAR(1, "PolarBear", Rarity.RARE),
+
+    /**
+     * Represents a Blaze BattleCard.
+     */
+    INFERNO_BLAZE(1, Blaze::class, Rarity.RARE),
+
+    /**
+     * Represents a Stray BattleCard.
+     */
+    BANDIT(1, "Stray", Rarity.UNCOMMON)
     ;
 
     private val entityClass: Class<out LivingEntity>?
