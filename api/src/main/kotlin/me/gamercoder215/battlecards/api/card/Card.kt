@@ -70,6 +70,7 @@ interface Card : ConfigurationSerializable {
          * @param value New Experience
          */
         set(value) {
+            if (statistics.cardExperience > maxCardExperience) throw IllegalArgumentException("Experience cannot be greater than max card experience")
             statistics.cardExperience = value
         }
 
@@ -115,7 +116,7 @@ interface Card : ConfigurationSerializable {
          * Fetches the name of this BattleCard.
          * @return BattleCard Name
          */
-        get() = type.name.lowercase(BattleConfig.getConfig().locale).split("_").joinToString(" ") { s -> s.replaceFirstChar { it.uppercase() } }
+        get() = type.name.lowercase(BattleConfig.config.locale).split("_").joinToString(" ") { s -> s.replaceFirstChar { it.uppercase() } }
 
     val deployTime: Int
         /**
@@ -139,12 +140,19 @@ interface Card : ConfigurationSerializable {
     @Throws(IllegalStateException::class)
     fun spawnCard(owner: Player): BattleCard<*>
 
+    val isMaxed: Boolean
+        /**
+         * Whetehr or not this BattleCard is currently maxed.
+         * @return true if reached maximum card experience and level, false otherwise
+         */
+        get() { return experience >= maxCardExperience }
+
     val cooldownTime: Long
         /**
          * Fetches how many milliseconds until this BattleCard can be deployed again.
          * @return Cooldown Time
          */
-        get() = (BattleConfig.getConfig().cardCooldown.times(1000) - (System.currentTimeMillis() - lastUsed.time)).coerceAtLeast(0)
+        get() = (BattleConfig.config.cardCooldown.times(1000) - (System.currentTimeMillis() - lastUsed.time)).coerceAtLeast(0)
 
     val canUse: Boolean
         /**
@@ -168,7 +176,7 @@ interface Card : ConfigurationSerializable {
         /**
          * The maximum level any BattleCard can be
          */
-        const val MAX_LEVEL = 150
+        const val MAX_LEVEL = 200
 
         /**
          * Converts a BattleCard's Experience to the corresponding level.

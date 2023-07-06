@@ -155,6 +155,13 @@ interface BattleCard<T : LivingEntity> {
          */
         get() = data.deployTime
 
+    val isMaxed: Boolean
+        /**
+         * Whetehr or not this BattleCard is currently maxed.
+         * @return true if reached maximum card experience and level, false otherwise
+         */
+        get() = data.isMaxed
+
     // Static Methods
 
     companion object {

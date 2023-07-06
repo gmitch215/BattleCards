@@ -8,7 +8,7 @@ import org.bukkit.ChatColor
 enum class Rarity(
     color: ChatColor,
     experienceModifier: Double = 1.0,
-    maxCardLevel: Int = BattleCard.MAX_LEVEL
+    maxCardLevel: Int = Card.MAX_LEVEL
 ) {
     /**
      * Represents the Basic rarity
@@ -21,23 +21,23 @@ enum class Rarity(
     /**
      * Represents the Uncommon rarity
      */
-    UNCOMMON(ChatColor.DARK_GREEN, 1.1),
+    UNCOMMON(ChatColor.DARK_GREEN, 1.1, 170),
     /**
      * Represents the Rare rarity
      */
-    RARE(ChatColor.BLUE, 1.25, 130),
+    RARE(ChatColor.BLUE, 1.25, 140),
     /**
      * Represents the Epic rarity
      */
-    EPIC(ChatColor.DARK_PURPLE, 1.45, 120),
+    EPIC(ChatColor.DARK_PURPLE, 1.45, 100),
     /**
      * Represents the Legend rarity
      */
-    LEGEND(ChatColor.GOLD, 1.6, 100),
+    LEGEND(ChatColor.GOLD, 1.6, 75),
     /**
      * Represents the Mythical rarity
      */
-    MYTHICAL(ChatColor.LIGHT_PURPLE, 1.95, 60),
+    MYTHICAL(ChatColor.LIGHT_PURPLE, 1.95, 50),
     /**
      * Represents the Ultimate rarity
      */
