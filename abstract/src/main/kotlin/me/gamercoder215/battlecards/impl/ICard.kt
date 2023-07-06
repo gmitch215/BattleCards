@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.impl
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
@@ -10,6 +11,7 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.io.BukkitObjectInputStream
 import org.bukkit.util.io.BukkitObjectOutputStream
 import java.io.*
@@ -48,6 +50,12 @@ class ICard(
 
         val card = constr.newInstance(this)
         card.spawn(owner, itemUsed, owner.location)
+        
+        object : BukkitRunnable() {
+            override fun run() {
+                card.despawn()
+            }
+        }.runTaskLater(BattleConfig.plugin, card.deployTime.toLong())
 
         return card
     }
@@ -73,6 +81,8 @@ class ICard(
     }
 
     companion object {
+
+        private const val serialVersionUID: Long = 193409138419023815L
 
         @JvmStatic
         fun fromByteArray(array: ByteArray): ICard {
