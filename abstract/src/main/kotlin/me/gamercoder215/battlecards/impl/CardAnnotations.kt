@@ -90,6 +90,16 @@ annotation class Defensive(
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
+annotation class Damage(
+    val chance: Double = 1.0,
+    val operation: CardOperation = CardOperation.ADD,
+    val value: Double = Double.NaN,
+    val max: Double = 1.0
+)
+
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
 annotation class Offensive(
     val chance: Double = 1.0,
     val operation: CardOperation = CardOperation.ADD,

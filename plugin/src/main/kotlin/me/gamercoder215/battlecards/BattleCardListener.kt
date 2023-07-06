@@ -73,7 +73,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         val p = event.player
         val item = event.item!!
 
-        if (!item.isCard()) return
+        if (!item.isCard) return
         val card = item.card!!
 
         when (event.action) {
@@ -95,7 +95,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     return
                 }
 
-                card.statistics.cardExperience += plugin.growthUseMultiplier * card.level
+                addExperience(card, plugin.growthUseMultiplier * card.level)
                 card.spawnCard(p, item)
                 w.spawnParticle(BattleParticle.CLOUD, p.location, 30, 0.0, 1.0, 0.0, 0.2)
 
@@ -111,8 +111,12 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     @EventHandler
     fun onTarget(event: EntityTargetEvent) {
-        if (event.entity.isCard() && event.entity.card!!.p.uniqueId == event.target.uniqueId)
-            event.isCancelled = true
+        if (event.entity.isCard) {
+            val card = event.entity.card!!
+
+            if (card.p.uniqueId == event.target?.uniqueId || event.reason.name == "TEMPT")
+                event.isCancelled = true
+        }
     }
 
     @EventHandler
@@ -127,15 +131,40 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         return card.level >= annotation.level
     }
 
+    private fun addExperience(card: ICard, amount: Number) {
+        if (!card.isMaxed)
+            card.experience = (card.experience + amount.toDouble()).coerceAtMost(card.maxCardExperience)
+    }
+
+    @EventHandler
+    fun damage(event: EntityDamageEvent) {
+        if (event.isCancelled) return
+        val entity = event.entity as? LivingEntity ?: return
+
+        // Damage
+
+        if (entity.isCard) {
+            val card = entity.card!!
+
+            val damage = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Damage::class.java) }
+            for (m in damage) {
+                if (!checkUnlockedAt(m, card)) continue
+                val annotation = m.getDeclaredAnnotation(Damage::class.java)
+
+                if (r.nextDouble() <= annotation.getChance(card.level))
+                    m.invoke(card, event)
+            }
+        }
+    }
+
     @EventHandler
     fun attack(event: EntityDamageByEntityEvent) {
         if (event.isCancelled) return
-        if (event.entity !is LivingEntity) return
-        val entity = event.entity as LivingEntity
+        val entity = event.entity as? LivingEntity ?: return
 
         // Defensive
 
-        if (entity.isCard()) {
+        if (entity.isCard) {
             val card = entity.card
             if (card != null) {
                 val defensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Defensive::class.java) }
@@ -143,13 +172,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     for (m in defensive) {
                         if (!checkUnlockedAt(m, card)) continue
                         val annotation = m.getDeclaredAnnotation(Defensive::class.java)
-                        var chance = annotation.chance
 
-                        if (!annotation.value.isNaN())
-                            for (i in 1 until card.level) chance = annotation.operation.apply(chance, annotation.value)
-
-                        chance = chance.coerceAtMost(annotation.max)
-                        if ((r.nextDouble() * annotation.max) <= chance)
+                        if (r.nextDouble() <= annotation.getChance(card.level))
                             m.invoke(card, event)
                     }
 
@@ -173,13 +197,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     for (m in userDefensive) {
                         if (!checkUnlockedAt(m, card)) continue
                         val annotation = m.getAnnotation(UserDefensive::class.java)
-                        var chance = annotation.chance
 
-                        if (!annotation.value.isNaN())
-                            for (i in 1 until card.level) chance = annotation.operation.apply(chance, annotation.value)
-
-                        chance = chance.coerceAtMost(annotation.max)
-                        if ((r.nextDouble() * annotation.max) <= chance)
+                        if (r.nextDouble() <= annotation.getChance(card.level))
                             m.invoke(card, event)
                     }
             }
@@ -187,33 +206,32 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         // Offensive
 
-        if (event.damager.isCard()) {
+        if (event.damager.isCard) {
             val card = event.damager.card
             if (card != null) {
                 val offensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Offensive::class.java) }
                 for (m in offensive) {
                     if (!checkUnlockedAt(m, card)) continue
-                    val annotation = m.getDeclaredAnnotation(Defensive::class.java)
-                    var chance = annotation.chance
+                    val annotation = m.getDeclaredAnnotation(Offensive::class.java)
 
-                    if (!annotation.value.isNaN())
-                        for (i in 1 until card.level) chance = annotation.operation.apply(chance, annotation.value)
-
-                    chance = chance.coerceAtMost(annotation.max)
-                    if ((r.nextDouble() * annotation.max) <= chance)
+                    if (r.nextDouble() <= annotation.getChance(card.level))
                         m.invoke(card, event)
                 }
 
                 card.data.statistics.damageDealt += event.finalDamage
 
                 if (entity.health - event.finalDamage <= 0) {
+                    var modifier: Double = plugin.growthKillMultiplier
                     when {
                         entity is Player -> card.data.statistics.playerKills++
-                        entity.isCard() -> card.data.statistics.cardKills++
+                        entity.isCard -> {
+                            card.data.statistics.cardKills++
+                            modifier = plugin.growthKillCardMultiplier
+                        }
                         else -> card.data.statistics.entityKills++
                     }
 
-                    card.data.experience += plugin.growthKillMultiplier * entity.maxHealth * (if (entity.isCard()) plugin.growthKillCardMultiplier else 1.0)
+                    addExperience(card.data, modifier * entity.maxHealth * (if (entity.isCard) plugin.growthKillCardMultiplier else 1.0))
                 }
                 card.currentItem = card.data.itemStack
             }
@@ -227,13 +245,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     for (m in userOffensive) {
                         if (!checkUnlockedAt(m, card)) continue
                         val annotation = m.getAnnotation(UserOffensive::class.java)
-                        var chance = annotation.chance
 
-                        if (!annotation.value.isNaN())
-                            for (i in 1 until card.level) chance = annotation.operation.apply(chance, annotation.value)
-
-                        chance = chance.coerceAtMost(annotation.max)
-                        if ((r.nextDouble() * annotation.max) <= chance)
+                        if (r.nextDouble() <= annotation.getChance(card.level))
                             m.invoke(card, event)
                     }
             }
