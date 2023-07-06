@@ -3,10 +3,12 @@ package me.gamercoder215.battlecards.wrapper.v1_17_R1
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import net.minecraft.server.level.EntityPlayer
 import net.minecraft.world.entity.EntityCreature
+import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.ai.goal.PathfinderGoal
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalTarget
 import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition
 import net.minecraft.world.level.pathfinder.PathType
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.event.entity.EntityTargetEvent
 
@@ -92,6 +94,52 @@ class CardOwnerHurtByTargetGoal1_17_R1(
 ) : PathfinderGoalTarget(creature, true, true) {
 
     private val nms = (card.p as CraftPlayer).handle
+    private var timestamp: Int = 0
+    private var lastHurtBy = nms.bc ?: nms.lastDamager
+
+    override fun a(): Boolean {
+        lastHurtBy = nms.bc ?: nms.lastDamager
+        return timestamp != nms.dH() && a(lastHurtBy, PathfinderTargetCondition.a)
+    }
+
+    override fun c() {
+        creature.setGoalTarget(lastHurtBy, EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true)
+        timestamp = nms.dH()
+
+        super.c()
+    }
+
+}
+
+internal class CardMasterHurtTargetGoal1_17_R1(
+    private val creature: EntityCreature,
+    card: IBattleCard<*>
+) : PathfinderGoalTarget(creature, true, true) {
+
+    private val nms = (card.entity as CraftCreature).handle
+    private var timestamp: Int = 0
+    private var lastHurt = nms.dI()
+
+    override fun a(): Boolean {
+        lastHurt = nms.dI()
+        return timestamp != nms.dJ() && a(lastHurt, PathfinderTargetCondition.a)
+    }
+
+    override fun c() {
+        creature.setGoalTarget(lastHurt, EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true)
+        timestamp = nms.dJ()
+
+        super.c()
+    }
+
+}
+
+internal class CardMasterHurtByTargetGoal1_17_R1(
+    private val creature: EntityCreature,
+    card: IBattleCard<*>
+) : PathfinderGoalTarget(creature, true, true) {
+
+    private val nms = (card.entity as CraftCreature).handle
     private var timestamp: Int = 0
     private var lastHurtBy = nms.bc ?: nms.lastDamager
 

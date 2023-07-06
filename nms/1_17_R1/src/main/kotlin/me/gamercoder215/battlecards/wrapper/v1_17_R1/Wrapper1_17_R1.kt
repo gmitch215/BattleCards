@@ -12,10 +12,12 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.core.IRegistry
 import net.minecraft.resources.MinecraftKey
 import net.minecraft.world.entity.EntityCreature
+import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.ai.attributes.AttributeBase
 import net.minecraft.world.entity.ai.attributes.AttributeMapBase
 import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.ai.goal.*
+import net.minecraft.world.entity.ai.goal.target.PathfinderGoalDefendVillage
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTargetWitch
@@ -65,7 +67,7 @@ internal class Wrapper1_17_R1 : Wrapper {
     }
 
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
-        val nms: EntityCreature = (en as CraftCreature).handle
+        val nms = (en as CraftCreature).handle
 
         nms.drops.clear()
 
@@ -73,7 +75,7 @@ internal class Wrapper1_17_R1 : Wrapper {
             val attribute = toNMS(toBukkit(entry.key))
             val value = entry.value
 
-            var handle: AttributeModifiable? = nms.getAttributeInstance(attribute)
+            var handle = nms.getAttributeInstance(attribute)
             if (handle == null) {
                 val attributesF = AttributeMapBase::class.java.getDeclaredField("b")
                 attributesF.isAccessible = true
@@ -85,20 +87,57 @@ internal class Wrapper1_17_R1 : Wrapper {
 
             handle.value = value
         }
-        
-        nms.bP.c().map { it.j() }.filter {
-            it is PathfinderGoalAvoidTarget<*> || it is PathfinderGoalRestrictSun || it is PathfinderGoalFleeSun || it is PathfinderGoalBeg || it is PathfinderGoalBreed
-        }.forEach { nms.bP.a(it) }
+
+        removeGoals(nms.bP, nms.bQ)
         nms.bP.a(2, FollowCardOwner1_17_R1(nms, card))
 
-        nms.bQ.c().map { it.j() }.filter {
-            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*>
-        }.forEach { nms.bQ.a(it) }
         nms.bQ.a(1, CardOwnerHurtByTargetGoal1_17_R1(nms, card))
         nms.bQ.a(2, CardOwnerHurtTargetGoal1_17_R1(nms, card))
         nms.bQ.a(3, PathfinderGoalHurtByTarget(nms))
 
         nms.addScoreboardTag("battlecards")
+    }
+
+    override fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T {
+        val card = ownerCard.entity
+        val en = card.world.spawn(card.location, clazz)
+
+        en.isCustomNameVisible = true
+        en.customName = "${ownerCard.rarity.color}${ownerCard.name}'s Minion"
+
+        val equipment = en.equipment!!
+        equipment.itemInMainHandDropChance = 0F
+        equipment.itemInOffHandDropChance = 0F
+        equipment.helmetDropChance = 0F
+        equipment.chestplateDropChance = 0F
+        equipment.leggingsDropChance = 0F
+        equipment.bootsDropChance = 0F
+
+        en.target = card.target
+
+        val nms = (en as CraftCreature).handle
+
+        removeGoals(nms.bP, nms.bQ)
+        nms.bP.a(2, FollowCardOwner1_17_R1(nms, ownerCard))
+
+        nms.bQ.a(1, CardMasterHurtByTargetGoal1_17_R1(nms, ownerCard))
+        nms.bQ.a(2, CardMasterHurtTargetGoal1_17_R1(nms, ownerCard))
+        nms.bQ.a(3, CardOwnerHurtByTargetGoal1_17_R1(nms, ownerCard))
+        nms.bQ.a(4, CardOwnerHurtTargetGoal1_17_R1(nms, ownerCard))
+        nms.bQ.a(5, PathfinderGoalHurtByTarget(nms))
+
+        ownerCard.minions.add(en)
+        return en
+    }
+
+    private fun removeGoals(goalSelector: PathfinderGoalSelector, targetSelector: PathfinderGoalSelector) {
+        goalSelector.c().map { it.j() }.filter {
+            it is PathfinderGoalAvoidTarget<*> || it is PathfinderGoalRestrictSun || it is PathfinderGoalFleeSun || it is PathfinderGoalBeg || it is PathfinderGoalBreed
+        }.forEach { goalSelector.a(it) }
+
+        targetSelector.c().map { it.j() }.filter {
+            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*> || it is PathfinderGoalDefendVillage
+        }.forEach { targetSelector.a(it) }
     }
 
     override fun getNBTWrapper(item: ItemStack): NBTWrapper {

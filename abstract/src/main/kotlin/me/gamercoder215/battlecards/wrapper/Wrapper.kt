@@ -34,6 +34,8 @@ interface Wrapper {
 
     fun spawnParticle(particle: BattleParticle, location: Location, count: Int, dX: Double = 0.0, dY: Double = 0.0, dZ: Double = 0.0, speed: Double = 0.0, force: Boolean = false)
 
+    fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T
+
     companion object {
         @JvmStatic
         val w = getWrapper()
@@ -78,11 +80,11 @@ interface Wrapper {
 
         @JvmStatic
         fun getCommandWrapper(): CommandWrapper {
-            val cmdV: Int = when (BattleConfig.getConfiguration().getString("Functionality.CommandVersion")) {
+            val cmdV: Int = when (BattleConfig.configuration.getString("Functionality.CommandVersion", "auto")) {
                 "1" -> 1
                 "2" -> 2
                 "auto" -> w.getCommandVersion()
-                else -> throw IllegalStateException("Invalid Command Version '${BattleConfig.getConfiguration().getString("Functionality.CommandVersion")}'")
+                else -> throw IllegalStateException("Invalid Command Version '${BattleConfig.configuration.getString("Functionality.CommandVersion")}'")
             }
 
             val constr = Class.forName("me.gamercoder215.battlecards.wrapper.commands.CommandWrapperV${cmdV}")
@@ -90,21 +92,22 @@ interface Wrapper {
                 .getDeclaredConstructor(Plugin::class.java)
 
             constr.isAccessible = true
-            return constr.newInstance(BattleConfig.getPlugin())
+            return constr.newInstance(BattleConfig.plugin)
         }
 
         @JvmStatic
         fun loadCards() {
             val current = getServerVersion()
-            val loaded: MutableList<Class<out IBattleCard<*>>> = mutableListOf()
-
-            loaded.addAll(listOf(
+            val loaded: MutableList<Class<out IBattleCard<*>>> = mutableListOf(
                 IBasicCard::class.java,
                 IDiamondGolem::class.java,
                 IKingWither::class.java,
                 IWitherman::class.java,
-                ISniper::class.java
-            ))
+                ISniper::class.java,
+                IRedstoneZombie::class.java,
+                IUndeadLumberjack::class.java,
+                IInfernoBlaze::class.java
+            )
 
             versions.subList(0, versions.indexOf(current) + 1).forEach {
                 try {
@@ -117,7 +120,7 @@ interface Wrapper {
                 } catch (ignored: ClassNotFoundException) {}
             }
 
-            loaded.forEach(BattleConfig.getConfig()::registerCard)
+            loaded.forEach(BattleConfig.config::registerCard)
         }
 
         @JvmStatic
@@ -127,12 +130,12 @@ interface Wrapper {
 
         @JvmStatic
         fun get(key: String): String {
-            return BattleConfig.getConfig().get(key)
+            return BattleConfig.config.get(key)
         }
 
         @JvmStatic
         fun getMessage(key: String): String {
-            return BattleConfig.getConfig().getMessage(key)
+            return BattleConfig.config.getMessage(key)
         }
 
         @JvmStatic

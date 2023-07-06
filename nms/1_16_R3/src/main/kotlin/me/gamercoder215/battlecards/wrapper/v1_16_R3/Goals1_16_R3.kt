@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_16_R3
 
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import net.minecraft.server.v1_16_R3.*
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
 import org.bukkit.event.entity.EntityTargetEvent
 
@@ -87,6 +88,52 @@ class CardOwnerHurtByTargetGoal1_16_R3(
 ) : PathfinderGoalTarget(creature, true, true) {
 
     private val nms = (card.p as CraftPlayer).handle
+    private var timestamp: Int = 0
+    private var lastHurtBy = nms.lastDamager
+
+    override fun a(): Boolean {
+        lastHurtBy = nms.lastDamager
+        return timestamp != nms.hurtTimestamp && a(lastHurtBy, PathfinderTargetCondition.a)
+    }
+
+    override fun c() {
+        creature.setGoalTarget(lastHurtBy, EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true)
+        timestamp = nms.hurtTimestamp
+
+        super.c()
+    }
+
+}
+
+internal class CardMasterHurtTargetGoal1_16_R3(
+    private val creature: EntityCreature,
+    card: IBattleCard<*>
+) : PathfinderGoalTarget(creature, true, true) {
+
+    private val nms = (card.entity as CraftCreature).handle
+    private var timestamp: Int = 0
+    private var lastHurt = nms.db()
+
+    override fun a(): Boolean {
+        lastHurt = nms.db()
+        return timestamp != nms.dc() && a(lastHurt, PathfinderTargetCondition.a)
+    }
+
+    override fun c() {
+        creature.setGoalTarget(lastHurt, EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true)
+        timestamp = nms.dc()
+
+        super.c()
+    }
+
+}
+
+internal class CardMasterHurtByTargetGoal1_16_R3(
+    private val creature: EntityCreature,
+    card: IBattleCard<*>
+) : PathfinderGoalTarget(creature, true, true) {
+
+    private val nms = (card.entity as CraftCreature).handle
     private var timestamp: Int = 0
     private var lastHurtBy = nms.lastDamager
 

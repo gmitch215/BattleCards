@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.goal.Goal
 import net.minecraft.world.entity.ai.goal.target.TargetGoal
 import net.minecraft.world.entity.ai.targeting.TargetingConditions
 import net.minecraft.world.level.pathfinder.BlockPathTypes
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityTargetEvent
@@ -94,6 +95,52 @@ class CardOwnerHurtByTargetGoal1_19_R1(
 ) : TargetGoal(creature, true, true) {
 
     private val nms = (card.p as CraftPlayer).handle
+    private var timestamp: Int = 0
+    private var lastHurtBy = nms.lastHurtByPlayer ?: nms.lastHurtByMob
+
+    override fun canUse(): Boolean {
+        lastHurtBy = nms.lastHurtByPlayer ?: nms.lastHurtByMob
+        return timestamp != nms.lastHurtByMobTimestamp && canAttack(lastHurtBy, TargetingConditions.DEFAULT)
+    }
+
+    override fun start() {
+        creature.setTarget(lastHurtBy, EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true)
+        timestamp = nms.lastHurtByMobTimestamp
+
+        super.start()
+    }
+
+}
+
+internal class CardMasterHurtTargetGoal1_19_R1(
+    private val creature: PathfinderMob,
+    card: IBattleCard<*>
+) : TargetGoal(creature, true, true) {
+
+    private val nms = (card.entity as CraftCreature).handle
+    private var timestamp: Int = 0
+    private var lastHurtBy = nms.lastHurtMob
+
+    override fun canUse(): Boolean {
+        lastHurtBy = nms.lastHurtMob
+        return timestamp != nms.lastHurtMobTimestamp && canAttack(lastHurtBy, TargetingConditions.DEFAULT)
+    }
+
+    override fun start() {
+        creature.setTarget(lastHurtBy, EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET, true)
+        timestamp = nms.lastHurtMobTimestamp
+
+        super.start()
+    }
+
+}
+
+internal class CardMasterHurtByTargetGoal1_19_R1(
+    private val creature: PathfinderMob,
+    card: IBattleCard<*>
+) : TargetGoal(creature, true, true) {
+
+    private val nms = (card.entity as CraftCreature).handle
     private var timestamp: Int = 0
     private var lastHurtBy = nms.lastHurtByPlayer ?: nms.lastHurtByMob
 

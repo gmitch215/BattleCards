@@ -84,19 +84,57 @@ internal class Wrapper1_19_R3 : Wrapper {
 
             handle.baseValue = value
         }
-        nms.goalSelector.removeAllGoals {
-            it is AvoidEntityGoal<*> || it is RestrictSunGoal || it is FleeSunGoal || it is BegGoal || it is BreedGoal
-        }
+
+        removeGoals(nms.goalSelector, nms.targetSelector)
         nms.goalSelector.addGoal(2, FollowCardOwner1_19_R3(nms, card))
 
-        nms.targetSelector.removeAllGoals {
-            it is NearestAttackableTargetGoal<*> || it is NearestAttackableWitchTargetGoal<*> || it is NearestHealableRaiderTargetGoal<*>
-        }
         nms.targetSelector.addGoal(1, CardOwnerHurtByTargetGoal1_19_R3(nms, card))
         nms.targetSelector.addGoal(2, CardOwnerHurtTargetGoal1_19_R3(nms, card))
         nms.targetSelector.addGoal(3, HurtByTargetGoal(nms))
 
         nms.addTag("battlecards")
+    }
+
+    override fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T {
+        val card = ownerCard.entity
+        val en = card.world.spawn(card.location, clazz)
+
+        en.isCustomNameVisible = true
+        en.customName = "${ownerCard.rarity.color}${ownerCard.name}'s Minion"
+
+        val equipment = en.equipment!!
+        equipment.itemInMainHandDropChance = 0F
+        equipment.itemInOffHandDropChance = 0F
+        equipment.helmetDropChance = 0F
+        equipment.chestplateDropChance = 0F
+        equipment.leggingsDropChance = 0F
+        equipment.bootsDropChance = 0F
+
+        en.target = card.target
+
+        val nms = (en as CraftCreature).handle
+
+        removeGoals(nms.goalSelector, nms.targetSelector)
+        nms.goalSelector.addGoal(2, FollowCardOwner1_19_R3(nms, ownerCard))
+
+        nms.targetSelector.addGoal(1, CardMasterHurtByTargetGoal1_19_R3(nms, ownerCard))
+        nms.targetSelector.addGoal(2, CardMasterHurtTargetGoal1_19_R3(nms, ownerCard))
+        nms.targetSelector.addGoal(3, CardOwnerHurtByTargetGoal1_19_R3(nms, ownerCard))
+        nms.targetSelector.addGoal(4, CardOwnerHurtTargetGoal1_19_R3(nms, ownerCard))
+        nms.targetSelector.addGoal(5, HurtByTargetGoal(nms))
+
+        ownerCard.minions.add(en)
+        return en
+    }
+
+    private fun removeGoals(goalSelector: GoalSelector, targetSelector: GoalSelector) {
+        goalSelector.removeAllGoals {
+            it is AvoidEntityGoal<*> || it is RestrictSunGoal || it is FleeSunGoal || it is BegGoal || it is BreedGoal
+        }
+
+        targetSelector.removeAllGoals {
+            it is NearestAttackableTargetGoal<*> || it is NearestAttackableWitchTargetGoal<*> || it is NearestHealableRaiderTargetGoal<*> || it is DefendVillageTargetGoal
+        }
     }
 
     override fun getNBTWrapper(item: ItemStack): NBTWrapper {
