@@ -83,7 +83,7 @@ enum class BattleCardType {
     /**
      * Represents a Polar Bear BattleCard.
      */
-    FROST_BEAR(1, "PolarBear", Rarity.RARE),
+    FROST_BEAR(1, "PolarBear", Rarity.EPIC),
 
     /**
      * Represents a Blaze BattleCard.
@@ -93,7 +93,12 @@ enum class BattleCardType {
     /**
      * Represents a Stray BattleCard.
      */
-    BANDIT(1, "Stray", Rarity.UNCOMMON)
+    BANDIT(1, "Stray", Rarity.UNCOMMON),
+
+    /**
+     * Represents a Pigin Brute BattleCard.
+     */
+    NETHERITE_PIGLIN(1, "PiglinBrute", Rarity.EPIC)
     ;
 
     private val entityClass: Class<out LivingEntity>?
@@ -145,7 +150,7 @@ enum class BattleCardType {
      * Creates an empty card data object.
      * @return New Card Data
      */
-    fun createCardData(): Card = BattleConfig.getConfig().createCardData(this)
+    fun createCardData(): Card = BattleConfig.config.createCardData(this)
 
     companion object {
 

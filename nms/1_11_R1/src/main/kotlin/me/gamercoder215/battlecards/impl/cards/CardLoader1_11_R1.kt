@@ -7,7 +7,9 @@ internal class CardLoader1_11_R1 : CardLoader {
     override fun loadedCards(): Collection<Class<out IBattleCard<*>>> = listOf(
         IMesaZombie::class.java,
         IPrinceHusk::class.java,
-        IGoldSkeleton::class.java
+        IGoldSkeleton::class.java,
+        IBandit::class.java,
+        IMiner::class.java
     )
 
 }
