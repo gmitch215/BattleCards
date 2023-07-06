@@ -1,7 +1,7 @@
 package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
-import me.gamercoder215.battlecards.impl.ICard
+import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -24,14 +24,15 @@ fun ItemStack.nbt(nbt: (NBTWrapper) -> Unit): ItemStack {
     return w.item
 }
 
-fun Entity.isCard(): Boolean {
-    if (this !is Creature) return false
-    return w.isCard(this)
-}
+inline val Entity.isCard: Boolean
+    get() {
+        if (this !is Creature) return false
+        return w.isCard(this) || IBattleCard.spawned.containsKey(uniqueId)
+    }
 
 inline val Entity.card: IBattleCard<*>?
     get() {
-        if (!isCard()) return null
+        if (!isCard) return null
         return IBattleCard.byEntity(this as Creature)
     }
 
@@ -44,7 +45,8 @@ inline val ItemStack.card: ICard?
         return ICard.fromByteArray(bytes)
     }
 
-fun ItemStack.isCard(): Boolean = NBTWrapper.of(this).getByteArray("card").isNotEmpty()
+inline val ItemStack.isCard: Boolean
+    get() = NBTWrapper.of(this).getByteArray("card").isNotEmpty()
 
 inline val ItemStack.id: String?
     get() {
@@ -74,6 +76,46 @@ fun Player.playSuccess() {
 
 fun Player.playFailure() {
     playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
+}
+
+fun Defensive.getChance(level: Int): Double {
+    var chance = this.chance
+    if (!value.isNaN())
+        for (i in 1 until level) chance = operation.apply(chance, value)
+
+    return chance.coerceAtMost(max)
+}
+
+fun UserDefensive.getChance(level: Int): Double {
+    var chance = this.chance
+    if (!value.isNaN())
+        for (i in 1 until level) chance = operation.apply(chance, value)
+
+    return chance.coerceAtMost(max)
+}
+
+fun Offensive.getChance(level: Int): Double {
+    var chance = this.chance
+    if (!value.isNaN())
+        for (i in 1 until level) chance = operation.apply(chance, value)
+
+    return chance.coerceAtMost(max)
+}
+
+fun UserOffensive.getChance(level: Int): Double {
+    var chance = this.chance
+    if (!value.isNaN())
+        for (i in 1 until level) chance = operation.apply(chance, value)
+
+    return chance.coerceAtMost(max)
+}
+
+fun Damage.getChance(level: Int): Double {
+    var chance = this.chance
+    if (!value.isNaN())
+        for (i in 1 until level) chance = operation.apply(chance, value)
+
+    return chance.coerceAtMost(max)
 }
 
 // Bukkit Extensions from Newer Version
@@ -164,6 +206,17 @@ fun Number.withSuffix(): String {
 }
 
 fun Enum<*>.formatName(): String {
-    return name.lowercase(BattleConfig.getConfig().locale).split("_").joinToString(" ") { s -> s.replaceFirstChar { it.uppercase() } }
+    return name.lowercase(BattleConfig.config.locale).split("_").joinToString(" ") { s -> s.replaceFirstChar { it.uppercase() } }
 }
+
+fun String.replace(vararg replacements: Pair<String, String>): String {
+    var result = this
+    for (replacement in replacements)
+        result = result.replace(replacement.first, replacement.second)
+
+    return result
+}
+
+fun String.replace(replacements: Map<String, String>): String =
+    replace(*replacements.toList().toTypedArray())
 
