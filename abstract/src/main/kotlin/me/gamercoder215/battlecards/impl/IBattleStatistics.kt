@@ -59,13 +59,13 @@ class IBattleStatistics(
 
     private fun find(attribute: CardAttribute): Double {
         val base = card.javaClass.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
-        val mod = card.javaClass.annotations.filterIsInstance<AttributesModifier>().first { it.attribute == attribute }
+        val mod = card.javaClass.annotations.filterIsInstance<AttributesModifier>().firstOrNull { it.attribute == attribute } ?: return base
 
         if (mod.value.isNaN()) return base
 
         var value = base
 
-        for (i in 0 until cardLevel)
+        for (i in 1 until cardLevel)
             value = mod.operation.apply(value, mod.value)
 
         return value
