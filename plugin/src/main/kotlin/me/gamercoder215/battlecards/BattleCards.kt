@@ -23,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import java.io.IOException
+import java.lang.IllegalStateException
 import java.util.*
 
 private const val bstats = 18166
@@ -152,9 +153,13 @@ class BattleCards : JavaPlugin(), BattleConfig {
         }
     }
 
+    override fun isAvailable(type: BattleCardType): Boolean =
+        registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } != null
+
     override fun createCardData(type: BattleCardType): Card {
+        val clazz = registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } ?: throw IllegalStateException("$type is not available on this Minecraft Version")
         return ICard(
-            registeredCards.first { it.getAnnotation(Type::class.java).type == type },
+            clazz,
             type,
             System.currentTimeMillis()
         )

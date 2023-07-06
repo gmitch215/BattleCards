@@ -20,50 +20,46 @@ import java.util.logging.Logger
 interface BattleConfig {
 
     companion object {
-        /**
-         * Fetches the BattleCards Plugin Instance.
-         * @return Plugin
-         */
         @JvmStatic
-        fun getPlugin(): Plugin {
-            return Bukkit.getPluginManager().getPlugin("BattleCards") ?: throw IllegalStateException("BattleCards is not loaded!")
-        }
+        val plugin: Plugin
+            /**
+             * Fetches the BattleCards Plugin Instance.
+             * @return Plugin
+             */
+            get() = Bukkit.getPluginManager().getPlugin("BattleCards") ?: throw IllegalStateException("BattleCards is not loaded!")
+        
+        @JvmStatic
+        val dataFolder: File
+            /**
+             * Fetches the Plugin's Data Folder.
+             * @return Plugin Data Folder
+             */
+            get() = plugin.dataFolder
+        
+        @JvmStatic
+        val config: BattleConfig
+            /**
+             * Fetches the BattleConfig Instance.
+             * @return BattleConfig
+             */
+            get() = plugin as BattleConfig
+        
+        @JvmStatic
+        val configuration: FileConfiguration
+            /**
+             * Fetches the Configuration File for the BattleCards plugin.
+             * @return BattleCards [FileConfiguration]
+             */
+            get() = plugin.config
 
-        /**
-         * Fetches the Plugin's Data Folder.
-         * @return Plugin Data Folder
-         */
-        @JvmStatic
-        fun getDataFolder(): File {
-            return getPlugin().dataFolder
-        }
 
-        /**
-         * Fetches the BattleConfig Instance.
-         * @return BattleConfig
-         */
         @JvmStatic
-        fun getConfig(): BattleConfig {
-            return getPlugin() as BattleConfig
-        }
-
-        /**
-         * Fetches the Configuration File for the BattleCards plugin.
-         * @return BattleCards [FileConfiguration]
-         */
-        @JvmStatic
-        fun getConfiguration(): FileConfiguration {
-            return getPlugin().config
-        }
-
-        /**
-         * Fetches the Plugin's Logger.
-         * @return Plugin Logger
-         */
-        @JvmStatic
-        fun getLogger(): Logger {
-            return getPlugin().logger
-        }
+        val logger: Logger
+            /**
+             * Fetches the Plugin's Logger.
+             * @return Plugin Logger
+             */
+            get() = plugin.logger
 
         /**
          * Prints a Throwable in the Plugin's Namespace.
@@ -71,10 +67,15 @@ interface BattleConfig {
          */
         @JvmStatic
         fun print(t: Throwable) {
-            getLogger().severe(t::class.java.simpleName)
-            getLogger().severe("-----------")
-            getLogger().severe(t.localizedMessage)
-            for (element in t.stackTrace) getLogger().severe(element.toString())
+            logger.severe(t::class.java.simpleName)
+            logger.severe("-----------")
+            logger.severe(t.localizedMessage)
+            for (element in t.stackTrace) logger.severe(element.toString())
+            
+            if (t.cause != null) {
+                logger.severe("=== Caused by: ===")
+                print(t.cause!!)
+            }
         }
 
         /**
@@ -83,8 +84,8 @@ interface BattleConfig {
          */
         @JvmStatic
         fun loadConfig(): FileConfiguration {
-            getPlugin().saveDefaultConfig()
-            val config = getPlugin().config
+            plugin.saveDefaultConfig()
+            val config = plugin.config
 
             if (!config.isString("Language")) config.set("Language", "en")
 
@@ -193,7 +194,7 @@ interface BattleConfig {
          * Fetches the plugin's language.
          * @return Language Identifier
          */
-        get() = getConfiguration().getString("Language", "en")
+        get() = configuration.getString("Language", "en")
 
     /**
      * Fetches a localized message from the plugin's language file, with the plugin prefix.
@@ -211,6 +212,12 @@ interface BattleConfig {
      */
     fun createCardData(type: BattleCardType): Card
 
+    /**
+     * Fetches whether this BattleCardType is available on this current MC Version.
+     * @param type Card Type
+     * @return true if available, false otherwise
+     */
+    fun isAvailable(type: BattleCardType): Boolean
 
     val locale: Locale
         /**
@@ -224,17 +231,16 @@ interface BattleConfig {
         }
 
     private fun setConfig(key: String, value: Any) {
-        getConfiguration().set(key, value)
-        getPlugin().saveConfig()
+        configuration.set(key, value)
+        plugin.saveConfig()
     }
-
 
     var isBasicDropsEnabled: Boolean
         /**
          * Fetches whether cards of the [Rarity.BASIC] rarity can be dropped by mobs.
          * @return true if can be dropped, false otherwise
          */
-        get() = getConfiguration().getBoolean("Cards.Basic.Drops.Enabled")
+        get() = configuration.getBoolean("Cards.Basic.Drops.Enabled")
         /**
          * Sets whether cards of the [Rarity.BASIC] rarity can be dropped by mobs.
          * @param value true if can be dropped, false otherwise
@@ -246,7 +252,7 @@ interface BattleConfig {
          * Fetches the amount of set experience added to cards in a player's inventory every hour.
          * @return Experience Amount
          */
-        get() = getConfiguration().getDouble("Cards.Growth.PassiveAmount")
+        get() = configuration.getDouble("Cards.Growth.PassiveAmount")
         /**
          * Sets the amount of set experience added to cards in a player's inventory every hour.
          * @param value Experience Amount
@@ -258,7 +264,7 @@ interface BattleConfig {
          * Fetches the multiplier by the Card's Level for how much experience will be added upon this card being used.
          * @return Use Multiplier
          */
-        get() = getConfiguration().getDouble("Cards.Growth.UseMultiplier")
+        get() = configuration.getDouble("Cards.Growth.UseMultiplier")
         /**
          * Sets the multiplier by the Card's Level for how much experience will be added upon this card being used.
          * @param value Use Multiplier
@@ -270,7 +276,7 @@ interface BattleConfig {
          * Fetches the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.
          * @return Kill Multiplier
          */
-        get() = getConfiguration().getDouble("Cards.Growth.KillMultiplier")
+        get() = configuration.getDouble("Cards.Growth.KillMultiplier")
         /**
          * Sets the multiplier that will be added to a target's maximum health upon a card killing it to be added to its experience.
          * @param value Kill Multiplier
@@ -283,7 +289,7 @@ interface BattleConfig {
          * @return Kill Card Multiplier
          * @see [growthKillMultiplier]
          */
-        get() = getConfiguration().getDouble("Cards.Growth.KillCardMultiplier")
+        get() = configuration.getDouble("Cards.Growth.KillCardMultiplier")
         /**
          * Sets the multiplier for the kill multiplier when the target is a Battle Card.
          * @param value Kill Card Multiplier
@@ -296,7 +302,7 @@ interface BattleConfig {
          * Fetches the cooldown, in seconds, between when the same BattleCard can be deployed again
          * @return Cooldown
          */
-        get() = getConfiguration().getInt("Cards.Cooldown")
+        get() = configuration.getInt("Cards.Cooldown")
         /**
          * Sets the cooldown, in seconds, between when the same BattleCard can be deployed again
          * @param value Cooldown
@@ -309,7 +315,7 @@ interface BattleConfig {
          * Fetches the number of cards that can be deployed by a player before the cooldown is activated.
          * @return Card Count
          */
-        get() = getConfiguration().getInt("Cards.PlayerCooldown.Count")
+        get() = configuration.getInt("Cards.PlayerCooldown.Count")
         /**
          * Sets the number of cards that can be deployed by a player before the cooldown is activated.
          * @param value Card Count
@@ -321,7 +327,7 @@ interface BattleConfig {
          * Fetches the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.
          * @return Cooldown Time
          */
-        get() = getConfiguration().getInt("Cards.PlayerCooldown.Cooldown")
+        get() = configuration.getInt("Cards.PlayerCooldown.Cooldown")
         /**
          * Sets the time, in seconds, that the cooldown will be activated for when the player has deployed the maximum number of cards.
          * @param value Cooldown Time
@@ -333,7 +339,7 @@ interface BattleConfig {
          * Fetches a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.
          * @return List of Players
          */
-        get() = getConfiguration().getStringList("Cards.PlayerCooldown.Ignored")
+        get() = configuration.getStringList("Cards.PlayerCooldown.Ignored")
         /**
          * Sets a list of players, permissions, and vault group patterns that will not be affected by the player cooldown.
          * @param value List of Players
