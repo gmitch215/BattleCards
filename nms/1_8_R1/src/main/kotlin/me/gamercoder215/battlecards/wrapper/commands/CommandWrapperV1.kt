@@ -53,7 +53,7 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
 
             val pcmd = createCommand(cmd, aliases)
             if (pcmd == null) {
-                BattleConfig.getLogger().info("Error loading command: $cmd")
+                BattleConfig.logger.info("Error loading command: $cmd")
                 continue
             }
 

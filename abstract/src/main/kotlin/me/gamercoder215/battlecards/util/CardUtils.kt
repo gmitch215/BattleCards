@@ -30,7 +30,7 @@ object CardUtils {
             entity.isSmall = attachment.small
             entity.isVisible = false
             entity.setGravity(false)
-            entity.setMetadata("battlecards:block_attachment", FixedMetadataValue(BattleConfig.getPlugin(), true))
+            entity.setMetadata("battlecards:block_attachment", FixedMetadataValue(BattleConfig.plugin, true))
 
             entity.helmet = ItemStack(attachment.material)
 
@@ -45,7 +45,7 @@ object CardUtils {
 
     @JvmStatic
     fun format(string: String, vararg args: Any): String {
-        return String.format(BattleConfig.getConfig().locale, string, *args)
+        return String.format(BattleConfig.config.locale, string, *args)
     }
 
     @JvmStatic
@@ -83,7 +83,7 @@ object CardUtils {
     @JvmStatic
     fun dateFormat(date: Date?): String? {
         if (date == null) return null
-        return SimpleDateFormat("MMM dd, yyyy", BattleConfig.getConfig().locale).format(date)
+        return SimpleDateFormat("MMM dd, yyyy", BattleConfig.config.locale).format(date)
     }
 
     // Other

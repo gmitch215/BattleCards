@@ -57,7 +57,7 @@ interface CommandWrapper {
     fun reloadPlugin(sender: CommandSender) {
         sender.sendMessage(getSuccess("command.reload.reloading"))
 
-        val plugin = BattleConfig.getPlugin()
+        val plugin = BattleConfig.plugin
 
         plugin.reloadConfig()
         BattleConfig.loadConfig()
@@ -73,7 +73,7 @@ interface CommandWrapper {
         }
 
         val item = p.inventory.itemInHand
-        if (!item.isCard()) {
+        if (!item.isCard) {
             p.sendMessage(getError("error.argument.item.held.card"))
             return
         }

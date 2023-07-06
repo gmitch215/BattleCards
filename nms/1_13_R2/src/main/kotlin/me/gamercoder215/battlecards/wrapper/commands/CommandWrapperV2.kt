@@ -30,7 +30,7 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
             handler.register(CardCommands(this))
 
             handler.registerBrigadier()
-            handler.locale = BattleConfig.getConfig().locale
+            handler.locale = BattleConfig.config.locale
         }
     }
 
