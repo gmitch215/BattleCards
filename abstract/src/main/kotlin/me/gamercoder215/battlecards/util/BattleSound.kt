@@ -8,7 +8,11 @@ enum class BattleSound(
 
     ENTITY_ARROW_HIT_PLAYER("ARROW_HIT"),
 
-    BLOCK_NOTE_BLOCK_PLING("NOTE_PLING")
+    BLOCK_NOTE_BLOCK_PLING("NOTE_PLING"),
+
+    ENTITY_GHAST_SCREAM("GHAST_SCREAM"),
+
+    ITEM_SHIELD_BLOCK()
 
     ;
 
@@ -22,16 +26,15 @@ enum class BattleSound(
         this.sounds = matches
     }
 
-    fun find(): Sound {
-        for (sound in sounds) {
-            try {
-                return Sound.valueOf(sound.uppercase())
-            } catch (e: IllegalArgumentException) {
-                continue
-            }
-        }
+    fun find(): Sound =
+        findOrNull() ?: throw IllegalArgumentException("No sound found for $this")
 
-        throw IllegalArgumentException("No sound found for $this")
+    fun findOrNull(): Sound? {
+        for (sound in sounds)
+            try { return Sound.valueOf(sound.uppercase()) }
+            catch (e: IllegalArgumentException) { continue }
+
+        return null
     }
 
 }
