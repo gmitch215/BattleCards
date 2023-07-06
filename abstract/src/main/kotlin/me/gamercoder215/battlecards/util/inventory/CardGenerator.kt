@@ -3,7 +3,7 @@ package me.gamercoder215.battlecards.util.inventory
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
-import me.gamercoder215.battlecards.impl.CardAbility
+import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.createLine
 import me.gamercoder215.battlecards.util.CardUtils.dateFormat
@@ -19,7 +19,7 @@ object CardGenerator {
 
     @JvmStatic
     fun toItem(card: Card): ItemStack {
-        val config = BattleConfig.getConfiguration()
+        val config = BattleConfig.configuration
 
         return ItemStack(Material.PAPER).apply {
             itemMeta = itemMeta.apply {
@@ -57,7 +57,7 @@ object CardGenerator {
 
     @JvmStatic
     fun generateCardInfo(card: Card): ItemStack {
-        val config = BattleConfig.getConfiguration()
+        val config = BattleConfig.configuration
 
         return ItemStack(Material.EMPTY_MAP).apply {
             itemMeta = itemMeta.apply {
@@ -75,20 +75,36 @@ object CardGenerator {
                     val abilityL = mutableListOf<String>()
                     abilityL.add(" ")
 
-                    val abilities = card::class.java.getAnnotationsByType(CardAbility::class.java)
-                        .plus(card::class.java.methods.toList().stream()
-                            .map { it.getAnnotationsByType(CardAbility::class.java) }
-                            .flatMap { it.toList().stream() }
-                            .collect(Collectors.toList())
-                        )
+                    val abilities = card::class.java.getAnnotationsByType(CardAbility::class.java).associateWith { mapOf<String, String>() }.toMutableMap()
+                    abilities.putAll(card::class.java.declaredMethods.toList()
+                        .map { it.isAccessible = true; it }
+                        .filter {
+                            if (it.isAnnotationPresent(UnlockedAt::class.java))
+                                card.level >= it.getAnnotation(UnlockedAt::class.java).level
+                            else true
+                        }.associate {
+                            val placeholders = mutableMapOf<String, String>()
 
-                    for (ability in abilities)
+                            placeholders["@chance@"] = it.run {
+                                return@run "${
+                                    if (isAnnotationPresent(Defensive::class.java)) getAnnotation(Defensive::class.java).getChance(card.level).format()
+                                    else if (isAnnotationPresent(Offensive::class.java)) getAnnotation(Offensive::class.java).getChance(card.level).format()
+                                    else if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level).format()
+                                    else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level).format()
+                                    else "100"
+                                }%"
+                            }
+
+                            it.getAnnotation(CardAbility::class.java) to placeholders
+                        })
+
+                    for ((ability, placeholders) in abilities)
                         abilityL.addAll(listOf(
                             "${ability.color}${get(ability.name)}",
                             if (ability.desc.equals("<desc>", ignoreCase = true))
-                                get("${ability.name}.desc")
+                                get("${ability.name}.desc").replace(placeholders)
                             else
-                                get(ability.desc),
+                                get(ability.desc).replace(placeholders),
                         ))
 
                     cardL.addAll(abilityL)
@@ -108,7 +124,7 @@ object CardGenerator {
 
     @JvmStatic
     fun generateCardStatistics(card: Card): ItemStack? {
-        if (!BattleConfig.getConfiguration().getBoolean("Card.Display.Info.ShowStatistics")) return null
+        if (!BattleConfig.configuration.getBoolean("Card.Display.Info.ShowStatistics")) return null
 
         val statistics = card.statistics
         
