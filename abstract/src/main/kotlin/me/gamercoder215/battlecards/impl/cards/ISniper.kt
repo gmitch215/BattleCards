@@ -2,7 +2,6 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
