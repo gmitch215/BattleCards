@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.Passive
 import me.gamercoder215.battlecards.util.BattleParticle
 import me.gamercoder215.battlecards.util.CardUtils
+import me.gamercoder215.battlecards.util.getChance
 import me.gamercoder215.battlecards.util.getEntity
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
@@ -32,6 +33,16 @@ abstract class IBattleCard<T : Creature>(
 
         @JvmStatic
         fun byEntity(entity: Creature): IBattleCard<*>? = spawned[entity.uniqueId]
+
+        @JvmStatic
+        fun byMinion(minion: Creature): IBattleCard<*>? {
+            spawned.forEach { (_, card) ->
+                if (card.minions.contains(minion))
+                    return card
+            }
+
+            return null
+        }
 
         @JvmStatic
         protected val r = SecureRandom()
@@ -73,6 +84,9 @@ abstract class IBattleCard<T : Creature>(
 
     fun despawn() {
         uninit()
+        minions.forEach { it.remove() }
+        minions.clear()
+
         entity.remove()
     }
 
@@ -101,20 +115,15 @@ abstract class IBattleCard<T : Creature>(
                     val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
                     entity.teleport(value.get())
                 }
+
+                minions.removeIf { it.isDead }
             }
         }.runTaskTimer(BattleConfig.plugin, 0, 1)
 
         // Passive Abilities
         this.javaClass.declaredMethods.filter { it.isAnnotationPresent(Passive::class.java) }.forEach { m ->
             m.isAccessible = true
-            val passive = m.getAnnotation(Passive::class.java)
-
-            val base = passive.interval
-            var interval = base
-
-            if (passive.value != Long.MIN_VALUE)
-                interval = passive.operation.apply(interval.toDouble(), passive.value.toDouble()).toLong()
-
+            val interval = m.getAnnotation(Passive::class.java).getChance(level)
             object : BukkitRunnable() {
                 override fun run() {
                     if (entity.isDead) {
@@ -139,6 +148,12 @@ abstract class IBattleCard<T : Creature>(
         get() = data.statistics
 
     // Utilities
+
+    fun <T : Creature> minion(clazz: Class<T>, action: T.() -> Unit = {}): T {
+        val minion = w.spawnMinion(clazz, this)
+        action(minion)
+        return minion
+    }
 
     fun spawn(l: Location, o: BattleParticle) =
         w.spawnParticle(o, l, 1, 0.0, 0.0, 0.0, 0.0, false)

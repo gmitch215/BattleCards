@@ -2,8 +2,10 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
+import me.gamercoder215.battlecards.util.BattleSound
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Hoglin
 import org.bukkit.entity.PiglinBrute
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
@@ -71,6 +73,21 @@ class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
     private fun heatShield(event: EntityDamageEvent) {
         if (event.cause == EntityDamageEvent.DamageCause.LAVA)
             event.isCancelled = true
+    }
+
+    @CardAbility("card.netherite_piglin.ability.hoglin")
+    @Defensive(0.1, CardOperation.ADD, 0.02, 0.25)
+    @UnlockedAt(55)
+    private fun hoglin(event: EntityDamageByEntityEvent) {
+        event.isCancelled = true
+        val sound = BattleSound.ITEM_SHIELD_BLOCK.findOrNull()
+        if (sound != null) entity.world.playSound(entity.location, sound, 3F, 1F)
+
+        minion(Hoglin::class.java) {
+            isImmuneToZombification = true
+
+            if (r.nextDouble() < 0.25) setBaby()
+        }
     }
 
 }
