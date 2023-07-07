@@ -118,6 +118,15 @@ fun Damage.getChance(level: Int): Double {
     return chance.coerceAtMost(max)
 }
 
+fun Passive.getChance(level: Int): Long {
+    var interval = this.interval
+
+    if (value != Long.MIN_VALUE)
+        for (i in 1 until level) interval = operation.apply(interval.toDouble(), value.toDouble()).toLong()
+
+    return interval
+}
+
 // Bukkit Extensions from Newer Version
 
 fun Server.getEntity(id: UUID): Entity? {
