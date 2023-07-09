@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.impl.cards
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.BattleSound
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Hoglin
@@ -61,13 +62,13 @@ class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
         })
     }
 
-    @CardAbility("card.netherite_piglin.ability.netherite_rage")
+    @CardAbility("card.netherite_piglin.ability.netherite_rage", ChatColor.RED)
     @Passive(72000, CardOperation.SUBTRACT, 20, Long.MAX_VALUE, 18000)
     private fun netheriteRage() {
         entity.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, (level + 4) * 20, level / 20, true))
     }
 
-    @CardAbility("card.netherite_piglin.ability.heat_shield")
+    @CardAbility("card.netherite_piglin.ability.heat_shield", ChatColor.YELLOW)
     @Damage
     @UnlockedAt(40)
     private fun heatShield(event: EntityDamageEvent) {
@@ -75,13 +76,13 @@ class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
             event.isCancelled = true
     }
 
-    @CardAbility("card.netherite_piglin.ability.hoglin")
+    @CardAbility("card.netherite_piglin.ability.hoglin", ChatColor.LIGHT_PURPLE)
     @Defensive(0.1, CardOperation.ADD, 0.02, 0.25)
     @UnlockedAt(55)
     private fun hoglin(event: EntityDamageByEntityEvent) {
         event.isCancelled = true
         val sound = BattleSound.ITEM_SHIELD_BLOCK.findOrNull()
-        if (sound != null) entity.world.playSound(entity.location, sound, 3F, 1F)
+        if (sound != null) world.playSound(location, sound, 3F, 1F)
 
         minion(Hoglin::class.java) {
             isImmuneToZombification = true
