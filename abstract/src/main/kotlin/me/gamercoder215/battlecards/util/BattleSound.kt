@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.util
 
+import org.bukkit.Location
 import org.bukkit.Sound
 
 enum class BattleSound(
@@ -12,7 +13,9 @@ enum class BattleSound(
 
     ENTITY_GHAST_SCREAM("GHAST_SCREAM"),
 
-    ITEM_SHIELD_BLOCK()
+    ITEM_SHIELD_BLOCK,
+
+    ENTITY_ENDER_DRAGON_GROWL("ENDERDRAGON_GROWL", "ENTITY_ENDERDRAGON_GROWL")
 
     ;
 
@@ -35,6 +38,11 @@ enum class BattleSound(
             catch (e: IllegalArgumentException) { continue }
 
         return null
+    }
+
+    fun play(location: Location, volume: Float = 1F, pitch: Float = 1F) {
+        val sound = findOrNull() ?: return
+        location.world.playSound(location, sound, volume, pitch)
     }
 
 }
