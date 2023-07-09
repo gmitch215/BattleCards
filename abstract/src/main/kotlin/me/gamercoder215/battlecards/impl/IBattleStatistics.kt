@@ -1,6 +1,8 @@
 package me.gamercoder215.battlecards.impl
 
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.BattleStatistics
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 
 class IBattleStatistics(
     override val card: ICard
@@ -58,7 +60,13 @@ class IBattleStatistics(
     // Logic & Attributes
 
     private fun find(attribute: CardAttribute): Double {
-        val base = card.javaClass.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
+        val base: Double =
+            if (card.type == BattleCardType.BASIC) {
+                val type = card.entityCardType ?: return 0.0
+                w.getDefaultAttribute(type, attribute)
+            } else
+                card.javaClass.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
+
         val mod = card.javaClass.annotations.filterIsInstance<AttributesModifier>().firstOrNull { it.attribute == attribute } ?: return base
 
         if (mod.value.isNaN()) return base
