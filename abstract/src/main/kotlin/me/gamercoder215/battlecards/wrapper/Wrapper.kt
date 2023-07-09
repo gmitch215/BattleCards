@@ -1,13 +1,17 @@
 package me.gamercoder215.battlecards.wrapper
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.impl.CardAttribute
+import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.cards.*
 import me.gamercoder215.battlecards.util.BattleParticle
+import me.gamercoder215.battlecards.util.CardAttackType
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Creature
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 import org.bukkit.inventory.ItemStack
@@ -35,6 +39,12 @@ interface Wrapper {
     fun spawnParticle(particle: BattleParticle, location: Location, count: Int, dX: Double = 0.0, dY: Double = 0.0, dZ: Double = 0.0, speed: Double = 0.0, force: Boolean = false)
 
     fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T
+
+    fun getDefaultAttribute(type: EntityType, attribute: CardAttribute): Double
+
+    fun setAttackType(entity: Creature, attackType: CardAttackType)
+
+    fun getAttackType(entity: Creature): CardAttackType
 
     companion object {
         @JvmStatic

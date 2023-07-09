@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.wrapper.v1_11_R1
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.BattleParticle
+import me.gamercoder215.battlecards.util.CardAttackType
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
@@ -10,11 +11,14 @@ import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.server.v1_11_R1.*
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
+import org.bukkit.craftbukkit.v1_11_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftWither
 import org.bukkit.entity.Creature
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 
@@ -153,6 +157,68 @@ internal class Wrapper1_11_R1 : Wrapper {
     ) {
         if (location.world == null) return
         location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed, force)
+    }
+
+    override fun getDefaultAttribute(type: EntityType, attribute: CardAttribute): Double {
+        val w = Bukkit.getWorlds()[0] as CraftWorld
+        val creature = w.createEntity(Location(w, 0.0, 0.0, 0.0), type.entityClass) as? EntityLiving ?: throw AssertionError("Failed to create dummy creature")
+
+        return creature.getAttributeInstance(toNMS(attribute)).b()
+    }
+
+    private fun removeAttackGoals(entity: EntityCreature) {
+        val goals = PathfinderGoalSelector::class.java.getDeclaredField("b").apply { isAccessible = true }.get(entity.goalSelector).run {
+            (this as Set<Any>).map { it::class.java.getDeclaredField("a").apply { isAccessible = true }.get(it).run { this as PathfinderGoal } }
+        }
+
+        goals.filter {
+            it is PathfinderGoalMeleeAttack || it is PathfinderGoalArrowAttack || it is PathfinderGoalBowShoot
+        }.forEach { entity.goalSelector.a(it) }
+    }
+
+    override fun setAttackType(entity: Creature, attackType: CardAttackType) {
+        val nms = (entity as CraftCreature).handle
+        removeAttackGoals(nms)
+
+        nms.goalSelector.a(3, when (attackType) {
+            CardAttackType.MELEE -> PathfinderGoalMeleeAttack(nms, 1.0, false)
+            CardAttackType.BOW -> {
+                if (nms !is EntitySkeletonAbstract) throw UnsupportedOperationException("Invalid Skeleton Type ${entity::class.java.simpleName}")
+
+                PathfinderGoalBowShoot(nms, 1.0, 20, 15.0F)
+            }
+            CardAttackType.CROSSBOW -> throw AssertionError("Using Crossbow AttackType below 1.14")
+        })
+    }
+
+    override fun getAttackType(entity: Creature): CardAttackType {
+        val nms = (entity as CraftCreature).handle
+        val goals = PathfinderGoalSelector::class.java.getDeclaredField("b").apply { isAccessible = true }.get(nms.goalSelector).run {
+            (this as Set<Any>).map {
+                Pair(
+                    it::class.java.getDeclaredField("a").apply { isAccessible = true }.get(it).run { this as PathfinderGoal },
+                    it::class.java.getDeclaredField("b").apply { isAccessible = true }.get(it).run { this as Int }
+                )
+            }
+        }
+        val targetGoals = PathfinderGoalSelector::class.java.getDeclaredField("b").apply { isAccessible = true }.get(nms.targetSelector).run {
+            (this as Set<Any>).map {
+                Pair(
+                    it::class.java.getDeclaredField("a").apply { isAccessible = true }.get(it).run { this as PathfinderGoal },
+                    it::class.java.getDeclaredField("b").apply { isAccessible = true }.get(it).run { this as Int }
+                )
+            }
+        }
+
+        return (goals + targetGoals)
+            .sortedBy { it.second }
+            .firstNotNullOf {
+                when (it.first) {
+                    is PathfinderGoalMeleeAttack -> CardAttackType.MELEE
+                    is PathfinderGoalBowShoot -> CardAttackType.BOW
+                    else -> null
+                } ?: CardAttackType.MELEE
+            }
     }
 
 }

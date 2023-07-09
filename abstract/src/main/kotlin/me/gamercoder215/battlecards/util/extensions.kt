@@ -70,6 +70,18 @@ inline val PlayerInventory.cards: Map<Int, ICard>
         return cards
     }
 
+inline var Creature.attackType: CardAttackType
+    get() = w.getAttackType(this)
+    set(value) = w.setAttackType(this, value)
+
+inline var IBattleCard<*>.attackType: CardAttackType
+    get() = this.entity.attackType
+    set(value) { this.entity.attackType = value }
+
+fun Creature.isMinion(card: IBattleCard<*>): Boolean {
+    return IBattleCard.byMinion(this) == card
+}
+
 fun Player.playSuccess() {
     playSound(location, BattleSound.ENTITY_ARROW_HIT_PLAYER.find(), 1F, 2F)
 }
@@ -78,51 +90,51 @@ fun Player.playFailure() {
     playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
 }
 
-fun Defensive.getChance(level: Int): Double {
+fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until level) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
 
     return chance.coerceAtMost(max)
 }
 
-fun UserDefensive.getChance(level: Int): Double {
+fun UserDefensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until level) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
 
     return chance.coerceAtMost(max)
 }
 
-fun Offensive.getChance(level: Int): Double {
+fun Offensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until level) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
 
     return chance.coerceAtMost(max)
 }
 
-fun UserOffensive.getChance(level: Int): Double {
+fun UserOffensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until level) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
 
     return chance.coerceAtMost(max)
 }
 
-fun Damage.getChance(level: Int): Double {
+fun Damage.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until level) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
 
     return chance.coerceAtMost(max)
 }
 
-fun Passive.getChance(level: Int): Long {
+fun Passive.getChance(level: Int, unlockedAt: Int = 0): Long {
     var interval = this.interval
 
     if (value != Long.MIN_VALUE)
-        for (i in 1 until level) interval = operation.apply(interval.toDouble(), value.toDouble()).toLong()
+        for (i in 1 until (level - unlockedAt)) interval = operation.apply(interval.toDouble(), value.toDouble()).toLong()
 
     return interval
 }

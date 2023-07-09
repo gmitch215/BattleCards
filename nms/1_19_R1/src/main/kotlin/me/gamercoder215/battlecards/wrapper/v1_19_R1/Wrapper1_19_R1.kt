@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.wrapper.v1_19_R1
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.BattleParticle
+import me.gamercoder215.battlecards.util.CardAttackType
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper
@@ -11,15 +12,20 @@ import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.AttributeMap
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes
 import net.minecraft.world.entity.ai.goal.*
 import net.minecraft.world.entity.ai.goal.target.DefendVillageTargetGoal
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableWitchTargetGoal
 import net.minecraft.world.entity.ai.goal.target.NearestHealableRaiderTargetGoal
+import net.minecraft.world.entity.monster.CrossbowAttackMob
+import net.minecraft.world.entity.monster.Monster
+import net.minecraft.world.entity.monster.RangedAttackMob
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
@@ -27,6 +33,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_19_R1.util.CraftNamespacedKey
 import org.bukkit.entity.Creature
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
 import org.bukkit.inventory.ItemStack
@@ -156,5 +163,55 @@ internal class Wrapper1_19_R1 : Wrapper {
     ) {
         if (location.world == null) return
         location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed, force)
+    }
+
+    private fun toNMS(type: EntityType): net.minecraft.world.entity.EntityType<*> {
+        return Registry.ENTITY_TYPE[CraftNamespacedKey.toMinecraft(type.key)]
+    }
+
+    override fun getDefaultAttribute(type: EntityType, attribute: CardAttribute): Double {
+        val supplier = DefaultAttributes.getSupplier(toNMS(type) as net.minecraft.world.entity.EntityType<out LivingEntity>)
+        return supplier.getBaseValue(toNMS(toBukkit(attribute)))
+    }
+
+    private fun removeAttackGoals(entity: PathfinderMob) {
+        entity.goalSelector.availableGoals.map { it.goal }.filter {
+            it is MeleeAttackGoal || it is RangedAttackGoal || it is RangedBowAttackGoal<*> || it is RangedCrossbowAttackGoal<*>
+        }.forEach { entity.goalSelector.removeGoal(it) }
+    }
+
+    override fun setAttackType(entity: Creature, attackType: CardAttackType) {
+        val nms = (entity as CraftCreature).handle
+        removeAttackGoals(nms)
+
+        nms.goalSelector.addGoal(3, when (attackType) {
+            CardAttackType.MELEE -> MeleeAttackGoal(nms, 1.0, false)
+            CardAttackType.BOW -> {
+                if (nms !is Monster) throw UnsupportedOperationException("Invalid Monster Type ${entity::class.java.simpleName}")
+                if (nms !is RangedAttackMob) throw UnsupportedOperationException("Invalid Ranged Type ${entity::class.java.simpleName}")
+
+                RangedBowAttackGoal(nms, 1.0, 20, 15.0F)
+            }
+            CardAttackType.CROSSBOW -> {
+                if (nms !is Monster) throw UnsupportedOperationException("Invalid Monster Type ${entity::class.java.simpleName}")
+                if (nms !is CrossbowAttackMob) throw UnsupportedOperationException("Invalid Crossbow Type ${entity::class.java.simpleName}")
+                RangedCrossbowAttackGoal(nms,1.0, 15.0F)
+            }
+        })
+    }
+
+    override fun getAttackType(entity: Creature): CardAttackType {
+        val nms = (entity as CraftCreature).handle
+
+        return (nms.goalSelector.availableGoals + nms.targetSelector.availableGoals)
+            .sortedBy { it.priority }
+            .firstNotNullOf {
+                when (it.goal) {
+                    is MeleeAttackGoal -> CardAttackType.MELEE
+                    is RangedBowAttackGoal<*> -> CardAttackType.BOW
+                    is RangedCrossbowAttackGoal<*> -> CardAttackType.CROSSBOW
+                    else -> null
+                } ?: CardAttackType.MELEE
+            }
     }
 }
