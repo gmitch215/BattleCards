@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
@@ -114,6 +115,9 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         if (event.entity.isCard) {
             val card = event.entity.card!!
 
+            if (!BattleConfig.config.cardAttackPlayers && event.target is Player)
+                event.isCancelled = true
+
             if (card.p.uniqueId == event.target?.uniqueId || event.reason.name == "TEMPT")
                 event.isCancelled = true
         }
@@ -170,7 +174,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         if (entity.isCard) {
             val card = entity.card
             if (card != null) {
-                if (event.damager is Player && event.damager.uniqueId == card.p.uniqueId) {
+                if (event.damager is Player && (event.damager.uniqueId == card.p.uniqueId || !BattleConfig.config.cardAttackPlayers)) {
                     event.isCancelled = true
                     return
                 }

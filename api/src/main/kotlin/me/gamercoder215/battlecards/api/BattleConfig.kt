@@ -87,35 +87,36 @@ interface BattleConfig {
             plugin.saveDefaultConfig()
             val config = plugin.config
 
-            if (!config.isString("Language")) config.set("Language", "en")
+            if (!config.isString("Language")) config["Language"] = "en"
 
             if (!config.isConfigurationSection("Functionality")) config.createSection("Functionality")
-            if (!config.isString("Functionality.CommandVersion") && !config.isInt("Functionality.CommandVersion")) config.set("Functionality.CommandVersion", "auto")
+            if (!config.isString("Functionality.CommandVersion") && !config.isInt("Functionality.CommandVersion")) config["Functionality.CommandVersion"] = "auto"
 
             if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
-            if (!config.isList("Cards.Disabled")) config.set("Cards.Disabled", listOf<String>())
-            if (!config.isInt("Cards.Cooldown")) config.set("Cards.Cooldown", 30)
+            if (!config.isList("Cards.Disabled")) config["Cards.Disabled"] = listOf<String>()
+            if (!config.isInt("Cards.Cooldown")) config["Cards.Cooldown"] = 30
+            if (!config.isBoolean("Cards.AttackPlayers")) config["Cards.AttackPlayers"] = true
 
             if (!config.isConfigurationSection("Cards.Display")) config.createSection("Cards.Display")
 
             if (!config.isConfigurationSection("Cards.Display.Inventory")) config.createSection("Cards.Display.Inventory")
-            if (!config.isBoolean("Cards.Display.Inventory.ShowLevel")) config.set("Cards.Display.Inventory.ShowLevel", true)
+            if (!config.isBoolean("Cards.Display.Inventory.ShowLevel")) config["Cards.Display.Inventory.ShowLevel"] = true
 
             if (!config.isConfigurationSection("Cards.Display.Info")) config.createSection("Cards.Display.Info")
-            if (!config.isBoolean("Cards.Display.Info.ShowAbilities")) config.set("Cards.Display.Info.ShowAbilities", true)
-            if (!config.isBoolean("Cards.Display.Info.ShowStatistics")) config.set("Cards.Display.Info.ShowStatistics", true)
+            if (!config.isBoolean("Cards.Display.Info.ShowAbilities")) config["Cards.Display.Info.ShowAbilities"] = true
+            if (!config.isBoolean("Cards.Display.Info.ShowStatistics")) config["Cards.Display.Info.ShowStatistics"] = true
 
             if (!config.isConfigurationSection("Cards.Growth")) config.createSection("Cards.Growth")
-            if (!config.isNumber("Cards.Growth.KillMultiplier")) config.set("Cards.Growth.KillMultiplier", 1.0)
-            if (!config.isNumber("Cards.Growth.KillCardMultiplier")) config.set("Cards.Growth.KillCardMultiplier", 2.0)
-            if (!config.isNumber("Cards.Growth.UseMultiplier")) config.set("Cards.Growth.UseMultiplier", 5.0)
-            if (!config.isNumber("Cards.Growth.PassiveAmount")) config.set("Cards.Growth.PassiveAmount", 2.0)
+            if (!config.isNumber("Cards.Growth.KillMultiplier")) config["Cards.Growth.KillMultiplier"] = 1.0
+            if (!config.isNumber("Cards.Growth.KillCardMultiplier")) config["Cards.Growth.KillCardMultiplier"] = 2.0
+            if (!config.isNumber("Cards.Growth.UseMultiplier")) config["Cards.Growth.UseMultiplier"] = 5.0
+            if (!config.isNumber("Cards.Growth.PassiveAmount")) config["Cards.Growth.PassiveAmount"] = 2.0
 
             if (!config.isConfigurationSection("Cards.Basic")) config.createSection("Cards.Basic")
 
             if (!config.isConfigurationSection("Cards.Basic.Drops")) config.createSection("Cards.Basic.Drops")
-            if (!config.isBoolean("Cards.Basic.Drops.Enabled")) config.set("Cards.Basic.Drops.Enabled", true)
-            if (!config.isString("Cards.Basic.Drops.Ignore")) config.set("Cards.Basic.Drops.Ignore", "")
+            if (!config.isBoolean("Cards.Basic.Drops.Enabled")) config["Cards.Basic.Drops.Enabled"] = true
+            if (!config.isString("Cards.Basic.Drops.Ignore")) config["Cards.Basic.Drops.Ignore"] = ""
 
             return config
         }
@@ -133,31 +134,28 @@ interface BattleConfig {
                     SPIDER,
                     CAVE_SPIDER,
                     ENDERMAN,
-                    ENDERMITE,
                     ZOMBIE,
                     SKELETON,
                     IRON_GOLEM,
                     BLAZE,
-                    CREEPER,
-                    WITCH,
                     WITHER,
-                    SLIME,
-                    MAGMA_CUBE,
                     GUARDIAN,
+                    WOLF,
 
                     "wither_skeleton",
                     "vindicator",
-                    "vex",
                     "stray",
                     "phantom",
                     "drowned",
                     "piglin",
+                    "illusioner",
                     "hoglin",
                     "evoker",
                     "pillager",
                     "elder_guardian",
                     "polar_bear",
-                    "wolf"
+                    "warden",
+                    "zoglin"
                 ).mapNotNull {
                     when (it) {
                         is EntityType -> it
@@ -345,5 +343,17 @@ interface BattleConfig {
          * @param value List of Players
          */
         set(value) = setConfig("Cards.PlayerCooldown.Ignored", value)
+
+    var cardAttackPlayers: Boolean
+        /**
+         * Fetches whether Battle Cards can attack players.
+         * @return true if can attack players, false otherwise
+         */
+        get() = configuration.getBoolean("Cards.AttackPlayers")
+        /**
+         * Sets whether Battle Cards can attack players.
+         * @param value true if can attack players, false otherwise
+         */
+        set(value) = setConfig("Cards.AttackPlayers", value)
 
 }

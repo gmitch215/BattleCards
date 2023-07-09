@@ -33,6 +33,10 @@ Cards:
   # The Cooldown, in seconds, for the same BattleCard to be deployed again.
   Cooldown: 30
 
+  # Whether Cards are allowed to target players at all. Cards, by default, only defend their owner and attack for them.
+  # This is not recommended for the purpose of gameplay (and how OP cards can get).
+  AttackPlayers: false
+
   # Configuration for Player-specific Cooldowns
   PlayerCooldown:
     # The amount of cards needed to trigger the player cooldown
