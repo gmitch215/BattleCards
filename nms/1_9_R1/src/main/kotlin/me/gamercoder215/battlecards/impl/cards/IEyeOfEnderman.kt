@@ -25,7 +25,7 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
     override fun init() {
         super.init()
 
-        crystal = entity.world.spawn(entity.eyeLocation, EnderCrystal::class.java).apply {
+        crystal = world.spawn(entity.eyeLocation, EnderCrystal::class.java).apply {
             isInvulnerable = true
             isShowingBottom = false
         }
@@ -39,7 +39,7 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
         val entity = entity.getNearbyEntities(radius, radius, radius)
             .filterIsInstance<LivingEntity>()
             .filter { it is Player || it.card != null}
-            .minByOrNull { entity.location.distanceSquared(it.location) } ?: return
+            .minByOrNull { location.distanceSquared(it.location) } ?: return
 
         crystal.beamTarget = entity.location
         crystalTarget = entity

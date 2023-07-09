@@ -19,6 +19,7 @@ import kotlin.math.roundToInt
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 25.5)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 9.6)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.1)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 7.75)
 
 @BlockAttachment(Material.BEDROCK, 0.0, 2.5, 0.0, true)
 class IKingWither(data: ICard) : IBattleCard<Wither>(data) {

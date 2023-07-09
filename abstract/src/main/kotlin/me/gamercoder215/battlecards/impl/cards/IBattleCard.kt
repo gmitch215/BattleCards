@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.impl.IBattleStatistics
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.Passive
+import me.gamercoder215.battlecards.impl.UnlockedAt
 import me.gamercoder215.battlecards.util.BattleParticle
 import me.gamercoder215.battlecards.util.CardUtils
 import me.gamercoder215.battlecards.util.getChance
@@ -12,10 +13,13 @@ import me.gamercoder215.battlecards.util.getEntity
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.entity.Creature
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
+import java.lang.reflect.Method
 import java.security.SecureRandom
 import java.util.*
 import java.util.function.Supplier
@@ -84,7 +88,7 @@ abstract class IBattleCard<T : Creature>(
 
     fun despawn() {
         uninit()
-        minions.forEach { it.remove() }
+        minions.forEach { it.health = 0.0 }
         minions.clear()
 
         entity.remove()
@@ -121,9 +125,9 @@ abstract class IBattleCard<T : Creature>(
         }.runTaskTimer(BattleConfig.plugin, 0, 1)
 
         // Passive Abilities
-        this.javaClass.declaredMethods.filter { it.isAnnotationPresent(Passive::class.java) }.forEach { m ->
+        this.javaClass.declaredMethods.filter { it.isAnnotationPresent(Passive::class.java) && checkUnlockedAt(it) }.forEach { m ->
             m.isAccessible = true
-            val interval = m.getAnnotation(Passive::class.java).getChance(level)
+            val interval = m.getAnnotation(Passive::class.java).getChance(level, unlockedAt(m))
             object : BukkitRunnable() {
                 override fun run() {
                     if (entity.isDead) {
@@ -148,6 +152,23 @@ abstract class IBattleCard<T : Creature>(
         get() = data.statistics
 
     // Utilities
+
+    val target: LivingEntity
+        get() = entity.target
+
+    val location: Location
+        get() = entity.location
+
+    val world: World
+        get() = entity.world
+
+    private fun checkUnlockedAt(method: Method): Boolean =
+        level >= unlockedAt(method)
+
+    private fun unlockedAt(method: Method): Int {
+        val annotation = method.getAnnotation(UnlockedAt::class.java) ?: return 0
+        return annotation.level
+    }
 
     fun <T : Creature> minion(clazz: Class<T>, action: T.() -> Unit = {}): T {
         val minion = w.spawnMinion(clazz, this)
@@ -184,5 +205,14 @@ abstract class IBattleCard<T : Creature>(
                 d += .1
             }
         }
+    }
+
+    // Hashing
+
+    override fun hashCode(): Int = entity.uniqueId.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is IBattleCard<*>) return false
+        return other.entity.uniqueId == entity.uniqueId
     }
 }

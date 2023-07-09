@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 @Attributes(100.0, 15.0, 60.0, 0.28, 10.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.75)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 8.0)
 // TODO Block Attachments
 class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
 
@@ -44,7 +45,7 @@ class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
     private fun heatSheild(event: EntityDamageByEntityEvent) {
         if (event.damager.world.environment == World.Environment.NETHER) {
             event.isCancelled = true
-            entity.world.playSound(entity.eyeLocation, BattleSound.ITEM_SHIELD_BLOCK.findOrNull() ?: return, 3F, 1F)
+            world.playSound(entity.eyeLocation, BattleSound.ITEM_SHIELD_BLOCK.findOrNull() ?: return, 3F, 1F)
         }
     }
 
@@ -52,12 +53,12 @@ class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
     @Passive(300, CardOperation.SUBTRACT, 10, Long.MAX_VALUE, 100)
     @UnlockedAt(25)
     private fun ghast() {
-        val fireball = entity.world.spawn(entity.eyeLocation, LargeFireball::class.java)
+        val fireball = world.spawn(entity.eyeLocation, LargeFireball::class.java)
         fireball.yield = 1 + (level / 0.2F).coerceAtMost(3F)
         fireball.velocity = fireball.velocity.multiply(1 + (level / 50))
         fireball.shooter = entity
 
-        entity.world.playSound(entity.location, BattleSound.ENTITY_GHAST_SCREAM.find(), 4F, 1.5F)
+        world.playSound(location, BattleSound.ENTITY_GHAST_SCREAM.find(), 4F, 1.5F)
     }
 
 
