@@ -41,7 +41,7 @@ class IGrandWarden(data: ICard) : IBattleCard<Warden>(data) {
     @UserOffensive(0.1, CardOperation.ADD, 0.02, 0.3)
     private fun sculkKnockback(event: EntityDamageByEntityEvent) {
         val entity = event.entity as? LivingEntity ?: return
-        entity.velocity.add(this.entity.location.direction.multiply(2 + (level * 0.04)))
+        entity.velocity.add(location.direction.multiply(2 + (level * 0.04)))
     }
 
     @CardAbility("card.grand_warden.ability.sonic_pulse")
