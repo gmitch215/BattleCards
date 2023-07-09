@@ -126,9 +126,12 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         event.isCancelled = true
     }
 
-    private fun checkUnlockedAt(method: Method, card: IBattleCard<*>): Boolean {
-        val annotation = method.getDeclaredAnnotation(UnlockedAt::class.java) ?: return true
-        return card.level >= annotation.level
+    private fun checkUnlockedAt(method: Method, card: IBattleCard<*>): Boolean =
+        card.level >= unlockedAt(method)
+
+    private fun unlockedAt(method: Method): Int {
+        val annotation = method.getAnnotation(UnlockedAt::class.java) ?: return 0
+        return annotation.level
     }
 
     private fun addExperience(card: ICard, amount: Number) {
@@ -151,7 +154,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 if (!checkUnlockedAt(m, card)) continue
                 val annotation = m.getDeclaredAnnotation(Damage::class.java)
 
-                if (r.nextDouble() <= annotation.getChance(card.level))
+                if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                     m.invoke(card, event)
             }
         }
@@ -167,13 +170,18 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         if (entity.isCard) {
             val card = entity.card
             if (card != null) {
+                if (event.damager is Player && event.damager.uniqueId == card.p.uniqueId) {
+                    event.isCancelled = true
+                    return
+                }
+
                 val defensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Defensive::class.java) }
                 if (defensive.isNotEmpty())
                     for (m in defensive) {
                         if (!checkUnlockedAt(m, card)) continue
                         val annotation = m.getDeclaredAnnotation(Defensive::class.java)
 
-                        if (r.nextDouble() <= annotation.getChance(card.level))
+                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                             m.invoke(card, event)
                     }
 
@@ -198,7 +206,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                         if (!checkUnlockedAt(m, card)) continue
                         val annotation = m.getAnnotation(UserDefensive::class.java)
 
-                        if (r.nextDouble() <= annotation.getChance(card.level))
+                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                             m.invoke(card, event)
                     }
             }
@@ -214,7 +222,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     if (!checkUnlockedAt(m, card)) continue
                     val annotation = m.getDeclaredAnnotation(Offensive::class.java)
 
-                    if (r.nextDouble() <= annotation.getChance(card.level))
+                    if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                         m.invoke(card, event)
                 }
 
