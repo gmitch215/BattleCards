@@ -4,6 +4,7 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Husk
 import org.bukkit.inventory.ItemStack
 
@@ -34,7 +35,19 @@ class IPrinceHusk(data: ICard) : IBattleCard<Husk>(data) {
     @CardAbility("card.prince_husk.ability.royal_guard", ChatColor.DARK_BLUE)
     @Passive(600, CardOperation.SUBTRACT, 5, 600, 100)
     private fun royalGuard() {
-        // TODO Add Minion Spawning
+        minion(Husk::class.java) {
+            equipment.itemInMainHand = ItemStack(if (r.nextDouble() < 0.25) Material.IRON_AXE else Material.IRON_SWORD)
+
+            equipment.helmet = ItemStack(Material.IRON_BLOCK)
+            equipment.chestplate = ItemStack(Material.IRON_CHESTPLATE).apply {
+                itemMeta = itemMeta.apply {
+                    isUnbreakable = true
+
+                    if (level >= 20)
+                        addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, level / 20, true)
+                }
+            }
+        }
     }
 
 }
