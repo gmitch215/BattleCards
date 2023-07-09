@@ -58,7 +58,7 @@ enum class BattleCardType {
     /**
      * Represents a Zombie BattleCard.
      */
-    REDSTONE_ZOMBIE(1, Zombie::class, Rarity.UNCOMMON),
+    REDSTONE_ZOMBIE(1, Zombie::class, Rarity.COMMON),
 
     /**
      * Represents a Skeleton BattleCard.
@@ -98,7 +98,102 @@ enum class BattleCardType {
     /**
      * Represents a Pigin Brute BattleCard.
      */
-    NETHERITE_PIGLIN(1, "PiglinBrute", Rarity.EPIC)
+    NETHERITE_PIGLIN(1, "PiglinBrute", Rarity.EPIC),
+
+    /**
+     * Represents a Spider BattleCard.
+     */
+    SPIDER_QUEEN(1, Spider::class, Rarity.LEGEND),
+
+    /**
+     * Represents a Skeleton BattleCard.
+     */
+    SKELETON_SOLDIER(1, Skeleton::class, Rarity.COMMON),
+
+    /**
+     * Represents a Wolf BattleCard.
+     */
+    PITBULL(1, Wolf::class, Rarity.UNCOMMON),
+
+    /**
+     * Represents a Zombie BattleCard.
+     */
+    BOMBERMAN(1, Zombie::class, Rarity.EPIC),
+
+    /**
+     * Represents a Pillager BattleCard.
+     */
+    MERCENARY(1, "Pillager", Rarity.RARE),
+
+    /**
+     * Represents a Drowned BattleCard.
+     */
+    POSEIDON(1, "Drowned", Rarity.ULTIMATE),
+
+    /**
+     * Represents a Vindicator BattleCard.
+     */
+    KNIGHT(1, "Vindicator", Rarity.COMMON),
+
+    /**
+     * Represents a Illusioner BattleCard.
+     */
+    GOLDEN_WIZARD(1, "Illusioner", Rarity.EPIC),
+
+    /**
+     * Represents a Cave Spider BattleCard.
+     */
+    SPIDER_STACK(1, CaveSpider::class, Rarity.UNCOMMON),
+
+    /**
+     * Represents a Zombie BattleCard.
+     */
+    SUSPICIOUS_ZOMBIE(1, Zombie::class, Rarity.EPIC),
+
+    /**
+     * Represents a Piglin Brute BattleCard.
+     */
+    ZOG_RIDER(1, "PiglinBrute", Rarity.LEGEND),
+
+    /**
+     * Represents a Stray BattleCard.
+     */
+    PHANTOM_RIDER(1, "Stray", Rarity.RARE),
+
+    /**
+     * Represents a Pillager BattleCard.
+     */
+    RAIDER(1, "Pillager", Rarity.UNCOMMON),
+
+    /**
+     * Represents a Wither Skeleton BattleCard.
+     */
+    NETHER_PRINCE(1, "WitherSkeleton", Rarity.LEGEND),
+
+    /**
+     * Represents a Skeleton BattleCard.
+     */
+    STONE_ARCHER(1, Skeleton::class, Rarity.COMMON),
+
+    /**
+     * Represents a Silverfish BattleCard.
+     */
+    SILVERFISH_HIVE(1, Silverfish::class, Rarity.RARE),
+
+    /**
+     * Represents a Zombie BattleCard.
+     */
+    THUNDER_REVENANT(1, Zombie::class, Rarity.EPIC),
+
+    /**
+     * Represents a Husk BattleCard.
+     */
+    EMERALD_HUSK(1, "Husk", Rarity.UNCOMMON),
+
+    /**
+     * Represents a Husk BattleCard.
+     */
+    WARRIOR_HUSK(1, "Husk", Rarity.EPIC)
     ;
 
     private val entityClass: Class<out LivingEntity>?
@@ -161,7 +256,7 @@ enum class BattleCardType {
          */
         @JvmStatic
         fun fromClass(clazz: Class<out BattleCard<*>>): BattleCardType? {
-            return values().firstOrNull { it.getEntityClass() == clazz }
+            return entries.firstOrNull { it.getEntityClass() == clazz }
         }
 
     }
