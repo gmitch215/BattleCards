@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.api.card
 import me.gamercoder215.battlecards.api.BattleConfig
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.serialization.ConfigurationSerializable
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import java.util.*
 import kotlin.math.floor
@@ -160,6 +161,15 @@ interface Card : ConfigurationSerializable {
          * @return Whether this card can be deployed based on the cooldown
          */
         get() = cooldownTime == 0L
+
+    val entityCardType: EntityType?
+        /**
+         * Fetches the EntityType of this BattleCard.
+         * @return BattleCard EntityType, or null if not found
+         */
+        get() = EntityType.entries.firstOrNull {
+            it.entityClass == type.getEntityClass()
+        }
 
     // Serialization
 
