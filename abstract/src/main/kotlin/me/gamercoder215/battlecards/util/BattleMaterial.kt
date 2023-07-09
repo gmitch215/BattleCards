@@ -14,6 +14,11 @@ enum class BattleMaterial(
     BLACK_STAINED_GLASS_PANE(
         { ItemStack(matchMaterial("stained_glass_pane"), 1, 15) },
         { ItemStack(matchMaterial("black_stained_glass_pane")) }
+    ),
+
+    COBWEB(
+        { ItemStack(matchMaterial("web")) },
+        { ItemStack(matchMaterial("cobweb")) }
     )
 
     ;
