@@ -2,17 +2,18 @@ package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.BlockAttachment
+import me.gamercoder215.battlecards.impl.MinionBlockAttachment
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.entity.ArmorStand
+import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.ChatPaginator
 import org.bukkit.util.Vector
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.function.Supplier
 
 object CardUtils {
 
@@ -21,23 +22,48 @@ object CardUtils {
     @JvmStatic
     fun createAttachments(card: IBattleCard<*>) {
         val attachments = card.javaClass.getAnnotationsByType(BlockAttachment::class.java)
+        if (attachments.isEmpty()) return
+
         val reference = card.location
 
         for (attachment in attachments) {
             val newLocation = reference.add(getLocal(reference, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)))
-            val entity: ArmorStand = card.world.spawn(newLocation, ArmorStand::class.java)
+            val entity = card.world.spawn(newLocation, ArmorStand::class.java).apply {
+                isSmall = attachment.small
+                isVisible = false
+                setGravity(false)
+                setMetadata("battlecards:block_attachment", FixedMetadataValue(BattleConfig.plugin, true))
+                helmet = ItemStack(attachment.material)
+            }
 
-            entity.isSmall = attachment.small
-            entity.isVisible = false
-            entity.setGravity(false)
-            entity.setMetadata("battlecards:block_attachment", FixedMetadataValue(BattleConfig.plugin, true))
-
-            entity.helmet = ItemStack(attachment.material)
-
-            card.attachments[entity.uniqueId] = Supplier{
+            card.attachments[entity.uniqueId] = {
                 val ref = card.location
                 ref.add(getLocal(ref, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)))
             }
+        }
+    }
+
+    @JvmStatic
+    fun createMinionAttachments(minion: LivingEntity, card: IBattleCard<*>) {
+        val attachments = card.javaClass.getAnnotationsByType(MinionBlockAttachment::class.java).filter { it.type == minion.type }
+        if (attachments.isEmpty()) return
+
+        val reference = minion.location
+
+        for (attachment in attachments) {
+            val newLocation = reference.add(getLocal(reference, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)))
+            val entity = minion.world.spawn(newLocation, ArmorStand::class.java).apply {
+                isSmall = attachment.small
+                isVisible = false
+                setGravity(false)
+                setMetadata("battlecards:block_attachment", FixedMetadataValue(BattleConfig.plugin, true))
+                helmet = ItemStack(attachment.material)
+            }
+
+            card.minionAttachments[minion.uniqueId] = mutableMapOf(entity.uniqueId to {
+                val ref = minion.location
+                ref.add(getLocal(ref, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)))
+            })
         }
     }
 

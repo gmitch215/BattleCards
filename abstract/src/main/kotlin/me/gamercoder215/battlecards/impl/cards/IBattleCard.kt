@@ -2,10 +2,7 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
-import me.gamercoder215.battlecards.impl.IBattleStatistics
-import me.gamercoder215.battlecards.impl.ICard
-import me.gamercoder215.battlecards.impl.Passive
-import me.gamercoder215.battlecards.impl.UnlockedAt
+import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.BattleParticle
 import me.gamercoder215.battlecards.util.CardUtils
 import me.gamercoder215.battlecards.util.getChance
@@ -14,6 +11,7 @@ import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
+import org.bukkit.entity.Ageable
 import org.bukkit.entity.Creature
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -22,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable
 import java.lang.reflect.Method
 import java.security.SecureRandom
 import java.util.*
-import java.util.function.Supplier
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -39,7 +36,7 @@ abstract class IBattleCard<T : Creature>(
         fun byEntity(entity: Creature): IBattleCard<*>? = spawned[entity.uniqueId]
 
         @JvmStatic
-        fun byMinion(minion: Creature): IBattleCard<*>? {
+        fun byMinion(minion: LivingEntity): IBattleCard<*>? {
             spawned.forEach { (_, card) ->
                 if (card.minions.contains(minion))
                     return card
@@ -57,8 +54,9 @@ abstract class IBattleCard<T : Creature>(
     override lateinit var currentItem: ItemStack
     lateinit var p: Player
 
-    val attachments: MutableMap<UUID, Supplier<Location>> = mutableMapOf()
-    val minions: MutableList<Creature> = mutableListOf()
+    val attachments: MutableMap<UUID, () -> Location> = mutableMapOf()
+    val minions: MutableList<LivingEntity> = mutableListOf()
+    val minionAttachments: MutableMap<UUID, MutableMap<UUID, () -> Location>> = mutableMapOf()
 
     fun spawn(player: Player, card: ItemStack, location: Location): T {
         if (!entity.isDead) throw IllegalStateException("Entity already spawned")
@@ -81,6 +79,10 @@ abstract class IBattleCard<T : Creature>(
 
         entity.removeWhenFarAway = false
         entity.canPickupItems = false
+
+        if (entity is Ageable)
+            (entity as Ageable).ageLock = true
+
         w.loadProperties(entity, this)
         init()
         return entity
@@ -88,9 +90,6 @@ abstract class IBattleCard<T : Creature>(
 
     fun despawn() {
         uninit()
-        minions.forEach { it.health = 0.0 }
-        minions.clear()
-
         entity.remove()
     }
 
@@ -117,10 +116,30 @@ abstract class IBattleCard<T : Creature>(
 
                 attachments.forEach { (key, value) ->
                     val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
-                    entity.teleport(value.get())
+                    entity.teleport(value())
                 }
 
-                minions.removeIf { it.isDead }
+                minions.iterator().apply {
+                    while (hasNext()) {
+                        val minion = next()
+                        if (minion.isDead) {
+                            remove()
+                            minionAttachments[minion.uniqueId]?.forEach { (key, _) ->
+                                val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
+                                entity.remove()
+                            }
+                            continue
+                        }
+
+                        minionAttachments[minion.uniqueId]?.forEach { (key, value) ->
+                            val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
+                            entity.teleport(value())
+                        }
+                    }
+                }
+
+                if (entity is Ageable)
+                    (entity as Ageable).setBreed(false)
             }
         }.runTaskTimer(BattleConfig.plugin, 0, 1)
 
@@ -144,6 +163,16 @@ abstract class IBattleCard<T : Creature>(
 
     open fun uninit() {
         if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
+
+        minions.forEach {
+            it.health = 0.0
+            minionAttachments[it.uniqueId]?.forEach attachments@{ (key, _) ->
+                val entity = Bukkit.getServer().getEntity(key) ?: return@attachments
+                entity.remove()
+            }
+        }
+        minions.clear()
+
         p.inventory.addItem(currentItem)
         spawned.remove(entity.uniqueId)
     }
@@ -151,9 +180,12 @@ abstract class IBattleCard<T : Creature>(
     final override val statistics: IBattleStatistics
         get() = data.statistics
 
+    final override val isRideable: Boolean
+        get() = this::class.java.isAnnotationPresent(Rideable::class.java)
+
     // Utilities
 
-    val target: LivingEntity
+    val target: LivingEntity?
         get() = entity.target
 
     val location: Location
@@ -173,6 +205,7 @@ abstract class IBattleCard<T : Creature>(
     fun <T : Creature> minion(clazz: Class<T>, action: T.() -> Unit = {}): T {
         val minion = w.spawnMinion(clazz, this)
         action(minion)
+        CardUtils.createMinionAttachments(minion, this)
         return minion
     }
 
@@ -213,6 +246,6 @@ abstract class IBattleCard<T : Creature>(
 
     override fun equals(other: Any?): Boolean {
         if (other !is IBattleCard<*>) return false
-        return other.entity.uniqueId == entity.uniqueId
+        return other.entity.uniqueId == entity.uniqueId || data == other.data
     }
 }
