@@ -1,8 +1,8 @@
 package me.gamercoder215.battlecards.impl.cards
 
-import me.gamercoder215.battlecards.impl.Listener
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
+import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
@@ -19,7 +19,7 @@ class IBattleCardListener(plugin: Plugin) : org.bukkit.event.Listener {
 
     fun onEvent(e: Event) {
         IBattleCard.spawned.values.forEach { card ->
-            card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Listener::class.java) }.forEach {
+            card.javaClass.declaredMethods.filter { it.isAnnotationPresent(EventHandler::class.java) }.forEach {
                 if (it.parameterCount != 1) throw IllegalStateException("Listener method must have 1 parameter: ${it.name} in ${card.javaClass.name}")
                 val parameter = it.parameterTypes[0]
 
