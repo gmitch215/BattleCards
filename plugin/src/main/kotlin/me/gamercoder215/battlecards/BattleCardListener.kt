@@ -12,12 +12,15 @@ import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityTargetEvent
+import org.bukkit.event.entity.SlimeSplitEvent
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scheduler.BukkitRunnable
@@ -104,30 +107,20 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     override fun run() {
                         uses[p.uniqueId] = (uses[p.uniqueId] ?: return) - 1
                     }
-                }.runTaskLater(plugin, plugin.playerCooldownTime * 20L)
+                }.runTaskLater(plugin, (plugin.playerCooldownTime + card.deployTime) * 20L)
             }
             else -> return
         }
     }
 
     @EventHandler
-    fun onTarget(event: EntityTargetEvent) {
-        if (event.entity.isCard) {
-            val card = event.entity.card!!
+    fun onInteract(event: PlayerInteractEntityEvent) {
+        val p = event.player
+        val entity = event.rightClicked
+        val card = entity.card ?: return
 
-            if (!BattleConfig.config.cardAttackPlayers && event.target is Player)
-                event.isCancelled = true
-
-            if (card.p.uniqueId == event.target?.uniqueId || event.reason.name == "TEMPT")
-                event.isCancelled = true
-        }
-    }
-
-    @EventHandler
-    fun onHitAttachment(event: EntityDamageEvent) {
-        val entity = event.entity
-        if (!entity.hasMetadata("battlecards:block_attachment")) return
-        event.isCancelled = true
+        if (card.isRideable)
+            entity.passenger = p
     }
 
     private fun checkUnlockedAt(method: Method, card: IBattleCard<*>): Boolean =
@@ -167,38 +160,46 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     @EventHandler
     fun attack(event: EntityDamageByEntityEvent) {
         if (event.isCancelled) return
-        val entity = event.entity as? LivingEntity ?: return
+        val entity: LivingEntity = when (event.entity) {
+            is LivingEntity -> event.entity as? LivingEntity
+            is Projectile -> (event.entity as? Projectile)?.shooter as? LivingEntity
+            else -> return
+        } ?: return
+
+        val damager: LivingEntity = when (event.damager) {
+            is LivingEntity -> event.damager as? LivingEntity
+            is Projectile -> (event.damager as? Projectile)?.shooter as? LivingEntity
+            else -> return
+        } ?: return
 
         // Defensive
 
         if (entity.isCard) {
-            val card = entity.card
-            if (card != null) {
-                if (event.damager is Player && (event.damager.uniqueId == card.p.uniqueId || !BattleConfig.config.cardAttackPlayers)) {
-                    event.isCancelled = true
-                    return
+            val card = entity.card!!
+
+            if (event.damager is Player && (event.damager.uniqueId == card.p.uniqueId || !BattleConfig.config.cardAttackPlayers)) {
+                event.isCancelled = true
+                return
+            }
+
+            val defensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Defensive::class.java) }
+            if (defensive.isNotEmpty())
+                for (m in defensive) {
+                    if (!checkUnlockedAt(m, card)) continue
+                    val annotation = m.getDeclaredAnnotation(Defensive::class.java)
+
+                    if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
+                        m.invoke(card, event)
                 }
 
-                val defensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Defensive::class.java) }
-                if (defensive.isNotEmpty())
-                    for (m in defensive) {
-                        if (!checkUnlockedAt(m, card)) continue
-                        val annotation = m.getDeclaredAnnotation(Defensive::class.java)
+            card.data.statistics.damageReceived += event.finalDamage
+            card.currentItem = card.data.itemStack
 
-                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
-                            m.invoke(card, event)
-                    }
-
-                card.data.statistics.damageReceived += event.finalDamage
+            if (entity.health - event.finalDamage <= 0) {
+                card.data.statistics.deaths++
                 card.currentItem = card.data.itemStack
 
-                if (entity.health - event.finalDamage <= 0) {
-                    card.data.statistics.deaths++
-                    card.currentItem = card.data.itemStack
-
-                    card.uninit()
-                }
-
+                card.uninit()
             }
         }
 
@@ -218,35 +219,44 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         // Offensive
 
-        if (event.damager.isCard) {
-            val card = event.damager.card
-            if (card != null) {
-                val offensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Offensive::class.java) }
-                for (m in offensive) {
-                    if (!checkUnlockedAt(m, card)) continue
-                    val annotation = m.getDeclaredAnnotation(Offensive::class.java)
+        if (damager.isMinion && damager.cardByMinion == entity.cardByMinion) {
+            event.isCancelled = true
+            return
+        }
 
-                    if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
-                        m.invoke(card, event)
-                }
+        if (damager.isCard) {
+            val card = damager.card!!
 
-                card.data.statistics.damageDealt += event.finalDamage
-
-                if (entity.health - event.finalDamage <= 0) {
-                    var modifier: Double = plugin.growthKillMultiplier
-                    when {
-                        entity is Player -> card.data.statistics.playerKills++
-                        entity.isCard -> {
-                            card.data.statistics.cardKills++
-                            modifier = plugin.growthKillCardMultiplier
-                        }
-                        else -> card.data.statistics.entityKills++
-                    }
-
-                    addExperience(card.data, modifier * entity.maxHealth * (if (entity.isCard) plugin.growthKillCardMultiplier else 1.0))
-                }
-                card.currentItem = card.data.itemStack
+            if (entity.isMinion && entity.cardByMinion == card) {
+                event.isCancelled = true
+                return
             }
+
+            val offensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Offensive::class.java) }
+            for (m in offensive) {
+                if (!checkUnlockedAt(m, card)) continue
+                val annotation = m.getDeclaredAnnotation(Offensive::class.java)
+
+                if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
+                    m.invoke(card, event)
+            }
+
+            card.data.statistics.damageDealt += event.finalDamage
+
+            if (entity.health - event.finalDamage <= 0) {
+                var modifier: Double = plugin.growthKillMultiplier
+                when {
+                    entity is Player -> card.data.statistics.playerKills++
+                    entity.isCard -> {
+                        card.data.statistics.cardKills++
+                        modifier = plugin.growthKillCardMultiplier
+                    }
+                    else -> card.data.statistics.entityKills++
+                }
+
+                addExperience(card.data, modifier * entity.maxHealth * (if (entity.isCard) plugin.growthKillCardMultiplier else 1.0))
+            }
+            card.currentItem = card.data.itemStack
         }
 
         if (event.damager is Player && (event.damager as Player).spawnedCards.isNotEmpty()) {
@@ -270,6 +280,39 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
         event.player.spawnedCards.forEach { it.despawn() }
+    }
+
+    @EventHandler
+    fun onTarget(event: EntityTargetEvent) {
+        if (event.entity.isCard) {
+            val card = event.entity.card!!
+
+            if (!BattleConfig.config.cardAttackPlayers && event.target is Player)
+                event.isCancelled = true
+
+            if (card.p.uniqueId == event.target?.uniqueId || event.reason.name == "TEMPT")
+                event.isCancelled = true
+        }
+
+        if (event.entity.isMinion) {
+            val minions = event.target.card?.minions?.map { it.uniqueId } ?: event.target.cardByMinion?.minions?.map { it.uniqueId }
+
+            if (minions?.contains(event.entity.uniqueId) == true)
+                event.isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun onHitAttachment(event: EntityDamageEvent) {
+        val entity = event.entity
+        if (!entity.hasMetadata("battlecards:block_attachment")) return
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onSplit(event: SlimeSplitEvent) {
+        if (event.entity.isMinion || event.entity.isCard)
+            event.isCancelled = true
     }
 
 }
