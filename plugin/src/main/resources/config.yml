@@ -40,9 +40,9 @@ Cards:
   # Configuration for Player-specific Cooldowns
   PlayerCooldown:
     # The amount of cards needed to trigger the player cooldown
-    Count: 5
+    Count: 2
 
-    # The amount of time, in seconds, to cooldown a player for
+    # The amount of time, in seconds, to cooldown a player for, added to the card's deploy time
     Cooldown: 180
 
     # A list of players, permissions, or Vault Groups who are ignored by the player cooldown. Supports RegEx Patterns.
