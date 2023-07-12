@@ -9,7 +9,7 @@ import org.bukkit.entity.Skeleton
 import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.SKELETON_SOLDIER)
-@Attributes(80.0, 3.5, 5.0, 0.3, 5.0)
+@Attributes(80.0, 3.5, 5.0, 0.2, 5.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 2.5)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.55)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.4)

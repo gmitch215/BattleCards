@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.GOLD_SKELETON)
 
-@Attributes(170.0, 6.5, 20.25, 0.4, 0.32)
+@Attributes(170.0, 6.5, 20.25, 0.3, 0.22)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 22.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.7)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.2)

@@ -11,7 +11,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 @Type(BattleCardType.MINER)
-@Attributes(140.0, 9.5, 13.75, 0.32, 5.0)
+@Attributes(140.0, 9.5, 13.75, 0.22, 5.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 5.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.5)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.0, 250.0)

@@ -2,12 +2,13 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
+import me.gamercoder215.battlecards.util.BattleSound
+import me.gamercoder215.battlecards.util.isCard
+import me.gamercoder215.battlecards.util.isMinion
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.ChatColor
 import org.bukkit.Material
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -32,8 +33,8 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
     }
 
     override fun uninit() {
-        super.uninit()
         p.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
+        super.uninit()
     }
 
     @CardAbility("card.ability.king_wither.poison_thorns", ChatColor.DARK_GREEN)
@@ -62,6 +63,56 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
         val target = event.entity as? LivingEntity ?: return
 
         target.addPotionEffect(PotionEffect(PotionEffectType.WITHER, 60, 1, false))
+    }
+
+    private companion object {
+        @JvmStatic
+        private val types: List<EntityType> = listOf<Any>(
+            EntityType.BLAZE,
+            EntityType.SKELETON,
+            EntityType.GHAST,
+            EntityType.ENDERMAN,
+            EntityType.MAGMA_CUBE,
+
+            "piglin_brute",
+            "piglin",
+            "zombified_piglin",
+            "hoglin",
+            "zoglin",
+            "wither_skeleton"
+        ).mapNotNull {
+            when (it) {
+                is EntityType -> it
+                is String -> try { EntityType.valueOf(it.uppercase()) } catch (e: IllegalArgumentException) { null }
+                else -> null
+            }
+        }
+    }
+
+    @CardAbility("card.ability.wither_king.decree", ChatColor.DARK_AQUA)
+    @Passive(300, CardOperation.SUBTRACT, 2, Long.MAX_VALUE)
+    @UnlockedAt(20)
+    private fun decree() {
+        val distance = (25.0 + (level - 50) * 2.0).coerceAtMost(60.0)
+        entity.getNearbyEntities(distance, distance, distance)
+            .filterIsInstance<Creature>()
+            .filter { !it.isCard && !it.isMinion }
+            .filter { it.type in types }
+            .forEach {
+                it.target = entity.target
+            }
+
+        entity.world.playSound(entity.location, BattleSound.ENTITY_WITHER_AMBIENT.find(), 5F, 0.75F)
+    }
+
+    @CardAbility("card.ability.wither_king.decay", ChatColor.DARK_GRAY)
+    @UserDefensive(0.6, CardOperation.ADD, 0.035)
+    @Defensive
+    @UnlockedAt(15)
+    private fun decay(event: EntityDamageByEntityEvent) {
+        val target = event.damager as? LivingEntity ?: return
+
+        target.addPotionEffect(PotionEffect(PotionEffectType.WITHER, 120, 1, false))
     }
 
 }

@@ -4,6 +4,7 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.BattleSound
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.Blaze
 import org.bukkit.entity.LargeFireball
@@ -14,7 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.75)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 8.0)
-// TODO Block Attachments
+@BlockAttachment(Material.MAGMA_BLOCK, 0.0, 0.7, 0.0, true)
 class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
 
     @CardAbility("card.inferno_blaze.ability.fire_thorns", ChatColor.GOLD)

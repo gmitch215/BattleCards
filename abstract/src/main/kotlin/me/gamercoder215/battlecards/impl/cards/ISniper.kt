@@ -6,11 +6,12 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Skeleton
+import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityShootBowEvent
 import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.SNIPER)
-@Attributes(25.0, 3.5, 5.5, 0.4, 0.0)
+@Attributes(25.0, 3.5, 5.5, 0.3, 0.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 5.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.5)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.55)
@@ -32,7 +33,7 @@ class ISniper(data: ICard) : IBattleCard<Skeleton>(data) {
         }
     }
 
-    @Listener
+    @EventHandler
     fun onShoot(event: EntityShootBowEvent) {
         if (event.entity != entity) return
 

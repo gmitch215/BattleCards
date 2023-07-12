@@ -94,8 +94,12 @@ interface BattleConfig {
 
             if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
             if (!config.isList("Cards.Disabled")) config["Cards.Disabled"] = listOf<String>()
-            if (!config.isInt("Cards.Cooldown")) config["Cards.Cooldown"] = 30
             if (!config.isBoolean("Cards.AttackPlayers")) config["Cards.AttackPlayers"] = true
+
+            if (!config.isConfigurationSection("Cards.PlayerCooldown")) config.createSection("Cards.PlayerCooldown")
+            if (!config.isInt("Cards.PlayerCooldown.Count")) config["Cards.PlayerCooldown.Count"] = 2
+            if (!config.isInt("Cards.PlayerCooldown.Cooldown")) config["Cards.PlayerCooldown.Cooldown"] = 180
+            if (!config.isList("Cards.PlayerCooldown.Ignore")) config["Cards.PlayerCooldown.Ignore"] = listOf<String>()
 
             if (!config.isConfigurationSection("Cards.Display")) config.createSection("Cards.Display")
 

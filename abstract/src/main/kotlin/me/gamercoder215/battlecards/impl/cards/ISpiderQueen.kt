@@ -9,15 +9,15 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.CaveSpider
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Spider
+import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 
 @Type(BattleCardType.SPIDER_QUEEN)
-@Attributes(600.0, 8.5, 20.0, 0.43, 20.0)
+@Attributes(600.0, 8.5, 20.0, 0.33, 20.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.5)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.25)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 10.0)
@@ -35,6 +35,7 @@ class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
 
     override fun uninit() {
         if (!child.isDead) child.health = 0.0
+        super.uninit()
     }
 
     @CardAbility("card.spider_queen.ability.poisoning", ChatColor.DARK_GREEN)
@@ -56,7 +57,7 @@ class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
     }
 
     @CardAbility("card.spider_queen.ability.matriarchy", ChatColor.RED)
-    @Listener
+    @EventHandler
     private fun childDeath(event: EntityDeathEvent) {
         if (event.entity != child) return
 

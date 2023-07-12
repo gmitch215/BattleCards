@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.MESA_ZOMBIE)
-@Attributes(50.0, 2.3, 5.5, 0.3, 0.2)
+@Attributes(50.0, 2.3, 5.5, 0.2, 0.2)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 15.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.1)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.4)

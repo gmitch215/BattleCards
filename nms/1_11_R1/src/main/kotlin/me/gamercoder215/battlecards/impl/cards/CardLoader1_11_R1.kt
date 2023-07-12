@@ -9,7 +9,9 @@ internal class CardLoader1_11_R1 : CardLoader {
         IPrinceHusk::class.java,
         IGoldSkeleton::class.java,
         IBandit::class.java,
-        IMiner::class.java
+        IMiner::class.java,
+        ISuspiciousZombie::class.java,
+        IEmeraldHusk::class.java
     )
 
 }

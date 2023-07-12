@@ -9,7 +9,7 @@ import org.bukkit.entity.Husk
 import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.PRINCE_HUSK)
-@Attributes(150.0, 6.3, 25.5, 0.35, 0.4)
+@Attributes(150.0, 6.3, 25.5, 0.25, 0.32)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 25.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.7)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 5.0)

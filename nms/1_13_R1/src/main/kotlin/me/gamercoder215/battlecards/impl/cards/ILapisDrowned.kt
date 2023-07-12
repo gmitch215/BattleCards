@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.LAPIS_DROWNED)
-@Attributes(45.0, 3.1, 5.5, 0.32, 0.18)
+@Attributes(45.0, 3.1, 5.5, 0.22, 0.18)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 11.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.34)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.22)

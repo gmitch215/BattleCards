@@ -7,12 +7,13 @@ import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Stray
+import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityShootBowEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 
 @Type(BattleCardType.BANDIT)
-@Attributes(75.0, 6.5, 8.5, 0.4, 4.5)
+@Attributes(75.0, 6.5, 8.5, 0.3, 4.5)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 7.0)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.55)
 class IBandit(data: ICard) : IBattleCard<Stray>(data) {
@@ -55,7 +56,7 @@ class IBandit(data: ICard) : IBattleCard<Stray>(data) {
     }
 
     @CardAbility("card.bandit.ability.bullet", ChatColor.GRAY)
-    @Listener
+    @EventHandler
     @UnlockedAt(5)
     private fun bullet(event: EntityShootBowEvent) {
         if (event.entity != entity) return

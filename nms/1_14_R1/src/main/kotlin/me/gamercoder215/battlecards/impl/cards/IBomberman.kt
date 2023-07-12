@@ -13,11 +13,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.util.Vector
 import kotlin.math.atan2
 
 @Type(BattleCardType.BOMBERMAN)
-@Attributes(90.0, 3.5, 30.0, 0.32, 45.0)
+@Attributes(90.0, 3.5, 30.0, 0.22, 45.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.0)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.5)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 5.0)
@@ -111,6 +110,7 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
     @Passive(1200, CardOperation.SUBTRACT, 20, Long.MAX_VALUE, 300)
     @UnlockedAt(35)
     private fun meteor() {
+        val target = target ?: return
         world.spawn(target.location.add(0.0, 3.5, 0.0), LargeFireball::class.java).apply {
             setIsIncendiary(true)
             shooter = entity

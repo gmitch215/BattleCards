@@ -9,12 +9,12 @@ import org.bukkit.entity.PolarBear
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 @Type(BattleCardType.FROST_BEAR)
-@Attributes(350.0, 15.0, 20.0, 0.37, 10.0)
+@Attributes(350.0, 15.0, 20.0, 0.27, 10.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 5.5)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.045)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.25)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.02)
-// TODO Block Attachments
+@Rideable
 class IFrostBear(data: ICard) : IBattleCard<PolarBear>(data) {
 
     @CardAbility("card.frost_bear.ability.frostbite")

@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 @Type(BattleCardType.EYE_OF_ENDERMAN)
-@Attributes(550.0, 13.5, 10.0, 0.4, 2.0)
+@Attributes(550.0, 13.5, 10.0, 0.3, 2.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 7.5)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.MULTIPLY, 1.015)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.55)

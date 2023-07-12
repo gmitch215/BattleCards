@@ -7,7 +7,7 @@ import org.bukkit.entity.Wolf
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 @Type(BattleCardType.PITBULL)
-@Attributes(80.0, 9.45, 10.0, 0.345, 2.0)
+@Attributes(80.0, 9.45, 10.0, 0.245, 2.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.5)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.4)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.35)

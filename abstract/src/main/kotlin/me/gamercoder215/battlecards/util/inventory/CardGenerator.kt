@@ -11,9 +11,7 @@ import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import org.bukkit.ChatColor
 import org.bukkit.Material
-import org.bukkit.entity.Creature
 import org.bukkit.inventory.ItemStack
-import java.util.stream.Collectors
 
 object CardGenerator {
 
@@ -49,7 +47,7 @@ object CardGenerator {
     }
 
     @JvmStatic
-    fun createBasicCard(entity: Creature): ItemStack {
+    fun createBasicCard(entity: LivingEntity): ItemStack {
         if (!BattleConfig.getValidBasicCards().contains(entity.type)) throw IllegalArgumentException("Invalid Entity Type: ${entity.type}")
         val card = BattleCardType.BASIC.createCardData()
         return toItem(card)
@@ -91,6 +89,7 @@ object CardGenerator {
                                     else if (isAnnotationPresent(Offensive::class.java)) getAnnotation(Offensive::class.java).getChance(card.level).format()
                                     else if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level).format()
                                     else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level).format()
+                                    else if (isAnnotationPresent(Damage::class.java)) getAnnotation(Damage::class.java).getChance(card.level).format()
                                     else "100"
                                 }%"
                             }
