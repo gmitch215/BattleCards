@@ -3,8 +3,8 @@ package me.gamercoder215.battlecards.impl
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.entity.EntityType
 import java.lang.annotation.Inherited
-import java.util.function.BiFunction
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
@@ -23,7 +23,8 @@ annotation class Attributes(
     val attackDamage: Double,
     val defense: Double,
     val speed: Double,
-    val knockbackResistance: Double
+    val knockbackResistance: Double,
+    val followRange: Double = 64.0
 )
 
 @Inherited
@@ -42,7 +43,8 @@ enum class CardAttribute {
     ATTACK_DAMAGE,
     DEFENSE,
     SPEED,
-    KNOCKBACK_RESISTANCE
+    KNOCKBACK_RESISTANCE,
+    FOLLOW_RANGE
 
     ;
 
@@ -53,13 +55,14 @@ enum class CardAttribute {
             DEFENSE -> attributes.defense
             SPEED -> attributes.speed
             KNOCKBACK_RESISTANCE -> attributes.knockbackResistance
+            FOLLOW_RANGE -> attributes.followRange
         }
     }
 }
 
 enum class CardOperation(
-    private val apply: BiFunction<Double, Double, Double>
-) : BiFunction<Double, Double, Double> by apply {
+    private val apply: (Double, Double) -> Double
+) : (Double, Double) -> Double by apply {
     ADD({ a, b -> a + b }),
     MULTIPLY({ a, b -> a * b }),
     DIVIDE({ a, b -> a / b }),
@@ -137,6 +140,19 @@ annotation class BlockAttachment(
     val small: Boolean = false
 )
 
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class MinionBlockAttachment(
+    val type: EntityType,
+    val material: Material,
+    // Uses Directional (^ ^ ^) offsets
+    val offsetX: Double,
+    val offsetY: Double,
+    val offsetZ: Double,
+    val small: Boolean = false
+)
+
 // User Grants
 
 @Inherited
@@ -159,9 +175,9 @@ annotation class UserOffensive(
     val max: Double = 1.0
 )
 
-// Listener
+// Other
 
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
-annotation class Listener
+@Target(AnnotationTarget.CLASS)
+annotation class Rideable
