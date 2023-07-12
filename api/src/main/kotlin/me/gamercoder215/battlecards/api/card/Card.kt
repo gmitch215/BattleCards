@@ -216,19 +216,19 @@ interface Card : ConfigurationSerializable {
         @JvmStatic
         fun toExperience(level: Int, rarity: Rarity = Rarity.COMMON): Double {
             return when (level) {
-                in (MAX_LEVEL + 1)..Int.MAX_VALUE -> throw IllegalArgumentException("Level must be less than or equal to $MAX_LEVEL!")
+                in (rarity.maxCardLevel + 1)..Int.MAX_VALUE -> throw IllegalArgumentException("Level must be less than or equal to ${rarity.maxCardLevel}!")
                 in Int.MIN_VALUE.. 0 -> throw IllegalArgumentException("Level must be positive!")
                 1 -> 0.0
                 else -> {
                     var exp = 0.0
                     for (i in 2..level)
-                        exp += floor(1.3.pow(i - 1) * 1000)
+                        exp += floor(rarity.experienceModifier.pow(i - 1) * 500)
 
                     val rem = exp % 50
 
                     if (exp >= 25) exp - rem + 50 else exp - rem
                 }
-            } * rarity.experienceModifier
+            }
         }
 
     }

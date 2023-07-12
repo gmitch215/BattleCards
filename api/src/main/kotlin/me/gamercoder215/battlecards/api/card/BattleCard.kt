@@ -162,6 +162,12 @@ interface BattleCard<T : LivingEntity> {
          */
         get() = data.isMaxed
 
+    /**
+     * Fetches whether this BattleCard is right click rideable.
+     * @return true if rideable, false otherwise
+     */
+    val isRideable: Boolean
+
     // Static Methods
 
     companion object {

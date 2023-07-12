@@ -123,52 +123,47 @@ enum class BattleCardType {
     /**
      * Represents a Pillager BattleCard.
      */
-    MERCENARY(1, "Pillager", Rarity.RARE),
+    MERCENARY(1, "Pillager", Rarity.UNCOMMON),
 
     /**
      * Represents a Drowned BattleCard.
      */
-    POSEIDON(1, "Drowned", Rarity.ULTIMATE),
+    SEALORD(1, "Drowned", Rarity.ULTIMATE),
 
     /**
      * Represents a Vindicator BattleCard.
      */
-    KNIGHT(1, "Vindicator", Rarity.COMMON),
+    KNIGHT(1, "Vindicator", Rarity.UNCOMMON),
 
     /**
      * Represents a Illusioner BattleCard.
      */
-    GOLDEN_WIZARD(1, "Illusioner", Rarity.EPIC),
+    GOLDEN_WIZARD(1, "Illusioner", Rarity.RARE),
 
     /**
      * Represents a Cave Spider BattleCard.
      */
-    SPIDER_STACK(1, CaveSpider::class, Rarity.UNCOMMON),
+    SPIDER_HIVE(1, CaveSpider::class, Rarity.UNCOMMON),
 
     /**
      * Represents a Zombie BattleCard.
      */
-    SUSPICIOUS_ZOMBIE(1, Zombie::class, Rarity.EPIC),
+    SUSPICIOUS_ZOMBIE(1, Zombie::class, Rarity.RARE),
 
-    /**
-     * Represents a Piglin Brute BattleCard.
-     */
-    ZOG_RIDER(1, "PiglinBrute", Rarity.LEGEND),
-
-    /**
+    /**`
      * Represents a Stray BattleCard.
      */
-    PHANTOM_RIDER(1, "Stray", Rarity.RARE),
+    PHANTOM_RIDER(1, "Stray", Rarity.UNCOMMON),
 
     /**
      * Represents a Pillager BattleCard.
      */
-    RAIDER(1, "Pillager", Rarity.UNCOMMON),
+    RAIDER(1, "Pillager", Rarity.EPIC),
 
     /**
      * Represents a Wither Skeleton BattleCard.
      */
-    NETHER_PRINCE(1, "WitherSkeleton", Rarity.LEGEND),
+    NETHER_PRINCE(1, "WitherSkeleton", Rarity.MYTHICAL),
 
     /**
      * Represents a Skeleton BattleCard.
@@ -183,7 +178,7 @@ enum class BattleCardType {
     /**
      * Represents a Zombie BattleCard.
      */
-    THUNDER_REVENANT(1, Zombie::class, Rarity.EPIC),
+    THUNDER_REVENANT(1, Zombie::class, Rarity.MYTHICAL),
 
     /**
      * Represents a Husk BattleCard.
@@ -193,7 +188,12 @@ enum class BattleCardType {
     /**
      * Represents a Husk BattleCard.
      */
-    WARRIOR_HUSK(1, "Husk", Rarity.EPIC)
+    WARRIOR_HUSK(1, "Husk", Rarity.EPIC),
+
+    /**
+     * Represents a Snow Golem BattleCard.
+     */
+    ICE_GOLEM(1, Snowman::class, Rarity.RARE),
     ;
 
     private val entityClass: Class<out LivingEntity>?

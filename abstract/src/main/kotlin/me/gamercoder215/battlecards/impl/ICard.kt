@@ -80,6 +80,16 @@ class ICard(
         return bOs.toByteArray()
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ICard) return false
+
+        return other.toByteArray().contentEquals(toByteArray())
+    }
+
+    override fun hashCode(): Int = toByteArray().hashCode()
+
+
     companion object {
 
         private const val serialVersionUID: Long = 193409138419023815L

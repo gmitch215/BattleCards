@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.impl
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.BattleStatistics
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import kotlin.math.pow
 
 class IBattleStatistics(
     override val card: ICard
@@ -74,9 +75,10 @@ class IBattleStatistics(
         var value = base
 
         for (i in 1 until cardLevel)
-            value = mod.operation.apply(value, mod.value)
+            value = mod.operation(value, mod.value)
 
-        return value
+        val finalMod = card.rarity.experienceModifier
+        return value * finalMod.pow(1 + finalMod)
     }
 
     override val maxHealth: Double
@@ -102,5 +104,45 @@ class IBattleStatistics(
             CardAttribute.SPEED to speed,
             CardAttribute.KNOCKBACK_RESISTANCE to knockbackResistance
         )
+
+    // Other
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as IBattleStatistics
+
+        if (card != other.card) return false
+        if (playerKills != other.playerKills) return false
+        if (cardKills != other.cardKills) return false
+        if (entityKills != other.entityKills) return false
+        if (deaths != other.deaths) return false
+        if (damageDealt != other.damageDealt) return false
+        if (damageReceived != other.damageReceived) return false
+        if (cardExperience != other.cardExperience) return false
+        if (maxHealth != other.maxHealth) return false
+        if (attackDamage != other.attackDamage) return false
+        if (defense != other.defense) return false
+        if (speed != other.speed) return false
+        return knockbackResistance == other.knockbackResistance
+    }
+
+    override fun hashCode(): Int {
+        var result = card.hashCode()
+        result = 31 * result + playerKills
+        result = 31 * result + cardKills
+        result = 31 * result + entityKills
+        result = 31 * result + deaths
+        result = 31 * result + damageDealt.hashCode()
+        result = 31 * result + damageReceived.hashCode()
+        result = 31 * result + cardExperience.hashCode()
+        result = 31 * result + maxHealth.hashCode()
+        result = 31 * result + attackDamage.hashCode()
+        result = 31 * result + defense.hashCode()
+        result = 31 * result + speed.hashCode()
+        result = 31 * result + knockbackResistance.hashCode()
+        return result
+    }
 
 }
