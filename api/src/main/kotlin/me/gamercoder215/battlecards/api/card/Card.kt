@@ -197,7 +197,7 @@ interface Card : ConfigurationSerializable {
         @JvmStatic
         fun toLevel(experience: Double, rarity: Rarity = Rarity.COMMON): Int {
             return when (experience) {
-                in 0.0..1350.0 -> 1
+                in 0.0..600.0 -> 1
                 in Double.NEGATIVE_INFINITY..0.0 -> throw IllegalArgumentException("Experience cannot be negative!")
                 else -> {
                     var level = 1

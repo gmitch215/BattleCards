@@ -11,6 +11,7 @@ import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.entity.Creature
 import org.bukkit.inventory.ItemStack
 
 object CardGenerator {
@@ -47,7 +48,7 @@ object CardGenerator {
     }
 
     @JvmStatic
-    fun createBasicCard(entity: LivingEntity): ItemStack {
+    fun createBasicCard(entity: Creature): ItemStack {
         if (!BattleConfig.getValidBasicCards().contains(entity.type)) throw IllegalArgumentException("Invalid Entity Type: ${entity.type}")
         val card = BattleCardType.BASIC.createCardData()
         return toItem(card)
