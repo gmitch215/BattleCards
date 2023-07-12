@@ -34,21 +34,23 @@ internal class Wrapper1_8_R1 : Wrapper {
         // Withers do not have boss bars until 1.9
     }
 
-    fun toNMS(attribute: CardAttribute): AttributeBase {
+    fun toNMS(attribute: CardAttribute): AttributeBase? {
         return when (attribute) {
             CardAttribute.MAX_HEALTH -> GenericAttributes.maxHealth
             CardAttribute.ATTACK_DAMAGE -> GenericAttributes.e
             CardAttribute.KNOCKBACK_RESISTANCE -> GenericAttributes.c
             CardAttribute.SPEED -> GenericAttributes.d
-            else -> throw IllegalArgumentException("Invalid attribute: $attribute")
-        } as AttributeBase
+            CardAttribute.FOLLOW_RANGE -> GenericAttributes.b
+            else -> null
+        } as? AttributeBase
     }
 
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
         val nms = (en as CraftCreature).handle
+        EntityLiving::class.java.getDeclaredField("drops").apply { isAccessible = true }[nms] = emptyList<ItemStack>()
 
         for (entry in card.statistics.attributes) {
-            val attribute = toNMS(entry.key)
+            val attribute = toNMS(entry.key) ?: continue
             val value = entry.value
 
             var handle = nms.getAttributeInstance(attribute)
@@ -91,7 +93,7 @@ internal class Wrapper1_8_R1 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 

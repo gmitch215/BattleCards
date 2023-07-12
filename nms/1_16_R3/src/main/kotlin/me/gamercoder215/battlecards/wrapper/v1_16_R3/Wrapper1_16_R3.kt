@@ -48,6 +48,7 @@ internal class Wrapper1_16_R3 : Wrapper {
             CardAttribute.KNOCKBACK_RESISTANCE -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
             CardAttribute.SPEED -> Attribute.GENERIC_MOVEMENT_SPEED
             CardAttribute.DEFENSE -> Attribute.GENERIC_ARMOR
+            CardAttribute.FOLLOW_RANGE -> Attribute.GENERIC_FOLLOW_RANGE
         }
     }
 
@@ -57,6 +58,7 @@ internal class Wrapper1_16_R3 : Wrapper {
 
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
         val nms = (en as CraftCreature).handle
+        EntityLiving::class.java.getDeclaredField("drops").apply { isAccessible = true }[nms] = emptyList<ItemStack>()
 
         for (entry in card.statistics.attributes) {
             val attribute = toNMS(toBukkit(entry.key))
@@ -100,7 +102,7 @@ internal class Wrapper1_16_R3 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 
@@ -124,7 +126,7 @@ internal class Wrapper1_16_R3 : Wrapper {
         }.forEach { goalSelector.a(it) }
 
         (field.get(targetSelector) as Set<PathfinderGoalWrapped>).map { it.j() }.filter {
-            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*> || it is PathfinderGoalDefendVillage
+            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*> || it is PathfinderGoalDefendVillage || it is PathfinderGoalUniversalAngerReset<*>
         }.forEach { targetSelector.a(it) }
     }
 

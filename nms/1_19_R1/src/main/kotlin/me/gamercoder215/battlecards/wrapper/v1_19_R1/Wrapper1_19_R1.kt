@@ -18,11 +18,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.AttributeMap
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes
 import net.minecraft.world.entity.ai.goal.*
-import net.minecraft.world.entity.ai.goal.target.DefendVillageTargetGoal
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableWitchTargetGoal
-import net.minecraft.world.entity.ai.goal.target.NearestHealableRaiderTargetGoal
+import net.minecraft.world.entity.ai.goal.target.*
 import net.minecraft.world.entity.monster.CrossbowAttackMob
 import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.monster.RangedAttackMob
@@ -63,6 +59,7 @@ internal class Wrapper1_19_R1 : Wrapper {
             CardAttribute.KNOCKBACK_RESISTANCE -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
             CardAttribute.SPEED -> Attribute.GENERIC_MOVEMENT_SPEED
             CardAttribute.DEFENSE -> Attribute.GENERIC_ARMOR
+            CardAttribute.FOLLOW_RANGE -> Attribute.GENERIC_FOLLOW_RANGE
         }
     }
 
@@ -117,7 +114,7 @@ internal class Wrapper1_19_R1 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 
@@ -140,7 +137,7 @@ internal class Wrapper1_19_R1 : Wrapper {
         }.forEach { goalSelector.removeGoal(it) }
 
         targetSelector.availableGoals.map { it.goal }.filter {
-            it is NearestAttackableTargetGoal<*> || it is NearestAttackableWitchTargetGoal<*> || it is NearestHealableRaiderTargetGoal<*> || it is DefendVillageTargetGoal
+            it is NearestAttackableTargetGoal<*> || it is NearestAttackableWitchTargetGoal<*> || it is NearestHealableRaiderTargetGoal<*> || it is DefendVillageTargetGoal || it is ResetUniversalAngerTargetGoal<*>
         }.forEach { targetSelector.removeGoal(it) }
     }
 

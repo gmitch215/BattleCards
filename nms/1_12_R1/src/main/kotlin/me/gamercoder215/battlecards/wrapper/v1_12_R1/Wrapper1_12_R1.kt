@@ -13,12 +13,10 @@ import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.server.v1_12_R1.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftWither
-import org.bukkit.craftbukkit.v1_12_R1.util.CraftNamespacedKey
 import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -54,11 +52,13 @@ internal class Wrapper1_12_R1 : Wrapper {
             CardAttribute.KNOCKBACK_RESISTANCE -> GenericAttributes.c
             CardAttribute.SPEED -> GenericAttributes.MOVEMENT_SPEED
             CardAttribute.DEFENSE -> GenericAttributes.h
+            CardAttribute.FOLLOW_RANGE -> GenericAttributes.FOLLOW_RANGE
         } as AttributeBase
     }
 
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
         val nms = (en as CraftCreature).handle
+        EntityLiving::class.java.getDeclaredField("drops").apply { isAccessible = true }[nms] = emptyList<ItemStack>()
 
         for (entry in card.statistics.attributes) {
             val attribute = toNMS(entry.key)
@@ -102,7 +102,7 @@ internal class Wrapper1_12_R1 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 

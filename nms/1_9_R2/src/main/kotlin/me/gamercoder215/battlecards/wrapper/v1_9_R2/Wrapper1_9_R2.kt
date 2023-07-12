@@ -52,11 +52,13 @@ internal class Wrapper1_9_R2 : Wrapper {
             CardAttribute.KNOCKBACK_RESISTANCE -> GenericAttributes.c
             CardAttribute.SPEED -> GenericAttributes.MOVEMENT_SPEED
             CardAttribute.DEFENSE -> GenericAttributes.h
+            CardAttribute.FOLLOW_RANGE -> GenericAttributes.FOLLOW_RANGE
         } as AttributeBase
     }
 
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
         val nms = (en as CraftCreature).handle
+        EntityLiving::class.java.getDeclaredField("drops").apply { isAccessible = true }[nms] = emptyList<ItemStack>()
 
         for (entry in card.statistics.attributes) {
             val attribute = toNMS(entry.key)
@@ -103,7 +105,7 @@ internal class Wrapper1_9_R2 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 

@@ -3,7 +3,8 @@ package me.gamercoder215.battlecards.wrapper.v1_18_R1
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftInventoryCustom
 
-// https://youtrack.jetbrains.com/issue/KTIJ-25766/
+// https://youtrack.jetbrains.com/issue/KT-59638
+@Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
 internal class BattleInventory1_18_R1(
     id: String,
     name: String,

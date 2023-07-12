@@ -16,10 +16,7 @@ import org.bukkit.craftbukkit.v1_9_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftWither
-import org.bukkit.entity.Creature
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
 
 @Suppress("unchecked_cast")
 internal class Wrapper1_9_R1 : Wrapper {
@@ -52,11 +49,13 @@ internal class Wrapper1_9_R1 : Wrapper {
             CardAttribute.KNOCKBACK_RESISTANCE -> GenericAttributes.c
             CardAttribute.SPEED -> GenericAttributes.MOVEMENT_SPEED
             CardAttribute.DEFENSE -> GenericAttributes.h
+            CardAttribute.FOLLOW_RANGE -> GenericAttributes.FOLLOW_RANGE
         } as AttributeBase
     }
 
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
         val nms = (en as CraftCreature).handle
+        EntityLiving::class.java.getDeclaredField("drops").apply { isAccessible = true }[nms] = emptyList<ItemStack>()
 
         for (entry in card.statistics.attributes) {
             val attribute = toNMS(entry.key)
@@ -103,7 +102,7 @@ internal class Wrapper1_9_R1 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 

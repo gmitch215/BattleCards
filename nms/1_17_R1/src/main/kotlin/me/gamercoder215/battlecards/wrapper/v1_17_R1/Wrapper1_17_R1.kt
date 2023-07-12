@@ -11,10 +11,8 @@ import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.core.IRegistry
-import net.minecraft.core.Registry
 import net.minecraft.resources.MinecraftKey
 import net.minecraft.world.entity.EntityCreature
-import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.EntityLiving
 import net.minecraft.world.entity.EntityTypes
 import net.minecraft.world.entity.ai.attributes.AttributeBase
@@ -22,11 +20,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeDefaults
 import net.minecraft.world.entity.ai.attributes.AttributeMapBase
 import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.ai.goal.*
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalDefendVillage
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalHurtByTarget
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTarget
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestAttackableTargetWitch
-import net.minecraft.world.entity.ai.goal.target.PathfinderGoalNearestHealableRaider
+import net.minecraft.world.entity.ai.goal.target.*
 import net.minecraft.world.entity.monster.EntityMonster
 import net.minecraft.world.entity.monster.ICrossbow
 import net.minecraft.world.entity.monster.IRangedEntity
@@ -68,6 +62,7 @@ internal class Wrapper1_17_R1 : Wrapper {
             CardAttribute.KNOCKBACK_RESISTANCE -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
             CardAttribute.SPEED -> Attribute.GENERIC_MOVEMENT_SPEED
             CardAttribute.DEFENSE -> Attribute.GENERIC_ARMOR
+            CardAttribute.FOLLOW_RANGE -> Attribute.GENERIC_FOLLOW_RANGE
         }
     }
 
@@ -122,7 +117,7 @@ internal class Wrapper1_17_R1 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 
@@ -145,7 +140,7 @@ internal class Wrapper1_17_R1 : Wrapper {
         }.forEach { goalSelector.a(it) }
 
         targetSelector.c().map { it.j() }.filter {
-            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*> || it is PathfinderGoalDefendVillage
+            it is PathfinderGoalNearestAttackableTarget<*> || it is PathfinderGoalNearestAttackableTargetWitch<*> || it is PathfinderGoalNearestHealableRaider<*> || it is PathfinderGoalDefendVillage || it is PathfinderGoalUniversalAngerReset<*>
         }.forEach { targetSelector.a(it) }
     }
 

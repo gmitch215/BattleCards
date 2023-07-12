@@ -2,7 +2,6 @@ package me.gamercoder215.battlecards.wrapper
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.CardAttribute
-import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.cards.*
 import me.gamercoder215.battlecards.util.BattleParticle
 import me.gamercoder215.battlecards.util.CardAttackType
@@ -14,6 +13,7 @@ import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
+import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import java.security.SecureRandom
@@ -116,7 +116,13 @@ interface Wrapper {
                 ISniper::class.java,
                 IRedstoneZombie::class.java,
                 IUndeadLumberjack::class.java,
-                IInfernoBlaze::class.java
+                IPitbull::class.java,
+                ISkeletonSoldier::class.java,
+                ISilverfishHive::class.java,
+                ISpiderHive::class.java,
+                ISpiderQueen::class.java,
+                IStoneArcher::class.java,
+                IThunderRevenant::class.java,
             )
 
             versions.subList(0, versions.indexOf(current) + 1).forEach {
@@ -126,7 +132,11 @@ interface Wrapper {
                         .getDeclaredConstructor()
                     constr.isAccessible = true
 
-                    loaded.addAll(constr.newInstance().loadedCards())
+                    val loader = constr.newInstance()
+                    loaded.addAll(loader.loadedCards())
+
+                    if (loader is Listener)
+                        Bukkit.getPluginManager().registerEvents(loader, BattleConfig.plugin)
                 } catch (ignored: ClassNotFoundException) {}
             }
 

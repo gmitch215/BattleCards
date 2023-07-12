@@ -59,6 +59,7 @@ internal class Wrapper1_18_R2 : Wrapper {
             CardAttribute.KNOCKBACK_RESISTANCE -> Attribute.GENERIC_KNOCKBACK_RESISTANCE
             CardAttribute.SPEED -> Attribute.GENERIC_MOVEMENT_SPEED
             CardAttribute.DEFENSE -> Attribute.GENERIC_ARMOR
+            CardAttribute.FOLLOW_RANGE -> Attribute.GENERIC_FOLLOW_RANGE
         }
     }
 
@@ -113,7 +114,7 @@ internal class Wrapper1_18_R2 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = card.target
+        en.target = ownerCard.target
 
         val nms = (en as CraftCreature).handle
 
@@ -136,7 +137,7 @@ internal class Wrapper1_18_R2 : Wrapper {
         }.forEach { goalSelector.removeGoal(it) }
 
         targetSelector.availableGoals.map { it.goal }.filter {
-            it is NearestAttackableTargetGoal<*> || it is NearestAttackableWitchTargetGoal<*> || it is NearestHealableRaiderTargetGoal<*> || it is DefendVillageTargetGoal
+            it is NearestAttackableTargetGoal<*> || it is NearestAttackableWitchTargetGoal<*> || it is NearestHealableRaiderTargetGoal<*> || it is DefendVillageTargetGoal || it is ResetUniversalAngerTargetGoal<*>
         }.forEach { targetSelector.removeGoal(it) }
     }
 
