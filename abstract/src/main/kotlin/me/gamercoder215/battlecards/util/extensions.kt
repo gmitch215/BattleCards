@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
@@ -30,10 +31,22 @@ inline val Entity.isCard: Boolean
         return w.isCard(this) || IBattleCard.spawned.containsKey(uniqueId)
     }
 
+inline val Entity.isMinion: Boolean
+    get() {
+        if (this !is Creature) return false
+        return IBattleCard.byMinion(this) != null
+    }
+
 inline val Entity.card: IBattleCard<*>?
     get() {
         if (!isCard) return null
         return IBattleCard.byEntity(this as Creature)
+    }
+
+inline val Entity.cardByMinion: IBattleCard<*>?
+    get() {
+        if (!isMinion) return null
+        return IBattleCard.byMinion(this as Creature)
     }
 
 inline val ItemStack.card: ICard?
@@ -78,7 +91,8 @@ inline var IBattleCard<*>.attackType: CardAttackType
     get() = this.entity.attackType
     set(value) { this.entity.attackType = value }
 
-fun Creature.isMinion(card: IBattleCard<*>): Boolean {
+fun Entity.isMinion(card: IBattleCard<*>): Boolean {
+    if (this !is Creature) return false
     return IBattleCard.byMinion(this) == card
 }
 
@@ -93,7 +107,7 @@ fun Player.playFailure() {
 fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation(chance, value)
 
     return chance.coerceAtMost(max)
 }
@@ -101,7 +115,7 @@ fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
 fun UserDefensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation(chance, value)
 
     return chance.coerceAtMost(max)
 }
@@ -109,7 +123,7 @@ fun UserDefensive.getChance(level: Int, unlockedAt: Int = 0): Double {
 fun Offensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation(chance, value)
 
     return chance.coerceAtMost(max)
 }
@@ -117,7 +131,7 @@ fun Offensive.getChance(level: Int, unlockedAt: Int = 0): Double {
 fun UserOffensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation(chance, value)
 
     return chance.coerceAtMost(max)
 }
@@ -125,7 +139,7 @@ fun UserOffensive.getChance(level: Int, unlockedAt: Int = 0): Double {
 fun Damage.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
-        for (i in 1 until (level - unlockedAt)) chance = operation.apply(chance, value)
+        for (i in 1 until (level - unlockedAt)) chance = operation(chance, value)
 
     return chance.coerceAtMost(max)
 }
@@ -134,12 +148,12 @@ fun Passive.getChance(level: Int, unlockedAt: Int = 0): Long {
     var interval = this.interval
 
     if (value != Long.MIN_VALUE)
-        for (i in 1 until (level - unlockedAt)) interval = operation.apply(interval.toDouble(), value.toDouble()).toLong()
+        for (i in 1 until (level - unlockedAt)) interval = operation(interval.toDouble(), value.toDouble()).toLong()
 
     return interval
 }
 
-// Bukkit Extensions from Newer Version
+// Bukkit Extensions from Newer Version & Utils
 
 fun Server.getEntity(id: UUID): Entity? {
     for (world in worlds)
@@ -172,6 +186,9 @@ fun Vector.rotateAroundNonUnitAxis(axis: Vector, angle: Double): Vector {
 
     return setX(xPrime).setY(yPrime).setZ(zPrime)
 }
+
+operator fun Location.plus(other: Location): Location = add(other)
+operator fun Location.plus(other: Vector): Location = add(other)
 
 // Kotlin Util
 
