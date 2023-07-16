@@ -28,13 +28,13 @@ class IDiamondGolem(data: ICard) : IBattleCard<IronGolem>(data) {
     @Offensive(0.15, CardOperation.ADD, 0.025)
     private fun launch(event: EntityDamageByEntityEvent) {
         val target = event.entity as? Player ?: return
-        val amplifier: Double = (level / 5) + 1.25
+        val amplifier: Double = ((level / 20.0) + 1.25).coerceAtMost(10.0)
 
         target.velocity = location.direction.multiply(amplifier)
     }
 
     @CardAbility("card.diamond_golem.ability.thorns", ChatColor.RED)
-    @Defensive(0.1)
+    @Defensive(0.07)
     private fun thorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
         val dmg = statistics.attackDamage * 0.2
