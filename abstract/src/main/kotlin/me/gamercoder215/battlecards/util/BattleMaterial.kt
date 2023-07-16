@@ -19,6 +19,16 @@ enum class BattleMaterial(
     COBWEB(
         { ItemStack(matchMaterial("web")) },
         { ItemStack(matchMaterial("cobweb")) }
+    ),
+
+    MAP(
+        { ItemStack(matchMaterial("empty_map")) },
+        { ItemStack(matchMaterial("map")) }
+    ),
+
+    PLAYER_HEAD(
+        { ItemStack(matchMaterial("skull_item"), 1, 3) },
+        { ItemStack(matchMaterial("player_head")) }
     )
 
     ;
