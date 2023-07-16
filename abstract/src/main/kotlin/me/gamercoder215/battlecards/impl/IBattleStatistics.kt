@@ -66,9 +66,9 @@ class IBattleStatistics(
                 val type = card.entityCardType ?: return 0.0
                 w.getDefaultAttribute(type, attribute)
             } else
-                card.javaClass.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
+                card.entityCardClass.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
 
-        val mod = card.javaClass.annotations.filterIsInstance<AttributesModifier>().firstOrNull { it.attribute == attribute } ?: return base
+        val mod = card.entityCardClass.annotations.filterIsInstance<AttributesModifier>().firstOrNull { it.attribute == attribute } ?: return base
 
         if (mod.value.isNaN()) return base
 
@@ -78,7 +78,7 @@ class IBattleStatistics(
             value = mod.operation(value, mod.value)
 
         val finalMod = card.rarity.experienceModifier
-        return value * finalMod.pow(1 + finalMod)
+        return (value * finalMod.pow(1 + finalMod)).coerceAtMost(mod.max.coerceAtMost(attribute.max))
     }
 
     override val maxHealth: Double
