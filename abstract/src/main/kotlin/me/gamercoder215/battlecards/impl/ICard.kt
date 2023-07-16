@@ -53,9 +53,10 @@ class ICard(
         
         object : BukkitRunnable() {
             override fun run() {
-                card.despawn()
+                if (!card.entity.isDead)
+                    card.despawn()
             }
-        }.runTaskLater(BattleConfig.plugin, card.deployTime.toLong())
+        }.runTaskLater(BattleConfig.plugin, card.deployTime * 20L)
 
         return card
     }
