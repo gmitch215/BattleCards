@@ -130,6 +130,6 @@ interface BattleStatistics {
      * @return Deploy Time
      */
     val deployTime: Int
-        get() = 30 + ((270 * cardLevel) / maxCardLevel)
+        get() = 30 + ((270 * cardLevel.minus(1)) / maxCardLevel.minus(1))
 
 }
