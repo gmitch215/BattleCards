@@ -1,6 +1,8 @@
 package me.gamercoder215.battlecards
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.events.CardExperienceChangeEvent
+import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
@@ -10,16 +12,14 @@ import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
-import org.bukkit.entity.Projectile
+import org.bukkit.entity.*
+import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
-import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.event.entity.EntityTargetEvent
-import org.bukkit.event.entity.SlimeSplitEvent
+import org.bukkit.event.entity.*
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -36,6 +36,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     }
 
     private fun isIgnoredByCooldown(p: Player): Boolean {
+        if (p.isOp) return true
+
         val ignored = plugin.playerCooldownIgnored
 
         val b = AtomicBoolean()
@@ -73,12 +75,9 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
-        if (!event.hasItem()) return
         val p = event.player
-        val item = event.item!!
-
-        if (!item.isCard) return
-        val card = item.card!!
+        val item = (event.item ?: return).clone().apply { amount = 1 }
+        val card = item.card ?: return
 
         when (event.action) {
             Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> {
@@ -132,8 +131,13 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     }
 
     private fun addExperience(card: ICard, amount: Number) {
-        if (!card.isMaxed)
-            card.experience = (card.experience + amount.toDouble()).coerceAtMost(card.maxCardExperience)
+        if (card.isMaxed) return
+
+        val new = (card.experience + amount.toDouble()).coerceAtMost(card.maxCardExperience)
+        val event = CardExperienceChangeEvent(card, card.experience, new).apply { call() }
+
+        if (!event.isCancelled)
+            card.experience = event.newExperience
     }
 
     @EventHandler
@@ -187,20 +191,17 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 for (m in defensive) {
                     if (!checkUnlockedAt(m, card)) continue
                     val annotation = m.getDeclaredAnnotation(Defensive::class.java)
+                    m.isAccessible = true
 
-                    if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
-                        m.invoke(card, event)
+                    if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m))) {
+                        val use = CardUseAbilityEvent(card, CardUseAbilityEvent.AbilityType.DEFENSIVE).apply { call() }
+                        if (!use.isCancelled)
+                            m.invoke(card, event)
+                    }
                 }
 
             card.data.statistics.damageReceived += event.finalDamage
             card.currentItem = card.data.itemStack
-
-            if (entity.health - event.finalDamage <= 0) {
-                card.data.statistics.deaths++
-                card.currentItem = card.data.itemStack
-
-                card.uninit()
-            }
         }
 
         if (entity is Player && entity.spawnedCards.isNotEmpty()) {
@@ -210,6 +211,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     for (m in userDefensive) {
                         if (!checkUnlockedAt(m, card)) continue
                         val annotation = m.getAnnotation(UserDefensive::class.java)
+                        m.isAccessible = true
 
                         if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                             m.invoke(card, event)
@@ -236,9 +238,13 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             for (m in offensive) {
                 if (!checkUnlockedAt(m, card)) continue
                 val annotation = m.getDeclaredAnnotation(Offensive::class.java)
+                m.isAccessible = true
 
-                if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
-                    m.invoke(card, event)
+                if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m))) {
+                    val use = CardUseAbilityEvent(card, CardUseAbilityEvent.AbilityType.OFFENSIVE).apply { call() }
+                    if (!use.isCancelled)
+                        m.invoke(card, event)
+                }
             }
 
             card.data.statistics.damageDealt += event.finalDamage
@@ -267,6 +273,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     for (m in userOffensive) {
                         if (!checkUnlockedAt(m, card)) continue
                         val annotation = m.getAnnotation(UserOffensive::class.java)
+                        m.isAccessible = true
 
                         if (r.nextDouble() <= annotation.getChance(card.level))
                             m.invoke(card, event)
@@ -275,7 +282,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         }
     }
 
-    // Cleanup Events
+    // Cleanup & Functionality Events
 
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
@@ -284,6 +291,11 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     @EventHandler
     fun onTarget(event: EntityTargetEvent) {
+        if (event.target == null) return
+
+        if (!BattleConfig.config.targetCards && !event.entity.isCard && event.target.isCard)
+            event.isCancelled = true
+
         if (event.entity.isCard) {
             val card = event.entity.card!!
 
@@ -292,6 +304,13 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
             if (card.p.uniqueId == event.target?.uniqueId || event.reason.name == "TEMPT")
                 event.isCancelled = true
+
+            if (event.target.isCard) {
+                val tCard = event.target.card!!
+
+                if (tCard.p.uniqueId == card.p.uniqueId)
+                    event.isCancelled = true
+            }
         }
 
         if (event.entity.isMinion) {
@@ -310,8 +329,59 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     }
 
     @EventHandler
+    fun onInteractAttachment(event: PlayerArmorStandManipulateEvent) {
+        val entity = event.rightClicked
+        if (!entity.hasMetadata("battlecards:block_attachment")) return
+        event.isCancelled = true
+    }
+
+    @EventHandler
     fun onSplit(event: SlimeSplitEvent) {
         if (event.entity.isMinion || event.entity.isCard)
+            event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onDeath(event: EntityDeathEvent) {
+        if (event.entity !is Creature) return
+
+        if (event.entity.isCard || event.entity.isMinion) {
+            event.droppedExp = 0
+            event.drops.clear()
+
+            val card = event.entity.card ?: return
+
+            card.data.statistics.deaths++
+            card.currentItem = card.data.itemStack
+
+            card.uninit()
+        }
+    }
+
+    @EventHandler
+    fun onCombust(event: EntityCombustEvent) { checkCardDestruction(event.entity as? Item ?: return, event, DamageCause.FIRE) }
+
+    @EventHandler
+    fun onCombust(event: EntityDamageEvent) { checkCardDestruction(event.entity as? Item ?: return, event, event.cause) }
+
+    private fun checkCardDestruction(entity: Item, event: Cancellable, cause: DamageCause) {
+        if (!entity.isCard) return
+
+        when (cause) {
+            DamageCause.FIRE, DamageCause.FIRE_TICK, DamageCause.LAVA ->
+                event.isCancelled = !BattleConfig.config.isCardDestroyedFire
+            DamageCause.THORNS ->
+                event.isCancelled = !BattleConfig.config.isCardDestroyedThorns
+            DamageCause.ENTITY_EXPLOSION, DamageCause.BLOCK_EXPLOSION ->
+                event.isCancelled = !BattleConfig.config.isCardDestroyedExplosion
+
+            else -> return
+        }
+    }
+
+    @EventHandler
+    fun onDespawn(event: ItemDespawnEvent) {
+        if (event.entity.isCard && !BattleConfig.config.isCardsDespawn)
             event.isCancelled = true
     }
 
