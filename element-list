@@ -3,7 +3,12 @@ $dokka.linkExtension:html
 $dokka.location:me.gamercoder215.battlecards.api.card/BattleCard.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/card/BattleCard.Companion.html
 $dokka.location:me.gamercoder215.battlecards.api.card/BattleCardType.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/card/BattleCardType.Companion.html
 $dokka.location:me.gamercoder215.battlecards.api.card/Card.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/card/Card.Companion.html
+$dokka.location:me.gamercoder215.battlecards.api.events.entity/CardUseAbilityEvent.AbilityType///PointingToDeclaration/me/gamercoder215/battlecards/api/events/entity/CardUseAbilityEvent.AbilityType.html
+$dokka.location:me.gamercoder215.battlecards.api.events.entity/EntityCardEvent.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/events/entity/EntityCardEvent.Companion.html
+$dokka.location:me.gamercoder215.battlecards.api.events/CardEvent.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/events/CardEvent.Companion.html
 $dokka.location:me.gamercoder215.battlecards.api/BattleConfig.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/BattleConfig.Companion.html
 me.gamercoder215.battlecards.api
 me.gamercoder215.battlecards.api.card
+me.gamercoder215.battlecards.api.events
+me.gamercoder215.battlecards.api.events.entity
 
