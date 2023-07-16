@@ -1,10 +1,13 @@
 package me.gamercoder215.battlecards.util.inventory
 
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.util.BattleMaterial
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import org.bukkit.ChatColor
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
 import kotlin.math.floor
 
 
@@ -37,7 +40,16 @@ object Generator {
 
     @JvmStatic
     fun generatePluginInfo(): BattleInventory {
-        val inv = genGUI(26, get("menu.plugin_info"))
+        val inv = genGUI(27, get("menu.plugin_info"))
+
+        inv[4] = BattleMaterial.PLAYER_HEAD.findStack().apply {
+            itemMeta = (itemMeta as SkullMeta).apply {
+                displayName = "${ChatColor.AQUA}${get("constants.created_by")}"
+                owner = "GamerCoder"
+            }
+        }
+
+        // TODO Finish Plugin Information
 
         return inv
     }
@@ -57,7 +69,7 @@ object Generator {
             inv[13] = info
 
         while (inv.firstEmpty() != -1)
-            inv.addItem(Items.GUI_BACKGROUND)
+            inv[inv.firstEmpty()] = Items.GUI_BACKGROUND
 
         return inv
     }
