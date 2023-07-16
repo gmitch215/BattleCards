@@ -2,11 +2,9 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
+import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.*
-import me.gamercoder215.battlecards.util.BattleParticle
-import me.gamercoder215.battlecards.util.CardUtils
-import me.gamercoder215.battlecards.util.getChance
-import me.gamercoder215.battlecards.util.getEntity
+import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -55,11 +53,11 @@ abstract class IBattleCard<T : Creature>(
     lateinit var p: Player
 
     val attachments: MutableMap<UUID, () -> Location> = mutableMapOf()
-    val minions: MutableList<LivingEntity> = mutableListOf()
+    val minions: MutableSet<LivingEntity> = mutableSetOf()
     val minionAttachments: MutableMap<UUID, MutableMap<UUID, () -> Location>> = mutableMapOf()
 
     fun spawn(player: Player, card: ItemStack, location: Location): T {
-        if (!entity.isDead) throw IllegalStateException("Entity already spawned")
+        if (this::entity.isInitialized) throw IllegalStateException("Entity already spawned")
 
         data.lastUsedPlayer = player
         data.last = System.currentTimeMillis()
@@ -84,13 +82,17 @@ abstract class IBattleCard<T : Creature>(
             (entity as Ageable).ageLock = true
 
         w.loadProperties(entity, this)
+        entity.health = entity.maxHealth
         init()
         return entity
     }
 
     fun despawn() {
+        if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
+
         uninit()
         entity.remove()
+        w.spawnParticle(BattleParticle.CLOUD, p.location, 30, 0.0, 1.0, 0.0, 0.2)
     }
 
     // Implementation
@@ -154,7 +156,9 @@ abstract class IBattleCard<T : Creature>(
                         return
                     }
 
-                    m.invoke(this@IBattleCard)
+                    val use = CardUseAbilityEvent(this@IBattleCard, CardUseAbilityEvent.AbilityType.PASSIVE).apply { call() }
+                    if (!use.isCancelled)
+                        m.invoke(this@IBattleCard)
                 }
             }.runTaskTimer(BattleConfig.plugin, interval, interval)
         }
@@ -165,7 +169,7 @@ abstract class IBattleCard<T : Creature>(
         if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
 
         minions.forEach {
-            it.health = 0.0
+            it.remove()
             minionAttachments[it.uniqueId]?.forEach attachments@{ (key, _) ->
                 val entity = Bukkit.getServer().getEntity(key) ?: return@attachments
                 entity.remove()
