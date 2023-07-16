@@ -23,7 +23,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import java.io.IOException
-import java.lang.IllegalStateException
 import java.util.*
 
 private const val bstats = 18166
@@ -89,17 +88,18 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Registered ${registeredCards.size} Cards")
 
         // UpdateChecker
-        UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, github)
-            .setDownloadLink("https://github.com/$github/releases/latest/")
-            .setSupportLink("https://discord.gg/WVFNWEvuqX")
-            .setNotifyOpsOnJoin(true)
-            .setChangelogLink("https://github.com/$github/releases/latest/")
-            .setUserAgent("$github v${BattleCards::class.java.`package`.implementationVersion}")
-            .setColoredConsoleOutput(true)
-            .setDonationLink("https://www.patreon.com/teaminceptus")
-            .setNotifyRequesters(true)
-            .checkEveryXHours(1.0)
-            .checkNow()
+        UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, github).apply {
+            supportLink = "https://discord.gg/WVFNWEvuqX"
+            isNotifyOpsOnJoin = true
+            changelogLink = "https://github.com/$github/releases/latest/"
+            isColoredConsoleOutput = true
+            donationLink = "https://www.patreon.com/teaminceptus"
+            isNotifyRequesters = true
+
+            setUserAgent("$github v${BattleCards::class.java.`package`.implementationVersion}")
+            checkEveryXHours(1.0)
+            checkNow()
+        }
 
         // bStats
         Metrics(this, bstats)
