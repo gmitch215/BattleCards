@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.*
+import me.gamercoder215.battlecards.util.CardUtils.color
 import me.gamercoder215.battlecards.util.CardUtils.createLine
 import me.gamercoder215.battlecards.util.CardUtils.dateFormat
 import me.gamercoder215.battlecards.util.CardUtils.format
@@ -13,6 +14,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Creature
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.ChatPaginator
 
 object CardGenerator {
 
@@ -30,8 +32,8 @@ object CardGenerator {
                 if (config.getBoolean("Cards.Display.Inventory.ShowLevel"))
                     cardL.addAll(listOf(
                         " ",
-                        "${ChatColor.YELLOW}${format(get("constants.level"), card.level)} | ${format(get("constants.card.deploy"), card.deployTime)}",
-                        "${createLine(card.level)} | ${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
+                        "${ChatColor.YELLOW}${format(get("constants.level"), card.level)} ${ChatColor.WHITE}| ${ChatColor.GOLD}${format(get("constants.card.deploy"), card.deployTime)}",
+                        "${ChatColor.GRAY}${createLine(card).replace("=", "${ChatColor.GREEN}=${ChatColor.GRAY}")} ${ChatColor.WHITE}| ${ChatColor.DARK_AQUA}${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
                     ))
 
                 cardL.addAll(listOf(
@@ -40,11 +42,10 @@ object CardGenerator {
                     "${ChatColor.YELLOW}${get("constants.card.right_click_deploy")}",
                 ))
 
-                lore = CardUtils.color(cardL)
+                lore = cardL
             }
 
-            nbt { nbt -> nbt["card"] = card.toByteArray() }
-        }
+        }.nbt { nbt -> nbt["card"] = card.toByteArray() }
     }
 
     @JvmStatic
@@ -54,28 +55,38 @@ object CardGenerator {
         return toItem(card)
     }
 
+    private val generationColors = listOf(
+        ChatColor.GREEN,
+        ChatColor.AQUA,
+        ChatColor.DARK_BLUE,
+        ChatColor.YELLOW,
+        ChatColor.DARK_PURPLE,
+        ChatColor.GOLD,
+        ChatColor.LIGHT_PURPLE
+    )
+
     @JvmStatic
     fun generateCardInfo(card: Card): ItemStack {
         val config = BattleConfig.configuration
 
-        return ItemStack(Material.EMPTY_MAP).apply {
+        return ItemStack(BattleMaterial.MAP.find()).apply {
             itemMeta = itemMeta.apply {
-                displayName = "${format(get("constants.card"), "${card.rarity.color}${card.name}")} | ${format(get("constants.card.generation"), card.generation.toRoman())}"
+                displayName = "${format(get("constants.card"), "${card.rarity.color}${card.name}")} ${ChatColor.WHITE}| ${generationColors[card.generation]}${format(get("constants.card.generation"), card.generation.toRoman())}"
 
                 val cardL = mutableListOf<String>()
                 cardL.addAll(listOf(
                     card.rarity.toString(),
                     " ",
-                    "${format(get("constants.level"), card.level)} | ${format(get("constants.card.deploy"), card.deployTime)}",
-                    "${createLine(card.level)} | ${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
+                    "${ChatColor.YELLOW}${format(get("constants.level"), card.level)} ${ChatColor.WHITE}| ${ChatColor.GOLD}${format(get("constants.card.deploy"), card.deployTime)}",
+                    "${ChatColor.GRAY}${createLine(card).replace("=", "${ChatColor.GREEN}=${ChatColor.GRAY}")} ${ChatColor.WHITE}| ${ChatColor.DARK_AQUA}${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
                 ))
 
-                if (config.getBoolean("Card.Display.Info.ShowAbilities")) {
+                if (config.getBoolean("Cards.Display.Info.ShowAbilities")) {
                     val abilityL = mutableListOf<String>()
                     abilityL.add(" ")
 
-                    val abilities = card::class.java.getAnnotationsByType(CardAbility::class.java).associateWith { mapOf<String, String>() }.toMutableMap()
-                    abilities.putAll(card::class.java.declaredMethods.toList()
+                    val abilities = card.entityCardClass.getAnnotationsByType(CardAbility::class.java).associateWith { mapOf<String, String>() }.toMutableMap()
+                    abilities.putAll(card.entityCardClass.declaredMethods.toList()
                         .map { it.isAccessible = true; it }
                         .filter {
                             if (it.isAnnotationPresent(UnlockedAt::class.java))
@@ -84,74 +95,79 @@ object CardGenerator {
                         }.associate {
                             val placeholders = mutableMapOf<String, String>()
 
-                            placeholders["@chance@"] = it.run {
-                                return@run "${
-                                    if (isAnnotationPresent(Defensive::class.java)) getAnnotation(Defensive::class.java).getChance(card.level).format()
-                                    else if (isAnnotationPresent(Offensive::class.java)) getAnnotation(Offensive::class.java).getChance(card.level).format()
-                                    else if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level).format()
-                                    else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level).format()
-                                    else if (isAnnotationPresent(Damage::class.java)) getAnnotation(Damage::class.java).getChance(card.level).format()
-                                    else "100"
-                                }%"
+                            placeholders["%bch"] = it.run {
+                                return@run "${ChatColor.GREEN}${(
+                                    if (isAnnotationPresent(Defensive::class.java)) getAnnotation(Defensive::class.java).getChance(card.level)
+                                    else if (isAnnotationPresent(Offensive::class.java)) getAnnotation(Offensive::class.java).getChance(card.level)
+                                    else if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level)
+                                    else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level)
+                                    else if (isAnnotationPresent(Damage::class.java)) getAnnotation(Damage::class.java).getChance(card.level)
+                                    else 1.0
+                                ).times(100.0).format()}%${ChatColor.GRAY}"
                             }
 
                             it.getAnnotation(CardAbility::class.java) to placeholders
-                        })
+                        }.filter { it.key != null }.toMap())
 
-                    for ((ability, placeholders) in abilities)
-                        abilityL.addAll(listOf(
-                            "${ability.color}${get(ability.name)}",
-                            if (ability.desc.equals("<desc>", ignoreCase = true))
-                                get("${ability.name}.desc").replace(placeholders)
-                            else
-                                get(ability.desc).replace(placeholders),
-                        ))
+                    if (abilities.isNotEmpty()) {
+                        for ((ability, placeholders) in abilities) {
+                            val desc = ChatPaginator.wordWrap(
+                                if (ability.desc.equals("<desc>", ignoreCase = true))
+                                    color(get("${ability.name}.desc").replace(placeholders))
+                                else
+                                    color(get(ability.desc).replace(placeholders)),
+                                35
+                            ).map { s -> "${ChatColor.GRAY}$s" }
 
-                    cardL.addAll(abilityL)
+                            abilityL.addAll(listOf("${ability.color}${get(ability.name)}") + desc + listOf(""))
+                        }
+
+                        cardL.addAll(abilityL)
+                    }
                 }
 
                 cardL.addAll(listOf(
                     " ",
                     format("${ChatColor.AQUA}${get("constants.card.creation_date")}", "${ChatColor.GOLD}${dateFormat(card.creationDate)}"),
                     format("${ChatColor.AQUA}${get("constants.card.last_used_by")}", "${ChatColor.GOLD}${card.lastUsedPlayer?.name ?: "N/A"}"),
-                    format("${ChatColor.AQUA}${get("constants.card.last_used_on")}", "${ChatColor.GOLD}${dateFormat(card.lastUsed) ?: "N/A"}")
+                    format("${ChatColor.AQUA}${get("constants.card.last_used_on")}", "${ChatColor.GOLD}${dateFormat(card.lastUsed, true) ?: "N/A"}")
                 ))
 
-                lore = CardUtils.color(cardL)
+                lore = cardL
             }
         }
     }
 
     @JvmStatic
     fun generateCardStatistics(card: Card): ItemStack? {
-        if (!BattleConfig.configuration.getBoolean("Card.Display.Info.ShowStatistics")) return null
+        if (!BattleConfig.configuration.getBoolean("Cards.Display.Info.ShowStatistics")) return null
 
         val statistics = card.statistics
         
-        return ItemStack(Material.EMPTY_MAP).apply {
+        return ItemStack(BattleMaterial.MAP.find()).apply {
             itemMeta = itemMeta.apply {
-                displayName = "${format(get("constants.card"), "${card.rarity.color}${card.name}")} | ${get("constants.statistics")}"
+                displayName = "${format(get("constants.card"), "${card.rarity.color}${card.name}")} ${ChatColor.WHITE}| ${ChatColor.YELLOW}${get("constants.statistics")}"
 
                 val cardL = mutableListOf<String>()
                 cardL.addAll(listOf(
                     " ",
-                    "${ChatColor.RED}${format(get("constants.card.statistics.max_health"), "${ChatColor.GOLD}${statistics.maxHealth.format()}")}",
-                    "${ChatColor.RED}${format(get("constants.card.statistics.attack_damage"), "${ChatColor.GOLD}${statistics.attackDamage.format()}")}",
-                    "${ChatColor.GREEN}${format(get("constants.card.statistics.defense"), "${ChatColor.GOLD}${statistics.defense.format()}")}",
-                    "${ChatColor.AQUA}${format(get("constants.card.statistics.movement_speed"), "${ChatColor.GOLD}${statistics.speed.format()}")}",
-                    "${ChatColor.DARK_PURPLE}${format(get("constants.card.statistics.knockback_resistance"), "${ChatColor.GOLD}${statistics.knockbackResistance.format()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.max_health"), "${ChatColor.GOLD}${statistics.maxHealth.withSuffix()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.attack_damage"), "${ChatColor.GOLD}${statistics.attackDamage.withSuffix()}")}",
+                    "${ChatColor.GREEN}${format(get("constants.card.statistics.defense"), "${ChatColor.GOLD}${statistics.defense.withSuffix()}")}",
+                    "${ChatColor.AQUA}${format(get("constants.card.statistics.movement_speed"), "${ChatColor.GOLD}${statistics.speed.withSuffix()}")}",
+                    "${ChatColor.DARK_PURPLE}${format(get("constants.card.statistics.knockback_resistance"), "${ChatColor.GOLD}${statistics.knockbackResistance.withSuffix()}")}",
                     " ",
-                    "${ChatColor.RED}${format(get("constants.card.statistics.player_kills"), "${ChatColor.DARK_RED}${statistics.playerKills.format()}")}",
-                    "${ChatColor.RED}${format(get("constants.card.statistics.card_kills"), "${ChatColor.DARK_RED}${statistics.cardKills.format()}")}",
-                    "${ChatColor.RED}${format(get("constants.card.statistics.entity_kills"),"${ChatColor.DARK_RED}${statistics.entityKills.format()}")}",
-                    "${ChatColor.RED}${format(get("constants.card.statistics.total_kills"), "${ChatColor.DARK_RED}${statistics.kills.format()}")}",
-                    "${ChatColor.RED}${format(get("constants.card.statistics.total_deaths"), "${ChatColor.DARK_RED}${statistics.deaths.format()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.player_kills"), "${ChatColor.DARK_RED}${statistics.playerKills.withSuffix()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.card_kills"), "${ChatColor.DARK_RED}${statistics.cardKills.withSuffix()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.entity_kills"),"${ChatColor.DARK_RED}${statistics.entityKills.withSuffix()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.total_kills"), "${ChatColor.DARK_RED}${statistics.kills.withSuffix()}")}",
+                    "${ChatColor.RED}${format(get("constants.card.statistics.total_deaths"), "${ChatColor.DARK_RED}${statistics.deaths.withSuffix()}")}",
                     " ",
-                    "${ChatColor.DARK_RED}${format(get("constants.card.statistics.total_damage_dealt"), "${ChatColor.BLUE}${statistics.damageDealt.format()}")}",
-                    "${ChatColor.DARK_RED}${format(get("constants.card.statistics.total_damage_received"), "${ChatColor.BLUE}${statistics.damageReceived.format()}")}",
+                    "${ChatColor.DARK_RED}${format(get("constants.card.statistics.total_damage_dealt"), "${ChatColor.BLUE}${statistics.damageDealt.withSuffix()}")}",
+                    "${ChatColor.DARK_RED}${format(get("constants.card.statistics.total_damage_received"), "${ChatColor.BLUE}${statistics.damageReceived.withSuffix()}")}",
                     " ",
-                    "${ChatColor.GREEN}${format(get("constants.card.statistics.card_experience"), "${ChatColor.YELLOW}${statistics.cardExperience.format()}")}",
-                    "${ChatColor.DARK_GREEN}${format(get("constants.card.statistics.max_card_experience"), "${ChatColor.YELLOW}${statistics.maxCardExperience.format()}")}",
+                    "${ChatColor.GREEN}${format(get("constants.card.statistics.card_experience"), "${ChatColor.YELLOW}${statistics.cardExperience.withSuffix()}")}",
+                    "${ChatColor.DARK_GREEN}${format(get("constants.card.statistics.max_card_experience"), "${ChatColor.YELLOW}${statistics.maxCardExperience.withSuffix()}")}",
                     "${ChatColor.GREEN}${format(get("constants.card.statistics.card_level"), "${ChatColor.YELLOW}${statistics.cardLevel.format()}")}",
                     "${ChatColor.DARK_GREEN}${format(get("constants.card.statistics.max_card_level"), "${ChatColor.YELLOW}${statistics.maxCardLevel.format()}")}",
                 ))
