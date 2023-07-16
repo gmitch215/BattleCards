@@ -5,11 +5,14 @@ import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Item
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import org.bukkit.util.Vector
@@ -30,6 +33,9 @@ inline val Entity.isCard: Boolean
         if (this !is Creature) return false
         return w.isCard(this) || IBattleCard.spawned.containsKey(uniqueId)
     }
+
+inline val Item.isCard: Boolean
+    get() = itemStack.isCard
 
 inline val Entity.isMinion: Boolean
     get() {
@@ -63,7 +69,7 @@ inline val ItemStack.isCard: Boolean
 
 inline val ItemStack.id: String?
     get() {
-        val id = NBTWrapper.of(this).getID()
+        val id = NBTWrapper.of(this).id
         if (id.isEmpty()) return null
 
         return id
@@ -76,7 +82,7 @@ inline val PlayerInventory.cards: Map<Int, ICard>
     get() {
         val cards = mutableMapOf<Int, ICard>()
         for (i in 0 until size) {
-            val item = getItem(i)
+            val item = getItem(i) ?: continue
             cards[i] = item.card ?: continue
         }
 
@@ -102,6 +108,10 @@ fun Player.playSuccess() {
 
 fun Player.playFailure() {
     playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
+}
+
+fun Event.call() {
+    Bukkit.getPluginManager().callEvent(this)
 }
 
 fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
@@ -164,20 +174,17 @@ fun Server.getEntity(id: UUID): Entity? {
 }
 
 fun Vector.rotateAroundY(angle: Double): Vector {
-    val cos = cos(angle)
-    val sin = sin(angle)
+    val cos = cos(angle); val sin = sin(angle)
+
     val nx: Double = cos * x + sin * z
     val nz: Double = -sin * x + cos * z
     return setX(nx).setZ(nz)
 }
 
 fun Vector.rotateAroundNonUnitAxis(axis: Vector, angle: Double): Vector {
-    val x2 = axis.x
-    val y2 = axis.y
-    val z2 = axis.z
+    val x2 = axis.x; val y2 = axis.y; val z2 = axis.z
 
-    val cos = cos(angle)
-    val sin = sin(angle)
+    val cos = cos(angle); val sin = sin(angle)
     val dot: Double = dot(axis)
 
     val xPrime = x2 * dot * (1.0 - cos) + x * cos + (-z2 * y + y2 * z) * sin
@@ -189,6 +196,12 @@ fun Vector.rotateAroundNonUnitAxis(axis: Vector, angle: Double): Vector {
 
 operator fun Location.plus(other: Location): Location = add(other)
 operator fun Location.plus(other: Vector): Location = add(other)
+
+operator fun Vector.plus(other: Vector): Vector = add(other)
+operator fun Vector.plus(other: Location): Vector = add(other.toVector())
+operator fun Vector.times(other: Vector): Vector = multiply(other)
+operator fun Vector.times(other: Location): Vector = multiply(other.toVector())
+operator fun Vector.times(other: Number): Vector = multiply(other.toDouble())
 
 // Kotlin Util
 
