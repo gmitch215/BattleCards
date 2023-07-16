@@ -82,7 +82,7 @@ interface Card : ConfigurationSerializable {
          */
         get() {
             if (level == maxCardLevel) return 0.0
-            return BattleCard.toExperience(level + 1, rarity) - experience
+            return toExperience(level + 1, rarity) - experience
         }
 
     val maxCardLevel: Int
@@ -222,7 +222,7 @@ interface Card : ConfigurationSerializable {
                 else -> {
                     var exp = 0.0
                     for (i in 2..level)
-                        exp += floor(rarity.experienceModifier.pow(i - 1) * 500)
+                        exp += floor(rarity.experienceModifier.pow(i / 2.0) * 500)
 
                     val rem = exp % 50
 
