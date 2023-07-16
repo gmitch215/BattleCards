@@ -38,13 +38,15 @@ annotation class AttributesModifier(
     val max: Double = Double.MAX_VALUE
 )
 
-enum class CardAttribute {
-    MAX_HEALTH,
-    ATTACK_DAMAGE,
-    DEFENSE,
-    SPEED,
+enum class CardAttribute(
+    val max: Double = Double.MAX_VALUE
+) {
+    MAX_HEALTH(25_000_000.0),
+    ATTACK_DAMAGE(3_500_000.0),
+    DEFENSE(2_000_000.0),
+    SPEED(0.45),
     KNOCKBACK_RESISTANCE,
-    FOLLOW_RANGE
+    FOLLOW_RANGE(1024.0)
 
     ;
 
