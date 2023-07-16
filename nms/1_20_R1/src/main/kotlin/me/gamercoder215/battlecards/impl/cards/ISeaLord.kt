@@ -47,6 +47,7 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
             getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = this@ISeaLord.statistics.maxHealth / 20.0
             
             persistentDataContainer[dolphinKey, PersistentDataType.BOOLEAN] = true
+            addPassenger(entity)
         }
 
         entity.equipment!!.helmet = ItemStack(Material.DIAMOND_HELMET).apply {
