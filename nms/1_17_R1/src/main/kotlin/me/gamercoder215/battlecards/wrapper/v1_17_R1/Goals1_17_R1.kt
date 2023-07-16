@@ -3,7 +3,6 @@ package me.gamercoder215.battlecards.wrapper.v1_17_R1
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import net.minecraft.server.level.EntityPlayer
 import net.minecraft.world.entity.EntityCreature
-import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.ai.goal.PathfinderGoal
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalTarget
 import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition
@@ -18,14 +17,19 @@ class FollowCardOwner1_17_R1(
 ) : PathfinderGoal() {
 
     companion object {
-        const val STOP_DISTANCE = 3
+        const val STOP_DISTANCE = 4
     }
 
     private val player: EntityPlayer = (card.p as CraftPlayer).handle
     private var timeToRecalcPath: Int = 0
     private var oldWaterCost: Float = 0F
 
-    override fun a(): Boolean = true
+    override fun a(): Boolean = when {
+        player.isSpectator || player.bukkitEntity.isFlying -> false
+        creature.isLeashed || creature.f(player) < STOP_DISTANCE.times(STOP_DISTANCE) -> false
+        creature.goalTarget != null -> false
+        else -> true
+    }
 
     override fun c() {
         timeToRecalcPath = 0
@@ -49,7 +53,7 @@ class FollowCardOwner1_17_R1(
             val distance = x * x + y * y + z * z
 
             if (distance > STOP_DISTANCE.times(STOP_DISTANCE))
-                creature.navigation.a(player, 1.0)
+                creature.navigation.a(player, 1.2)
             else {
                 creature.navigation.o()
                 val sight = player.bukkitEntity.hasLineOfSight(creature.bukkitEntity)
@@ -57,7 +61,7 @@ class FollowCardOwner1_17_R1(
                 if (distance <= STOP_DISTANCE || sight) {
                     val dx = player.locX() - creature.locX()
                     val dz = player.locZ() - creature.locZ()
-                    creature.navigation.a(creature.locX() - dx, creature.locY(), creature.locZ() - dz, 1.0)
+                    creature.navigation.a(creature.locX() - dx, creature.locY(), creature.locZ() - dz, 1.2)
                 }
             }
         }

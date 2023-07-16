@@ -9,9 +9,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions
 import net.minecraft.world.level.pathfinder.BlockPathTypes
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
-import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityTargetEvent
-import java.util.*
 
 class FollowCardOwner1_19_R2(
     private val creature: PathfinderMob,
@@ -19,14 +17,19 @@ class FollowCardOwner1_19_R2(
 ) : Goal() {
 
     companion object {
-        const val STOP_DISTANCE = 3
+        const val STOP_DISTANCE = 4
     }
 
     private val player: ServerPlayer = (card.p as CraftPlayer).handle
     private var timeToRecalcPath: Int = 0
     private var oldWaterCost: Float = 0F
 
-    override fun canUse(): Boolean = true
+        override fun canUse(): Boolean = when {
+        player.isSpectator || player.bukkitEntity.isFlying -> false
+        creature.isLeashed || creature.distanceToSqr(player) < STOP_DISTANCE.times(STOP_DISTANCE) -> false
+        creature.target != null -> false
+        else -> true
+    }
 
     override fun start() {
         timeToRecalcPath = 0
@@ -50,7 +53,7 @@ class FollowCardOwner1_19_R2(
             val distance = x * x + y * y + z * z
 
             if (distance > STOP_DISTANCE.times(STOP_DISTANCE))
-                creature.navigation.moveTo(player, 1.0)
+                creature.navigation.moveTo(player, 1.2)
             else {
                 creature.navigation.stop()
                 val sight = player.bukkitEntity.hasLineOfSight(creature.bukkitEntity)
@@ -58,7 +61,7 @@ class FollowCardOwner1_19_R2(
                 if (distance <= STOP_DISTANCE || sight) {
                     val dx = player.x - creature.x
                     val dz = player.z - creature.z
-                    creature.navigation.moveTo(creature.x - dx, creature.y, creature.z - dz, 1.0)
+                    creature.navigation.moveTo(creature.x - dx, creature.y, creature.z - dz, 1.2)
                 }
             }
         }
