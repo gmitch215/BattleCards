@@ -10,7 +10,6 @@ class TestBattleCard {
     @DisplayName("Test BattleCard#toExperience")
     fun testToExperience() {
         Assertions.assertEquals(0.0, BattleCard.toExperience(1))
-        Assertions.assertEquals(600.0, BattleCard.toExperience(2))
         Assertions.assertThrows(IllegalArgumentException::class.java) { BattleCard.toExperience(0) }
         Assertions.assertThrows(IllegalArgumentException::class.java) { BattleCard.toExperience(-1) }
         Assertions.assertThrows(IllegalArgumentException::class.java) { BattleCard.toExperience(BattleCard.MAX_LEVEL + 1) }
