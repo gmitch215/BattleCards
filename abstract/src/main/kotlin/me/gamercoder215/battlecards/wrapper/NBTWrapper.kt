@@ -37,13 +37,9 @@ abstract class NBTWrapper(
         @JvmStatic
         fun builder(item: ItemStack, meta: (ItemMeta) -> Unit, nbt: (NBTWrapper) -> Unit): ItemStack {
             val item0 = item.clone()
-            item0.itemMeta = item0.itemMeta.apply {
-                meta(this)
-            }
+            item0.itemMeta = item0.itemMeta.apply { meta(this) }
 
-            return of(item0).apply {
-                nbt(this)
-            }.item
+            return of(item0).apply { nbt(this) }.item
         }
 
         @JvmStatic
@@ -56,9 +52,9 @@ abstract class NBTWrapper(
 
     // NBT Methods/Implementation
 
-    fun getID(): String = getString("id")
-
-    fun setID(id: String) = set("id", id)
+    var id: String
+        get() = getString("id")
+        set(value) = set("id", value)
 
     fun hasID(): Boolean = getString("id").isNotEmpty()
 
