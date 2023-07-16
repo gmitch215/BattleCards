@@ -37,6 +37,24 @@ Cards:
   # This is not recommended for the purpose of gameplay (and how OP cards can get).
   AttackPlayers: false
 
+  # Whether Non-Card Entities that naturally target specific entity types (e.g. Zombies targeting Iron Golems) will apply to BattleCards.
+  # This Configuration option does not prevent non-card entities from attacking BattleCards.
+  TargetCards: true
+
+  # Card Destruction Configuration
+  Destruction:
+    # Whether Card Items are destroyed by cactus
+    Cactus: false
+
+    # Whether Cards burn and are destroyed in Fire & Lava
+    Fire: true
+
+    # Whether Cards are destroyed by explosions
+    Explosion: true
+
+    # Whether Card Items naturally despawn
+    Despawn: false
+
   # Configuration for Player-specific Cooldowns
   PlayerCooldown:
     # The amount of cards needed to trigger the player cooldown

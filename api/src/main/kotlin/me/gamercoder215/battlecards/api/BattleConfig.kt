@@ -52,6 +52,13 @@ interface BattleConfig {
              */
             get() = plugin.config
 
+        @JvmStatic
+        val configurationFile: File
+            /**
+             * Fetches the Configuration File Instance for the BattleCards plugin.
+             * @return [File] for [configuration]
+             */
+            get() = File(dataFolder, "config.yml")
 
         @JvmStatic
         val logger: Logger
@@ -94,7 +101,14 @@ interface BattleConfig {
 
             if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
             if (!config.isList("Cards.Disabled")) config["Cards.Disabled"] = listOf<String>()
-            if (!config.isBoolean("Cards.AttackPlayers")) config["Cards.AttackPlayers"] = true
+            if (!config.isBoolean("Cards.AttackPlayers")) config["Cards.AttackPlayers"] = false
+            if (!config.isBoolean("Cards.TargetCards")) config["Cards.TargetCards"] = true
+
+            if (!config.isConfigurationSection("Cards.Destruction")) config.createSection("Cards.Destruction")
+            if (!config.isBoolean("Cards.Destruction.Cactus")) config["Cards.Destruction.Cactus"] = false
+            if (!config.isBoolean("Cards.Destruction.Fire")) config["Cards.Destruction.Fire"] = true
+            if (!config.isBoolean("Cards.Destruction.Explosion")) config["Cards.Destruction.Explosion"] = true
+            if (!config.isBoolean("Cards.Destruction.Despawn")) config["Cards.Destruction.Despawn"] = false
 
             if (!config.isConfigurationSection("Cards.PlayerCooldown")) config.createSection("Cards.PlayerCooldown")
             if (!config.isInt("Cards.PlayerCooldown.Count")) config["Cards.PlayerCooldown.Count"] = 2
@@ -121,6 +135,8 @@ interface BattleConfig {
             if (!config.isConfigurationSection("Cards.Basic.Drops")) config.createSection("Cards.Basic.Drops")
             if (!config.isBoolean("Cards.Basic.Drops.Enabled")) config["Cards.Basic.Drops.Enabled"] = true
             if (!config.isString("Cards.Basic.Drops.Ignore")) config["Cards.Basic.Drops.Ignore"] = ""
+
+            config.save(configurationFile)
 
             return config
         }
@@ -232,8 +248,8 @@ interface BattleConfig {
             else -> Locale(language)
         }
 
-    private fun setConfig(key: String, value: Any) {
-        configuration.set(key, value)
+    private fun setConfig(key: String, value: Any?) {
+        configuration[key] = value
         plugin.saveConfig()
     }
 
@@ -359,5 +375,65 @@ interface BattleConfig {
          * @param value true if can attack players, false otherwise
          */
         set(value) = setConfig("Cards.AttackPlayers", value)
+
+    var targetCards: Boolean
+        /**
+         * Fetches whether Non-Card Entities can target Battle Cards.
+         * @return true if can target Battle Cards, false otherwise
+         */
+        get() = configuration.getBoolean("Cards.TargetCards")
+        /**
+         * Sets whether Non-Card Entities can target Battle Cards.
+         * @param value true if can target Battle Cards, false otherwise
+         */
+        set(value) = setConfig("Cards.TargetCards", value)
+
+    var isCardDestroyedThorns: Boolean
+        /**
+         * Fetches whether Battle Cards can be destroyed by a Cactus.
+         * @return true if can be destroyed by a Cactus, false otherwise
+         */
+        get() = configuration.getBoolean("Cards.Destruction.Cactus")
+        /**
+         * Sets whether Battle Cards can be destroyed by a Cactus.
+         * @param value true if can be destroyed by a Cactus, false otherwise
+         */
+        set(value) = setConfig("Cards.Destruction.Cactus", value)
+
+    var isCardDestroyedFire: Boolean
+        /**
+         * Fetches whether Battle Cards can be destroyed by Fire.
+         * @return true if can be destroyed by Fire, false otherwise
+         */
+        get() = configuration.getBoolean("Cards.Destruction.Fire")
+        /**
+         * Sets whether Battle Cards can be destroyed by Fire.
+         * @param value true if can be destroyed by Fire, false otherwise
+         */
+        set(value) = setConfig("Cards.Destruction.Fire", value)
+
+    var isCardDestroyedExplosion: Boolean
+        /**
+         * Fetches whether Battle Cards can be destroyed by an Explosion.
+         * @return true if can be destroyed by an Explosion, false otherwise
+         */
+        get() = configuration.getBoolean("Cards.Destruction.Explosion")
+        /**
+         * Sets whether Battle Cards can be destroyed by an Explosion.
+         * @param value true if can be destroyed by an Explosion, false otherwise
+         */
+        set(value) = setConfig("Cards.Destruction.Explosion", value)
+
+    var isCardsDespawn: Boolean
+        /**
+         * Fetches whether Battle Card Items can despawn.
+         * @return true if can despawn, false otherwise
+         */
+        get() = configuration.getBoolean("Cards.Destruction.Despawn")
+        /**
+         * Sets whether Battle Card Items can despawn.
+         * @param value true if can despawn, false otherwise
+         */
+        set(value) = setConfig("Cards.Destruction.Despawn", value)
 
 }
