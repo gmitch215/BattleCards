@@ -51,7 +51,7 @@ interface CommandWrapper {
         fun getError(key: String): String = "${get("plugin.prefix")} ${ChatColor.RED}${get(key)}"
 
         @JvmStatic
-        fun getSuccess(key: String): String = "${get("plugin.prefix")} ${ChatColor.RED}${get(key)}"
+        fun getSuccess(key: String): String = "${get("plugin.prefix")} ${ChatColor.GREEN}${get(key)}"
     }
 
     fun reloadPlugin(sender: CommandSender) {
