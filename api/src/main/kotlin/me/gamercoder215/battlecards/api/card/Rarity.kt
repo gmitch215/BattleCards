@@ -76,8 +76,6 @@ enum class Rarity(
         this.maxCardLevel = maxCardLevel
     }
 
-    override fun toString(): String {
-        return "$color${name.uppercase()}"
-    }
+    override fun toString(): String = "$color${ChatColor.BOLD}${name.uppercase()}"
 
 }
