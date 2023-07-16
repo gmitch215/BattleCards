@@ -52,8 +52,8 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
         if (w.hasTag("_cancel")) e.isCancelled = true
         if (CLICK_INVENTORIES.containsKey(inv.id)) CLICK_INVENTORIES[inv.id]!!(inv, e)
-        if (CLICK_ITEMS.containsKey(w.getID())) {
-            CLICK_ITEMS[w.getID()]!!(inv, e)
+        if (CLICK_ITEMS.containsKey(w.id)) {
+            CLICK_ITEMS[w.id]!!(inv, e)
             e.isCancelled = true
         }
     }
