@@ -153,7 +153,7 @@ internal class Wrapper1_12_R1 : Wrapper {
         speed: Double, force: Boolean
     ) {
         if (location.world == null) return
-        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed, force)
+        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed)
     }
 
     override fun getDefaultAttribute(type: EntityType, attribute: CardAttribute): Double {

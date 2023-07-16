@@ -28,11 +28,9 @@ import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey
-import org.bukkit.entity.Creature
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
 
 @Suppress("unchecked_cast", "KotlinConstantConditions")
 internal class Wrapper1_20_R1 : Wrapper {
@@ -134,7 +132,7 @@ internal class Wrapper1_20_R1 : Wrapper {
 
     private fun removeGoals(goalSelector: GoalSelector, targetSelector: GoalSelector) {
         goalSelector.removeAllGoals {
-            it is AvoidEntityGoal<*> || it is RestrictSunGoal || it is FleeSunGoal || it is BegGoal || it is BreedGoal
+            it is AvoidEntityGoal<*> || it is RestrictSunGoal || it is FleeSunGoal || it is BegGoal || it is BreedGoal || it is MoveBackToVillageGoal || it is GolemRandomStrollInVillageGoal
         }
 
         targetSelector.removeAllGoals {
@@ -160,7 +158,7 @@ internal class Wrapper1_20_R1 : Wrapper {
         speed: Double, force: Boolean
     ) {
         if (location.world == null) return
-        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed, force)
+        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed)
     }
 
     private fun toNMS(type: EntityType): net.minecraft.world.entity.EntityType<*> {

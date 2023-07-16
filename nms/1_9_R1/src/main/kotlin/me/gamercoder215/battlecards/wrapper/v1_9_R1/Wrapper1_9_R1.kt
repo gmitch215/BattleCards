@@ -16,7 +16,10 @@ import org.bukkit.craftbukkit.v1_9_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftWither
-import org.bukkit.entity.*
+import org.bukkit.entity.Creature
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
+import org.bukkit.entity.Wither
 
 @Suppress("unchecked_cast")
 internal class Wrapper1_9_R1 : Wrapper {
@@ -155,7 +158,7 @@ internal class Wrapper1_9_R1 : Wrapper {
         speed: Double, force: Boolean
     ) {
         if (location.world == null) return
-        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed, force)
+        location.world!!.spawnParticle(Particle.valueOf(particle.name.uppercase()), location, count, dX, dY, dZ, speed)
     }
 
     override fun getDefaultAttribute(type: EntityType, attribute: CardAttribute): Double {
