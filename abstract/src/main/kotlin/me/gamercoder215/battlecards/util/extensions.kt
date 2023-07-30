@@ -15,6 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
+import org.bukkit.scheduler.BukkitTask
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.math.cos
@@ -270,4 +271,7 @@ fun String.replace(vararg replacements: Pair<String, String>): String {
 
 fun String.replace(replacements: Map<String, String>): String =
     replace(*replacements.toList().toTypedArray())
+
+fun sync(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTask(BattleConfig.plugin, block)
+fun async(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTaskAsynchronously(BattleConfig.plugin, block)
 
