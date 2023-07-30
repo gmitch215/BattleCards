@@ -37,6 +37,69 @@ Coming Soon...
 ![GitHub](https://img.shields.io/github/license/GamerCoder215/BattleCards)
 [![GitHub branch checks state](https://github.com/GamerCoder215/BattleCards/actions/workflows/build.yml/badge.svg)](https://github.com/Team-Inceptus/PlasmaEnchants/actions/)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/GamerCoder215/BattleCards?style=plastic)
+![GitHub repo size](https://img.shields.io/github/repo-size/GamerCoder215/BattleCards)
+
+**JavaDocs:** [https://battlecards.gamercoder215.me](https://battlecards.gamercoder215.me)
+
+### Installation
+
+<details>
+    <summary>Maven</summary>
+
+```xml
+<project>
+
+    <repositories>
+        <repository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        </repository>
+    </repositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>me.gamercoder215.battlecards</groupId>
+            <artifactId>battlecards-api</artifactId>
+            <version>[VERSION]</version>
+        </dependency>
+    </dependencies>
+    
+</project>
+```
+</details>
+
+<details>
+    <summary>Gradle (Groovy)</summary>
+
+```gradle
+repositories {
+    maven { url 'https://repo.codemc.io/repository/maven-snapshots/' }
+}
+
+dependencies {
+    implementation 'me.gamercoder215.battlecards:battlecards-api:[VERSION]'
+}
+```
+</details>
+
+<details>
+    <summary>Gradle (Kotlin DSL)</summary>
+
+```kotlin
+repositories {
+    maven(url = "https://repo.codemc.io/repository/maven-snapshots/")
+}
+
+dependencies {
+    implementation('me.gamercoder215.battlecards:battlecards-api:[VERSION]')
+}
+```
+</details>
 
 ---
 ## 📷 Screenshots
+
+![Screenshot4](https://media.discordapp.net/attachments/894254760075603980/1135013631440994345/2023-07-29_19.58.35.png)
+![Screenshot3](https://media.discordapp.net/attachments/894254760075603980/1135013630971236513/2023-07-29_19.58.19.png)
+![Screenshot2](https://media.discordapp.net/attachments/894254760075603980/1135013630618898452/2023-07-29_19.58.16.png)
+![Screenshot1](https://media.discordapp.net/attachments/894254760075603980/1135013630241427506/2023-07-29_19.58.08.png)
