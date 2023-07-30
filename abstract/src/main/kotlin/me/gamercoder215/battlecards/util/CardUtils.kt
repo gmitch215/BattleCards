@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.BlockAttachment
 import me.gamercoder215.battlecards.impl.MinionBlockAttachment
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.entity.ArmorStand
@@ -25,7 +26,11 @@ object CardUtils {
         if (attachments.isEmpty()) return
 
         for (attachment in attachments) {
-            val newLocation = local(card.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)) // FIXME: Use Body Location Direction
+            val newLocation = local(card.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
+                yaw = w.getYBodyRot(card.entity)
+                pitch = 0f
+            }
+
             val entity = card.world.spawn(newLocation, ArmorStand::class.java).apply {
                 isSmall = attachment.small
                 isVisible = false
@@ -34,7 +39,12 @@ object CardUtils {
                 helmet = ItemStack(attachment.material)
             }
 
-            card.attachments[entity.uniqueId] = { local(card.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)) }
+            card.attachments[entity.uniqueId] = {
+                local(card.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
+                    yaw = w.getYBodyRot(card.entity)
+                    pitch = 0f
+                }
+            }
         }
     }
 
@@ -48,7 +58,11 @@ object CardUtils {
         val map = mutableMapOf<UUID, () -> Location>()
 
         for (attachment in attachments) {
-            val newLocation = local(reference, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ))
+            val newLocation = local(reference, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
+                yaw = w.getYBodyRot(card.entity)
+                pitch = 0f
+            }
+
             val entity = minion.world.spawn(newLocation, ArmorStand::class.java).apply {
                 isSmall = attachment.small
                 isVisible = false
@@ -57,7 +71,12 @@ object CardUtils {
                 helmet = ItemStack(attachment.material)
             }
 
-            map[entity.uniqueId] = { local(minion.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)) }
+            map[entity.uniqueId] = {
+                local(minion.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
+                    yaw = w.getYBodyRot(minion)
+                    pitch = 0f
+                }
+            }
         }
 
         card.minionAttachments[minion.uniqueId] = map

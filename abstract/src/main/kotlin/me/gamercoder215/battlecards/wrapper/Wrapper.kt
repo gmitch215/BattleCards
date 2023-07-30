@@ -9,14 +9,13 @@ import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper
 import net.md_5.bungee.api.chat.BaseComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.entity.Creature
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
 import org.bukkit.event.Listener
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import java.security.SecureRandom
+
+const val PACKET_INJECTOR_ID = "battlecards:packet_injector"
 
 interface Wrapper {
 
@@ -45,6 +44,12 @@ interface Wrapper {
     fun setAttackType(entity: Creature, attackType: CardAttackType)
 
     fun getAttackType(entity: Creature): CardAttackType
+
+    fun getYBodyRot(entity: LivingEntity): Float
+
+    fun addPacketInjector(p: Player)
+
+    fun removePacketInjector(p: Player)
 
     companion object {
         @JvmStatic
