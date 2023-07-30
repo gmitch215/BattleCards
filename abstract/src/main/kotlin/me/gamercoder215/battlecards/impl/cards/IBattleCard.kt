@@ -206,7 +206,7 @@ abstract class IBattleCard<T : Creature>(
         return annotation.level
     }
 
-    fun <T : Creature> minion(clazz: Class<T>, action: T.() -> Unit = {}): T {
+    fun <E : Creature> minion(clazz: Class<E>, action: E.() -> Unit = {}): E {
         val minion = w.spawnMinion(clazz, this)
         action(minion)
         CardUtils.createMinionAttachments(minion, this)
