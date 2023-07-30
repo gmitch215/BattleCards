@@ -2,10 +2,10 @@ package me.gamercoder215.battlecards.wrapper.v1_10_R1
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
-import me.gamercoder215.battlecards.util.BattleParticle
-import me.gamercoder215.battlecards.util.CardAttackType
+import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
+import me.gamercoder215.battlecards.wrapper.PACKET_INJECTOR_ID
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
@@ -16,11 +16,14 @@ import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.craftbukkit.v1_10_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_10_R1.entity.CraftWither
 import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
+import org.bukkit.util.Vector
 
 @Suppress("unchecked_cast")
 internal class Wrapper1_10_R1 : Wrapper {
@@ -221,6 +224,42 @@ internal class Wrapper1_10_R1 : Wrapper {
                     else -> null
                 } ?: CardAttackType.MELEE
             }
+    }
+
+    override fun getYBodyRot(entity: org.bukkit.entity.LivingEntity): Float = (entity as CraftLivingEntity).handle.aO
+
+    override fun addPacketInjector(p: Player) {
+        val sp = (p as CraftPlayer).handle
+        val ch = sp.playerConnection.networkManager.channel
+
+        if (ch.pipeline().get(PACKET_INJECTOR_ID) != null) return
+        ch.pipeline().addAfter("decoder", PACKET_INJECTOR_ID, PacketHandler1_10_R1(p))
+
+        PacketHandler1_10_R1.PACKET_HANDLERS[p.uniqueId] = handler@{ packet ->
+            if (packet is PacketPlayInSteerVehicle) {
+                val vehicle = p.vehicle ?: return@handler
+                val card = vehicle.card ?: return@handler
+                if (!card.isRideable) return@handler
+
+                (vehicle as CraftCreature).handle.apply {
+                    yaw = p.location.yaw; h(p.location.yaw)
+                    pitch = p.location.pitch
+                }
+
+                vehicle.velocity += (p.location.apply { pitch = 0F }.direction * packet.b()).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.a()) * (card.statistics.speed * 0.75) * if (vehicle.isOnGround) 1 else 0.3
+
+                if (packet.d() && vehicle.isOnGround)
+                    vehicle.handle.controllerJump.a()
+            }
+        }
+    }
+
+    override fun removePacketInjector(p: Player) {
+        val sp = (p as CraftPlayer).handle
+        val ch = sp.playerConnection.networkManager.channel
+
+        if (ch.pipeline().get(PACKET_INJECTOR_ID) == null) return
+        ch.pipeline().remove(PACKET_INJECTOR_ID)
     }
 
 }

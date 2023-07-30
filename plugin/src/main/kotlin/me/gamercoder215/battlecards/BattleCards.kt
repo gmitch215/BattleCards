@@ -16,6 +16,7 @@ import me.gamercoder215.battlecards.placeholderapi.BattlePlaceholders
 import me.gamercoder215.battlecards.util.cards
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -82,6 +83,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Loaded Files...")
 
         loadTasks()
+        Bukkit.getOnlinePlayers().forEach { w.addPacketInjector(it) }
         logger.info("Loaded Tasks...")
 
         Wrapper.loadCards()
@@ -117,6 +119,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Unloaded Cards...")
 
         tasks.forEach(BukkitTask::cancel)
+        Bukkit.getOnlinePlayers().forEach { w.removePacketInjector(it) }
         logger.info("Stopping Tasks...")
 
         logger.info("Finished!")

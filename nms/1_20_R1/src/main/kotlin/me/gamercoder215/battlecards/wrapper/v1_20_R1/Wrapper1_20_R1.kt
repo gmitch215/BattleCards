@@ -2,16 +2,19 @@ package me.gamercoder215.battlecards.wrapper.v1_20_R1
 
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
-import me.gamercoder215.battlecards.util.BattleParticle
-import me.gamercoder215.battlecards.util.CardAttackType
+import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
+import me.gamercoder215.battlecards.wrapper.PACKET_INJECTOR_ID
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.Connection
+import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.network.ServerGamePacketListenerImpl
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeInstance
@@ -27,10 +30,16 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey
-import org.bukkit.entity.*
+import org.bukkit.entity.Creature
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
+import org.bukkit.entity.Wither
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+
 
 @Suppress("unchecked_cast", "KotlinConstantConditions")
 internal class Wrapper1_20_R1 : Wrapper {
@@ -209,6 +218,38 @@ internal class Wrapper1_20_R1 : Wrapper {
                     else -> null
                 } ?: CardAttackType.MELEE
             }
+    }
+
+    override fun getYBodyRot(entity: org.bukkit.entity.LivingEntity): Float = (entity as CraftLivingEntity).handle.visualRotationYInDegrees
+
+    override fun addPacketInjector(p: Player) {
+        val sp = (p as CraftPlayer).handle
+        val ch = (ServerGamePacketListenerImpl::class.java.getDeclaredField("h").apply { isAccessible = true }.get(sp.connection) as Connection).channel
+
+        if (ch.pipeline().get(PACKET_INJECTOR_ID) != null) return
+        ch.pipeline().addAfter("decoder", PACKET_INJECTOR_ID, PacketHandler1_20_R1(p))
+
+        PacketHandler1_20_R1.PACKET_HANDLERS[p.uniqueId] = handler@{ packet ->
+            if (packet is ServerboundPlayerInputPacket) {
+                val vehicle = p.vehicle ?: return@handler
+                val card = vehicle.card ?: return@handler
+                if (!card.isRideable) return@handler
+
+                vehicle.setRotation(p.location.yaw, p.location.pitch)
+                vehicle.velocity += (p.location.apply { pitch = 0F }.direction * packet.zza).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.xxa) * (card.statistics.speed * 0.75) * if (vehicle.isOnGround) 1 else 0.3
+
+                if (packet.isJumping && vehicle.isOnGround)
+                    (vehicle as CraftCreature).handle.jumpControl.jump()
+            }
+        }
+    }
+
+    override fun removePacketInjector(p: Player) {
+        val sp = (p as CraftPlayer).handle
+        val ch = (ServerGamePacketListenerImpl::class.java.getDeclaredField("h").apply { isAccessible = true }.get(sp.connection) as Connection).channel
+
+        if (ch.pipeline().get(PACKET_INJECTOR_ID) == null) return
+        ch.pipeline().remove(PACKET_INJECTOR_ID)
     }
 
 }

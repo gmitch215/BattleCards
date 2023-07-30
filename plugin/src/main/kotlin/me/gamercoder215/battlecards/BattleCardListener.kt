@@ -19,10 +19,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.entity.*
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent
-import org.bukkit.event.player.PlayerInteractEntityEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.*
 import org.bukkit.scheduler.BukkitRunnable
 import java.lang.reflect.Method
 import java.util.*
@@ -118,7 +115,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         val entity = event.rightClicked
         val card = entity.card ?: return
 
-        if (card.isRideable)
+        if (card.isRideable && card.p == p)
             entity.passenger = p
     }
 
@@ -285,8 +282,15 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     // Cleanup & Functionality Events
 
     @EventHandler
+    fun onJoin(event: PlayerJoinEvent) {
+        w.addPacketInjector(event.player)
+    }
+
+    @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
         event.player.spawnedCards.forEach { it.despawn() }
+
+        w.removePacketInjector(event.player)
     }
 
     @EventHandler
