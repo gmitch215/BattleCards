@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.5)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.4)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.35)
+@Rideable
 class IPitbull(data: ICard) : IBattleCard<Wolf>(data) {
 
     @CardAbility("card.pitbull.ability.bite", ChatColor.DARK_GRAY)

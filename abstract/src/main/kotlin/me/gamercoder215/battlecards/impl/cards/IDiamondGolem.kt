@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.02)
 
 @BlockAttachment(Material.DIAMOND_BLOCK, 0.0, 0.0, 0.2)
+@Rideable
 @Suppress("deprecation")
 class IDiamondGolem(data: ICard) : IBattleCard<IronGolem>(data) {
 
