@@ -174,7 +174,6 @@ interface BattleConfig {
                     "pillager",
                     "elder_guardian",
                     "polar_bear",
-                    "warden",
                     "zoglin"
                 ).mapNotNull {
                     when (it) {
