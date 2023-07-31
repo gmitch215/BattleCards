@@ -111,6 +111,9 @@ fun Player.playFailure() {
     playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
 }
 
+inline val Player.cardInHand: ICard?
+    get() = inventory.itemInHand.card
+
 fun Event.call() {
     Bukkit.getPluginManager().callEvent(this)
 }
@@ -163,6 +166,9 @@ fun Passive.getChance(level: Int, unlockedAt: Int = 0): Long {
 
     return interval
 }
+
+fun sync(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTask(BattleConfig.plugin, block)
+fun async(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTaskAsynchronously(BattleConfig.plugin, block)
 
 // Bukkit Extensions from Newer Version & Utils
 
@@ -271,7 +277,3 @@ fun String.replace(vararg replacements: Pair<String, String>): String {
 
 fun String.replace(replacements: Map<String, String>): String =
     replace(*replacements.toList().toTypedArray())
-
-fun sync(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTask(BattleConfig.plugin, block)
-fun async(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTaskAsynchronously(BattleConfig.plugin, block)
-
