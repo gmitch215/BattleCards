@@ -156,8 +156,8 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
     }
     
     @EventHandler
-    private fun cancelDryout(event: EntityDamageEvent) {
-        if (event.cause != DamageCause.DRYOUT) return
+    private fun cancelDolphinDamage(event: EntityDamageEvent) {
+        if (event.cause != DamageCause.DRYOUT && event.cause != DamageCause.LIGHTNING) return
         val entity = event.entity as? Dolphin ?: return
 
         if (entity.persistentDataContainer[dolphinKey, PersistentDataType.BOOLEAN] == true)
