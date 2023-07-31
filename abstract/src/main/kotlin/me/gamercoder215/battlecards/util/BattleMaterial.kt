@@ -29,6 +29,11 @@ enum class BattleMaterial(
     PLAYER_HEAD(
         { ItemStack(matchMaterial("skull_item"), 1, 3) },
         { ItemStack(matchMaterial("player_head")) }
+    ),
+
+    WOODEN_SWORD(
+        { ItemStack(matchMaterial("wood_sword")) },
+        { ItemStack(matchMaterial("wooden_sword")) }
     )
 
     ;
