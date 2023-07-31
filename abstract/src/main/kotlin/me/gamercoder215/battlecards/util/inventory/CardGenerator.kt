@@ -33,7 +33,7 @@ object CardGenerator {
                     cardL.addAll(listOf(
                         " ",
                         "${ChatColor.YELLOW}${format(get("constants.level"), card.level)} ${ChatColor.WHITE}| ${ChatColor.GOLD}${format(get("constants.card.deploy"), card.deployTime)}",
-                        "${ChatColor.GRAY}${createLine(card).replace("=", "${ChatColor.GREEN}=${ChatColor.GRAY}")} ${ChatColor.WHITE}| ${ChatColor.DARK_AQUA}${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
+                        if (card.isMaxed) "${ChatColor.AQUA}${ChatColor.BOLD}${get("constants.maxed")}" else "${ChatColor.GRAY}${createLine(card).replace("=", "${ChatColor.GREEN}=${ChatColor.GRAY}")} ${ChatColor.WHITE}| ${ChatColor.DARK_AQUA}${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
                     ))
 
                 cardL.addAll(listOf(
@@ -51,7 +51,8 @@ object CardGenerator {
     @JvmStatic
     fun createBasicCard(entity: Creature): ItemStack {
         if (!BattleConfig.getValidBasicCards().contains(entity.type)) throw IllegalArgumentException("Invalid Entity Type: ${entity.type}")
-        val card = BattleCardType.BASIC.createCardData()
+        val card = BattleCardType.BASIC.createCardData() as ICard
+        card.storedEntityType = entity.type
         return toItem(card)
     }
 
@@ -78,7 +79,7 @@ object CardGenerator {
                     card.rarity.toString(),
                     " ",
                     "${ChatColor.YELLOW}${format(get("constants.level"), card.level)} ${ChatColor.WHITE}| ${ChatColor.GOLD}${format(get("constants.card.deploy"), card.deployTime)}",
-                    "${ChatColor.GRAY}${createLine(card).replace("=", "${ChatColor.GREEN}=${ChatColor.GRAY}")} ${ChatColor.WHITE}| ${ChatColor.DARK_AQUA}${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
+                    if (card.isMaxed) "${ChatColor.AQUA}${ChatColor.BOLD}${get("constants.maxed")}" else "${ChatColor.GRAY}${createLine(card).replace("=", "${ChatColor.GREEN}=${ChatColor.GRAY}")} ${ChatColor.WHITE}| ${ChatColor.DARK_AQUA}${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
                 ))
 
                 if (config.getBoolean("Cards.Display.Info.ShowAbilities")) {
