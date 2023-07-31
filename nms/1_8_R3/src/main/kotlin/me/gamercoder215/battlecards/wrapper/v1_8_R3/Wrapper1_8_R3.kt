@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.wrapper.v1_8_R3
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
@@ -19,6 +20,7 @@ import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.Wither
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 
 @Suppress("unchecked_cast")
@@ -82,6 +84,21 @@ internal class Wrapper1_8_R3 : Wrapper {
         nms.b(tag)
         tag.setBoolean("battlecard", true)
         nms.a(tag)
+
+        if (nms is EntityWither)
+            object : BukkitRunnable() {
+                override fun run() {
+                    if (en.isDead)
+                        return cancel()
+
+                    for (i in 0..2) {
+                        val alt = nms.world.entityList.firstOrNull { it.id == nms.s(i) }?.bukkitEntity ?: continue
+
+                        if ((alt is Player && !BattleConfig.config.cardAttackPlayers) || (alt !is Player && !alt.isCard))
+                            nms.b(i, 0)
+                    }
+                }
+            }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
     }
 
     override fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T {
