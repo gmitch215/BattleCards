@@ -3,17 +3,18 @@ package me.gamercoder215.battlecards.wrapper.commands
 import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
+import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.CardUtils.format
-import me.gamercoder215.battlecards.util.card
+import me.gamercoder215.battlecards.util.cardInHand
 import me.gamercoder215.battlecards.util.formatName
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
-import me.gamercoder215.battlecards.util.isCard
 import me.gamercoder215.battlecards.util.playSuccess
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 
 interface CommandWrapper {
@@ -67,29 +68,48 @@ interface CommandWrapper {
     }
 
     fun cardInfo(p: Player) {
-        if (p.inventory.itemInHand == null) {
-            p.sendMessage(getError("error.argument.item.held"))
-            return
-        }
+        if (!p.hasPermission("battlecards.user.info"))
+            return p.sendMessage(getError("error.permission"))
 
-        val item = p.inventory.itemInHand
-        if (!item.isCard) {
-            p.sendMessage(getError("error.argument.item.held.card"))
-            return
-        }
+        if (p.inventory.itemInHand == null)
+            return p.sendMessage(getError("error.argument.item.held"))
 
-        p.openInventory(Generator.generateCardInfo(item.card!!))
+        p.openInventory(Generator.generateCardInfo(p.cardInHand ?: return p.sendMessage(getError("error.argument.item.held.card"))))
         p.playSuccess()
     }
     
-    fun createCard(p: Player, type: BattleCardType) {
-        if (p.inventory.firstEmpty() == -1) {
-            p.sendMessage(getError("error.inventory.full"))
-            return
-        }
-        
-        p.inventory.addItem(CardGenerator.toItem(type.createCardData()))
+    fun createCard(p: Player, type: BattleCardType, basicType: EntityType? = null) {
+        if (!p.hasPermission("battlecards.admin.card.create"))
+            return p.sendMessage(getError("error.permission.argument"))
+
+        if (p.inventory.firstEmpty() == -1)
+            return p.sendMessage(getError("error.inventory.full"))
+
+        if (type == BattleCardType.BASIC && basicType == null)
+            return p.sendMessage(getError("error.argument.basic_type"))
+
+        p.inventory.addItem(CardGenerator.toItem(type.createCardData().apply { this as ICard; storedEntityType = basicType } ))
         p.sendMessage(format(getSuccess("success.card.created"), type.formatName()))
+        p.playSuccess()
+    }
+
+    fun queryCard(p: Player, type: BattleCardType) {
+        if (!p.hasPermission("battlecards.user.query"))
+            return p.sendMessage(getError("error.permission.argument"))
+
+        p.openInventory(Generator.generateCardInfo(type.createCardData()))
+        p.playSuccess()
+    }
+
+    fun editCard(p: Player, action: (ICard) -> Unit) {
+        if (!p.hasPermission("battlecards.admin.card.edit"))
+            return p.sendMessage(getError("error.permission.argument"))
+
+        val card = p.cardInHand ?: return p.sendMessage(getError("error.argument.item.held.card"))
+
+        p.inventory.itemInHand = CardGenerator.toItem(
+            card.apply { action(this) }
+        )
         p.playSuccess()
     }
 

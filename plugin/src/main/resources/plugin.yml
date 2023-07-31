@@ -9,6 +9,7 @@ softdepend: [Kotlin, Vault, PlaceholderAPI]
 load: POSTWORLD
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:${project.ext.kotlin_version}
+  - org.jetbrains.kotlin:kotlin-reflect:${project.ext.kotlin_version}
 permissions:
   battlecards.*:
     description: Gives access to all BattleCards commands
@@ -25,6 +26,27 @@ permissions:
   battlecards.admin.reload:
     description: Access to reload plugin configuration/metadata
     default: op
+    children:
+      battlecards.admin: true
+
+  # Admin Card Permissions
+  battlecards.admin.card:
+    description: Access to all BattleCard Administrator Commands and Actions
+    default: op
+    children:
+      battlecards.admin: true
+
+  battlecards.admin.card.create:
+    description: Access to the /bcard create command
+    default: op
+    children:
+      battlecards.admin.card.edit: true
+
+  battlecards.admin.card.edit:
+    description: Access to the /bcard edit command and subcommands
+    default: op
+    children:
+      battlecards.admin.card: true
 
   # User Permissions
   battlecards.user:
@@ -34,7 +56,11 @@ permissions:
   battlecards.user.card:
     description: Gives access to the /bcard command and other basic card actions
     default: true
+    children:
+      battlecards.user: true
 
   battlecards.user.query:
     description: Gives access to the /bquery command
     default: true
+    children:
+      battlecards.user: true
