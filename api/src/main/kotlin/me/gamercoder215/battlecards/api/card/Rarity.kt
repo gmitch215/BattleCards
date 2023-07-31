@@ -68,7 +68,7 @@ enum class Rarity(
          * Fetches the maximum experience a BattleCard can have for this rarity.
          * @return Maximum Card Experience
          */
-        get() = BattleCard.toExperience(maxCardLevel, this)
+        get() = Card.toExperience(maxCardLevel, this)
 
     init {
         this.color = color

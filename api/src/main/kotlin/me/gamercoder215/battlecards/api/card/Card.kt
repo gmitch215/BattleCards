@@ -4,6 +4,7 @@ import me.gamercoder215.battlecards.api.BattleConfig
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import java.util.*
 import kotlin.math.floor
@@ -52,13 +53,20 @@ interface Card : ConfigurationSerializable {
      */
     val lastUsedPlayer: OfflinePlayer?
 
-    val level: Int
+    var level: Int
         /**
          * Fetches the level of this BattleCard.
          * @return BattleCard Level
          */
         get() = statistics.cardLevel
-
+        /**
+         * Sets the level of this BattleCard.
+         * @param value New Level
+         */
+        set(value) {
+            if (value > maxCardLevel) throw IllegalArgumentException("Level cannot be greater than max card level")
+            statistics.cardLevel = value.coerceIn(1, maxCardLevel)
+        }
 
     var experience: Double
         /**
@@ -72,7 +80,7 @@ interface Card : ConfigurationSerializable {
          */
         set(value) {
             if (statistics.cardExperience > maxCardExperience) throw IllegalArgumentException("Experience cannot be greater than max card experience")
-            statistics.cardExperience = value
+            statistics.cardExperience = value.coerceIn(0.0, maxCardExperience)
         }
 
     val remainingExperience: Double
@@ -161,6 +169,13 @@ interface Card : ConfigurationSerializable {
          * @return Whether this card can be deployed based on the cooldown
          */
         get() = cooldownTime == 0L
+
+    val entityClass: Class<out LivingEntity>?
+        /**
+         * Fetches the BattleCard Entity class for this Card Data.
+         * @return BattleCard Entity Class
+         */
+        get() = type.getEntityClass()
 
     val entityCardType: EntityType?
         /**

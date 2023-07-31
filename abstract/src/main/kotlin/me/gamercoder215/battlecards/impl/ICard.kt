@@ -4,11 +4,15 @@ import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.formatName
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.spawnedCards
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
@@ -25,6 +29,8 @@ class ICard(
     var last: Long? = null,
     override var lastUsedPlayer: OfflinePlayer? = null
 ) : Card, Serializable {
+
+    var storedEntityType: EntityType? = null
 
     val itemStack: ItemStack
         get() = CardGenerator.toItem(this)
@@ -68,7 +74,8 @@ class ICard(
             "creation_date" to creation,
             "last_used" to last,
             "last_used_player" to lastUsedPlayer?.uniqueId.toString(),
-            "stats" to stats
+            "stats" to stats,
+            "stored_entity_type" to storedEntityType?.name
         )
     }
 
@@ -88,8 +95,25 @@ class ICard(
         return other.toByteArray().contentEquals(toByteArray())
     }
 
+    override val entityCardType: EntityType?
+        get() = storedEntityType ?: super.entityCardType
+
+    override val entityClass: Class<out LivingEntity>?
+        get() {
+            return try {
+                storedEntityType?.entityClass?.asSubclass(LivingEntity::class.java)
+            } catch (ignored: ClassCastException) {
+                null
+            } ?: super.entityClass
+        }
+
     override fun hashCode(): Int = toByteArray().hashCode()
 
+    override val name: String
+        get() {
+            if (rarity == Rarity.BASIC) return entityCardType!!.formatName()
+            return super.name
+        }
 
     companion object {
 
@@ -113,9 +137,17 @@ class ICard(
             val last = map["last_used"] as Long?
             val lastPlayerS = map["last_used_player"] as String
             val lastPlayer: OfflinePlayer? = lastPlayerS.let { if (it == "null") null else Bukkit.getOfflinePlayer(UUID.fromString(it)) }
+            val storedEntityTypeS = map["stored_entity_type"] as String?
 
             val card = ICard(clazz, type, creation, last, lastPlayer)
             card.stats.putAll(map["stats"] as MutableMap<String, Number>)
+            card.storedEntityType = storedEntityTypeS?.let {
+                try {
+                    EntityType.valueOf(it)
+                } catch (ignored: IllegalArgumentException) {
+                    null
+                }
+            }
 
             return card
         }

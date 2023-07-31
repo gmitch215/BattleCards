@@ -17,7 +17,7 @@ interface BattleCard<T : LivingEntity> {
          * Fetches the Entity Class that this BattleCard represents.
          * @return Entity Class
          */
-        get() = type.getEntityClass() as Class<T>
+        get() = data.entityClass as Class<T>
 
     val isSpawned: Boolean
         /**
