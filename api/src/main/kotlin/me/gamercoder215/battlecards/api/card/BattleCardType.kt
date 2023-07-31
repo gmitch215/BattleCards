@@ -71,11 +71,6 @@ enum class BattleCardType {
     MINER(1, "ZombieVillager", Rarity.UNCOMMON),
 
     /**
-     * Represents a Warden BattleCard.
-     */
-    GRAND_WARDEN(1, "Warden", Rarity.ULTIMATE),
-
-    /**
      * Represents an Enderman BattleCard.
      */
     EYE_OF_ENDERMAN(1, Enderman::class, Rarity.LEGEND),
