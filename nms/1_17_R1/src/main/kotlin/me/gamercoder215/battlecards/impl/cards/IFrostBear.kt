@@ -10,10 +10,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 @Type(BattleCardType.FROST_BEAR)
 @Attributes(350.0, 15.0, 20.0, 0.27, 10.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 5.5)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.045)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.25)
-@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.02)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.35)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.015)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.15, 115.5)
+@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.013)
 @Rideable
 class IFrostBear(data: ICard) : IBattleCard<PolarBear>(data) {
 
@@ -30,7 +30,7 @@ class IFrostBear(data: ICard) : IBattleCard<PolarBear>(data) {
     private fun iceDefense(event: EntityDamageByEntityEvent) {
         if (event.entity.location.block.biome.takeIf {
             it == Biome.FROZEN_OCEAN || it == Biome.FROZEN_RIVER || it == Biome.DEEP_FROZEN_OCEAN ||
-            it == Biome.ICE_SPIKES || it == Biome.SNOWY_TAIGA_MOUNTAINS
+            it == Biome.ICE_SPIKES || it == Biome.SNOWY_TAIGA
         } == null) return
 
         event.damage *= 0.75
