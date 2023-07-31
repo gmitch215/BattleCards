@@ -7,11 +7,14 @@ import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.format
+import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
+import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
@@ -68,6 +71,19 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     private companion object {
         @JvmStatic
         private val uses = mutableMapOf<UUID, Int>()
+
+        @JvmStatic
+        private val basicCardDrops: List<DamageCause> = listOf(
+            "ENTITY_ATTACK",
+            "ENTITY_SWEEP_ATTACK",
+            "ENTITY_EXPLOSION")
+            .mapNotNull {
+                try {
+                    DamageCause.valueOf(it)
+                } catch (ignored: IllegalArgumentException) {
+                    null
+                }
+            }
     }
 
     @EventHandler
@@ -113,9 +129,23 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     fun onInteract(event: PlayerInteractEntityEvent) {
         val p = event.player
         val entity = event.rightClicked
+
+        if (entity.hasMetadata("battlecards:nointeract"))
+            event.isCancelled = true
+
         val card = entity.card ?: return
 
-        if (card.isRideable && card.p == p)
+        if (entity.type == EntityType.IRON_GOLEM && p.itemInHand?.type == Material.IRON_INGOT)
+            event.isCancelled = true
+
+        if (card.p != p) return
+
+        if (p.isSneaking && p.gameMode == GameMode.CREATIVE) {
+            card.despawn()
+            return
+        }
+
+        if (card.isRideable)
             entity.passenger = p
     }
 
@@ -151,6 +181,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             for (m in damage) {
                 if (!checkUnlockedAt(m, card)) continue
                 val annotation = m.getDeclaredAnnotation(Damage::class.java)
+                m.isAccessible = true
 
                 if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                     m.invoke(card, event)
@@ -347,13 +378,24 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     @EventHandler
     fun onDeath(event: EntityDeathEvent) {
-        if (event.entity !is Creature) return
+        val entity = event.entity
+        val lastDamage = entity.lastDamageCause ?: return
 
-        if (event.entity.isCard || event.entity.isMinion) {
+        if (entity !is Creature) return
+
+        if (BattleConfig.getValidBasicCards().contains(entity.type) && !entity.isCard && basicCardDrops.contains(lastDamage.cause)) {
+            val chance = 2 / entity.maxHealth
+            if (r.nextDouble() < chance)
+                entity.world.dropItemNaturally(entity.location, CardGenerator.createBasicCard(entity))
+
+            return
+        }
+
+        if (entity.isCard || entity.isMinion) {
             event.droppedExp = 0
             event.drops.clear()
 
-            val card = event.entity.card ?: return
+            val card = entity.card ?: return
 
             card.data.statistics.deaths++
             card.currentItem = card.data.itemStack
