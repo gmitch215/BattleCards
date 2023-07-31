@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.impl.cards
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.card
@@ -10,6 +11,7 @@ import org.bukkit.entity.Enderman
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.metadata.FixedMetadataValue
 
 @Type(BattleCardType.EYE_OF_ENDERMAN)
 @Attributes(550.0, 13.5, 10.0, 0.3, 2.0)
@@ -28,9 +30,15 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
         crystal = world.spawn(entity.eyeLocation, EnderCrystal::class.java).apply {
             isInvulnerable = true
             isShowingBottom = false
+            setMetadata("battlecards:nointeract", FixedMetadataValue(BattleConfig.plugin, true))
         }
 
         entity.passenger = crystal
+    }
+
+    override fun uninit() {
+        crystal.remove()
+        super.uninit()
     }
 
     @Passive(1)
@@ -38,7 +46,8 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
         val radius = 2 + ((level - 1) * 0.25).coerceAtMost(8.0)
         val entity = entity.getNearbyEntities(radius, radius, radius)
             .filterIsInstance<LivingEntity>()
-            .filter { it is Player || it.card != null}
+            .filter { it is Player || it.card != null }
+            .filter { it != p && it != entity && it.card?.p != p }
             .minByOrNull { location.distanceSquared(it.location) } ?: return
 
         crystal.beamTarget = entity.location
