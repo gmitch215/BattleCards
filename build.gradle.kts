@@ -65,6 +65,7 @@ subprojects {
         compileOnly("org.jetbrains:annotations:24.0.1")
         val kotlin = compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
         project.ext["kotlin_version"] = kotlin!!.version
+        compileOnly(kotlin("reflect"))
 
         testImplementation("org.mockito:mockito-core:5.4.0")
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")

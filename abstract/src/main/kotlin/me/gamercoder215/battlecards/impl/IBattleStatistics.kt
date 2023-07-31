@@ -4,6 +4,7 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.BattleStatistics
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import kotlin.math.pow
+import kotlin.reflect.full.findAnnotations
 
 class IBattleStatistics(
     override val card: ICard
@@ -66,9 +67,9 @@ class IBattleStatistics(
                 val type = card.entityCardType ?: return 0.0
                 w.getDefaultAttribute(type, attribute)
             } else
-                card.entityCardClass.annotations.find { it is Attributes }?.let { attribute.getAttribute(it as Attributes) } ?: 0.0
+                card.entityCardClass.kotlin.findAnnotations<Attributes>().firstOrNull()?.let { attribute.getAttribute(it) } ?: 0.0
 
-        val mod = card.entityCardClass.annotations.filterIsInstance<AttributesModifier>().firstOrNull { it.attribute == attribute } ?: return base
+        val mod = card.entityCardClass.kotlin.findAnnotations<AttributesModifier>().firstOrNull { it.attribute == attribute } ?: return base
 
         if (mod.value.isNaN()) return base
 

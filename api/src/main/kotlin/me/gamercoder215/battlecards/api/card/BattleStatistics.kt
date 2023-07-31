@@ -100,15 +100,19 @@ interface BattleStatistics {
     val remainingExperience: Double
         get() = card.remainingExperience
 
-    /**
-     * Fetches the level that this Card is currently at.
-     * @return Card Level
-     */
     var cardLevel: Int
-        get() = BattleCard.toLevel(cardExperience, card.rarity)
+        /**
+         * Fetches the level that this Card is currently at.
+         * @return Card Level
+         */
+        get() = Card.toLevel(cardExperience, card.rarity)
+        /**
+         * Sets the level that this Card is currently at.
+         * @param value New Level
+         */
         set(value) {
             if (value < 0 || value > maxCardLevel) throw IllegalArgumentException("Level must be between 0 and $maxCardLevel")
-            cardExperience = BattleCard.toExperience(value, card.rarity)
+            cardExperience = Card.toExperience(value, card.rarity)
         }
 
     /**
