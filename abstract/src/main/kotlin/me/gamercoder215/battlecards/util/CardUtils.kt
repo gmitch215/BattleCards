@@ -101,8 +101,8 @@ object CardUtils {
                 str = when {
                     strC.endsWith("%") -> "${ChatColor.DARK_AQUA}$str"
                     strC.endsWith("s") && str.substringBeforeLast("s").toDoubleOrNull() != null -> "${ChatColor.GOLD}$str"
-                    strC.endsWith("x") -> "${ChatColor.BLUE}$str"
-                    strC.toDoubleOrNull() != null -> "${ChatColor.RED}$str"
+                    strC.endsWith("x") && str.substringBeforeLast("x").toDoubleOrNull() != null -> "${ChatColor.RED}$str"
+                    strC.toDoubleOrNull() != null -> "${ChatColor.BLUE}$str"
                     else -> "${ChatColor.GRAY}$str"
                 }
             }
