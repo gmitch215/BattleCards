@@ -34,7 +34,22 @@ enum class BattleMaterial(
     WOODEN_SWORD(
         { ItemStack(matchMaterial("wood_sword")) },
         { ItemStack(matchMaterial("wooden_sword")) }
-    )
+    ),
+
+    FILLED_MAP(
+        { ItemStack(matchMaterial("map")) },
+        { ItemStack(matchMaterial("filled_map")) }
+    ),
+
+    GOLDEN_CHESTPLATE(
+        { ItemStack(matchMaterial("gold_chestplate")) },
+        { ItemStack(matchMaterial("golden_chestplate")) }
+    ),
+
+    GOLDEN_HELMET(
+        { ItemStack(matchMaterial("gold_helmet")) },
+        { ItemStack(matchMaterial("golden_helmet")) }
+    ),
 
     ;
 
