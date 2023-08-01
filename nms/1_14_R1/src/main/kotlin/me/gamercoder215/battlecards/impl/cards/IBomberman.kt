@@ -10,6 +10,7 @@ import org.bukkit.entity.LargeFireball
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.entity.Zombie
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.scheduler.BukkitRunnable
@@ -65,6 +66,8 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
     @CardAbility("card.bomberman.ability.exploding", ChatColor.RED)
     @Offensive(0.8, CardOperation.ADD, 0.02)
     private fun exploding(event: EntityDamageByEntityEvent) {
+        if (event.cause == DamageCause.ENTITY_EXPLOSION || event.cause == DamageCause.BLOCK_EXPLOSION) return
+
         val power = (2F + (level / 15F)).coerceAtMost(6F)
         event.entity.world.createExplosion(event.entity.location, power, false, false, entity)
     }
