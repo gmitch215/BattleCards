@@ -107,6 +107,18 @@ object CardGenerator {
                                 ).times(100.0).format()}%${ChatColor.GRAY}"
                             }
 
+                            placeholders["%bcu"] = it.run {
+                                return@run "${ChatColor.GREEN}${(
+                                        if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level)
+                                        else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level)
+                                        else 1.0
+                                ).times(100.0).format()}%${ChatColor.GRAY}"
+                            }
+
+                            placeholders["%bcint"] = it.run {
+                                return@run if (isAnnotationPresent(Passive::class.java)) "${ChatColor.GOLD}${getAnnotation(Passive::class.java).interval.div(20.0).format()}s${ChatColor.GRAY}" else ""
+                            }
+
                             it.getAnnotation(CardAbility::class.java) to placeholders
                         }.filter { it.key != null }.toMap())
 
