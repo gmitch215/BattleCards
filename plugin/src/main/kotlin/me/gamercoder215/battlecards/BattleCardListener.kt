@@ -431,4 +431,11 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             event.isCancelled = true
     }
 
+    @EventHandler
+    fun onExplode(event: EntityExplodeEvent) {
+        val entity = event.entity
+        if (entity.isCard || entity.hasMetadata("battlecards:nointeract"))
+            event.isCancelled = true
+    }
+
 }
