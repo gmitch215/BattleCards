@@ -11,9 +11,9 @@ import org.bukkit.entity.Creature
 import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.BASIC)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 2.15)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.9)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.45)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 0.6)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.7)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.4)
 @Rideable
 class IBasicCard<T : Creature>(data: ICard) : IBattleCard<T>(data) {
 
