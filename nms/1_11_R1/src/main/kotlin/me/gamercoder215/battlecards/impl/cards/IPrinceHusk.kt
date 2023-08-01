@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
+import me.gamercoder215.battlecards.util.BattleMaterial
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -20,12 +21,12 @@ class IPrinceHusk(data: ICard) : IBattleCard<Husk>(data) {
     override fun init() {
         super.init()
 
-        entity.equipment.helmet = ItemStack(Material.GOLD_HELMET).apply {
+        entity.equipment.helmet = ItemStack(BattleMaterial.GOLDEN_HELMET.find()).apply {
             itemMeta = itemMeta.apply {
                 isUnbreakable = true
             }
         }
-        entity.equipment.chestplate = ItemStack(Material.GOLD_CHESTPLATE).apply {
+        entity.equipment.chestplate = ItemStack(BattleMaterial.GOLDEN_CHESTPLATE.find()).apply {
             itemMeta = itemMeta.apply {
                 isUnbreakable = true
             }

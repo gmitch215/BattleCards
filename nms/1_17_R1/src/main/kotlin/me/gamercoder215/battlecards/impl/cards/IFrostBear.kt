@@ -38,6 +38,7 @@ class IFrostBear(data: ICard) : IBattleCard<PolarBear>(data) {
 
     @CardAbility("card.frost_bear.ability.ice_aspect", ChatColor.DARK_AQUA)
     @UserOffensive(0.1, CardOperation.MULTIPLY, 1.03)
+    @UnlockedAt(30)
     private fun iceAspect(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
         target.freezeTicks += 15

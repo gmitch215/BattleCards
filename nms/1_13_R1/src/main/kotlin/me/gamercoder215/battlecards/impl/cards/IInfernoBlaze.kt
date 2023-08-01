@@ -12,9 +12,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 @Type(BattleCardType.INFERNO_BLAZE)
 @Attributes(100.0, 15.0, 60.0, 0.28, 10.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.75)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 8.0)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 2.0)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.255)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.05)
 @BlockAttachment(Material.MAGMA_BLOCK, 0.0, 0.7, 0.0, true)
 class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
 
