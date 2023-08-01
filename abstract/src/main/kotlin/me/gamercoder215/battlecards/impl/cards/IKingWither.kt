@@ -13,14 +13,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import kotlin.math.floor
-import kotlin.math.roundToInt
 
 @Type(BattleCardType.WITHER_KING)
 @Attributes(3500.0, 55.5, 100.0, 0.15, 150.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 25.5)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 9.6)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 15.5)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 7.6)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.1)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 7.75)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 4.85)
 
 @BlockAttachment(Material.BEDROCK, 0.0, 2.5, 0.0, true)
 class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
@@ -37,18 +36,18 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
         super.uninit()
     }
 
-    @CardAbility("card.ability.king_wither.poison_thorns", ChatColor.DARK_GREEN)
+    @CardAbility("card.wither_king.ability.poison_thorns", ChatColor.DARK_GREEN)
     @Defensive(0.2, CardOperation.ADD, 0.01)
     private fun posionThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
-        val duration = statistics.attackDamage * 1.5
-        val amp = floor(level / 6.0).toInt()
+        val duration = (5 + (level - 1)) * 20
+        val amp = floor(level / 6.0).toInt().coerceAtMost(4)
 
-        attacker.addPotionEffect(PotionEffect(PotionEffectType.WITHER, duration.roundToInt(), amp, false))
+        attacker.addPotionEffect(PotionEffect(PotionEffectType.WITHER, duration.coerceAtMost(20 * 30), amp, false))
     }
 
     @UnlockedAt(5)
-    @CardAbility("card.king_wither.ability.lightning_thorns", ChatColor.AQUA)
+    @CardAbility("card.wither_king.ability.lightning_thorns", ChatColor.AQUA)
     @Defensive(0.25, CardOperation.ADD, 0.02)
     private fun lightningThorns(event: EntityDamageByEntityEvent) {
         val attacker = event.damager as? Player ?: return
@@ -57,7 +56,7 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
     }
 
 
-    @CardAbility("card.king_wither.ability.user.wither_offensive", ChatColor.GRAY)
+    @CardAbility("card.wither_king.ability.user.wither_offensive", ChatColor.GRAY)
     @UserOffensive(0.4, CardOperation.ADD, 0.02)
     private fun witherOffensive(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
@@ -89,11 +88,11 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
         }
     }
 
-    @CardAbility("card.ability.wither_king.decree", ChatColor.DARK_AQUA)
-    @Passive(300, CardOperation.SUBTRACT, 2, Long.MAX_VALUE)
-    @UnlockedAt(20)
+    @CardAbility("card.wither_king.ability.decree", ChatColor.DARK_AQUA)
+    @Passive(300, CardOperation.SUBTRACT, 2, Long.MAX_VALUE, 100)
+    @UnlockedAt(30)
     private fun decree() {
-        val distance = (25.0 + (level - 50) * 2.0).coerceAtMost(60.0)
+        val distance = (25.0 + (level - 30) * 2.0).coerceAtMost(60.0)
         entity.getNearbyEntities(distance, distance, distance)
             .filterIsInstance<Creature>()
             .filter { !it.isCard && !it.isMinion }
@@ -105,7 +104,7 @@ class IKingWither(data: ICard) : IBattleCard<Wither>(data) {
         entity.world.playSound(entity.location, BattleSound.ENTITY_WITHER_AMBIENT.find(), 5F, 0.75F)
     }
 
-    @CardAbility("card.ability.wither_king.decay", ChatColor.DARK_GRAY)
+    @CardAbility("card.wither_king.ability.decay", ChatColor.DARK_GRAY)
     @UserDefensive(0.6, CardOperation.ADD, 0.035)
     @Defensive
     @UnlockedAt(15)
