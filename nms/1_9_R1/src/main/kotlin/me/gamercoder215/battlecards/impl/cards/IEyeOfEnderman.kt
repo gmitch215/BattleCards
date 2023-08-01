@@ -43,10 +43,16 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
 
     @Passive(1)
     private fun beamTarget() {
+        if (crystalTarget?.isDead == true) {
+            crystal.beamTarget = null
+            crystalTarget = null
+            return
+        }
+
         val radius = 2 + ((level - 1) * 0.25).coerceAtMost(8.0)
-        val entity = entity.getNearbyEntities(radius, radius, radius)
+        val entity = entity.target ?: entity.getNearbyEntities(radius, radius, radius)
             .filterIsInstance<LivingEntity>()
-            .filter { it is Player || it.card != null }
+            .filter { (it is Player && BattleConfig.config.cardAttackPlayers) || it.card != null }
             .filter { it != p && it != entity && it.card?.p != p }
             .minByOrNull { location.distanceSquared(it.location) } ?: return
 
