@@ -71,7 +71,7 @@ class IBattleStatistics(
 
         val mod = card.entityCardClass.kotlin.findAnnotations<AttributesModifier>().firstOrNull { it.attribute == attribute } ?: return base
 
-        if (mod.value.isNaN()) return base
+        if (mod.value.isNaN() || cardLevel == 1) return base
 
         var value = base
 
