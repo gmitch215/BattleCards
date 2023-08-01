@@ -142,6 +142,12 @@ abstract class IBattleCard<T : Creature>(
 
                 if (entity is Ageable)
                     (entity as Ageable).setBreed(false)
+
+                if ((entity.world.uid != p.world.uid || entity.location.distanceSquared(p.location) > (30 * 30)) && entity.isOnGround) {
+                    val target = p.location
+                    if (p.location.subtract(0.0, 1.0, 0.0).block.type.isSolid && !target.block.type.isSolid)
+                        entity.teleport(target)
+                }
             }
         }.runTaskTimer(BattleConfig.plugin, 0, 1)
 
