@@ -13,7 +13,7 @@ interface BattleInventory : Inventory {
         get() = get("_id", String::class.java)
 
     var isCancelled: Boolean
-        get() = get("_cancel", Boolean::class.java, false)
+        get() = get("_cancel", Boolean::class.javaObjectType, false)
         set(value) = set("_cancel", value)
 
     operator fun set(key: String, value: Any)
