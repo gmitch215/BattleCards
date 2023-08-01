@@ -215,7 +215,7 @@ operator fun Vector.times(other: Number): Vector = multiply(other.toDouble())
 fun Number.format(): String {
     return when (this) {
         is Int, is Long -> CardUtils.format("%,d", this)
-        else -> CardUtils.format("%,.2f", this)
+        else -> CardUtils.format("%,.2f", this).replace(".00", "")
     }
 }
 
