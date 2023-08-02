@@ -6,14 +6,15 @@ import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
-import me.gamercoder215.battlecards.wrapper.PACKET_INJECTOR_ID
 import me.gamercoder215.battlecards.wrapper.Wrapper
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.PACKET_INJECTOR_ID
 import net.md_5.bungee.api.chat.BaseComponent
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Creature
@@ -25,6 +26,49 @@ import org.bukkit.util.Vector
 
 @Suppress("unchecked_cast")
 internal class Wrapper1_8_R3 : Wrapper {
+
+    override fun setEntityNBT(entity: org.bukkit.entity.Entity, key: String, value: Any) {
+        val nms = (entity as CraftEntity).handle
+        val nbt = NBTTagCompound()
+        nms.e(nbt)
+
+        val root = nbt.getCompound(NBTWrapper.ROOT)
+        when (value) {
+            is String, is Class<*> -> root.setString(key, value.toString())
+            is Int -> root.setInt(key, value)
+            is Double -> root.setDouble(key, value)
+            is Float -> root.setFloat(key, value)
+            is Boolean -> root.setBoolean(key, value)
+            is Long -> root.setLong(key, value)
+            is Short -> root.setShort(key, value)
+            is ByteArray -> root.setByteArray(key, value)
+            else -> throw IllegalArgumentException("Unsupported NBT type: ${value.javaClass}")
+        }
+        nbt[NBTWrapper.ROOT] = root
+
+        nms.f(nbt)
+    }
+
+    override fun getEntityNBT(entity: org.bukkit.entity.Entity, key: String): Any? {
+        val nms = (entity as CraftEntity).handle
+        val nbt = NBTTagCompound()
+        nms.e(nbt)
+
+        val root = nbt.getCompound(NBTWrapper.ROOT)
+        val tag = root.get(key) ?: return null
+
+        return when (tag) {
+            is NBTTagString -> tag.a_()
+            is NBTTagInt -> tag.e()
+            is NBTTagDouble -> tag.h()
+            is NBTTagFloat -> tag.h()
+            is NBTTagByte -> tag.f() == 1.toByte()
+            is NBTTagLong -> tag.d()
+            is NBTTagShort -> tag.f()
+            is NBTTagByteArray -> tag.c()
+            else -> throw IllegalArgumentException("Unsupported NBT type: ${tag.javaClass}")
+        }
+    }
 
     override fun getCommandVersion(): Int = 1
 

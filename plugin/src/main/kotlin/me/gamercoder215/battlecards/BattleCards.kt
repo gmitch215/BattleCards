@@ -13,16 +13,24 @@ import me.gamercoder215.battlecards.impl.Type
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.impl.cards.IBattleCardListener
 import me.gamercoder215.battlecards.placeholderapi.BattlePlaceholders
+import me.gamercoder215.battlecards.util.BattleBlockData
+import me.gamercoder215.battlecards.util.CardUtils
 import me.gamercoder215.battlecards.util.cards
+import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.Location
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
+import org.bukkit.util.io.BukkitObjectInputStream
+import org.bukkit.util.io.BukkitObjectOutputStream
+import java.io.EOFException
+import java.io.File
 import java.io.IOException
 import java.util.*
 
@@ -30,6 +38,7 @@ private const val bstats = 18166
 private const val github = "GamerCoder215/BattleCards"
 private const val hourTicks: Long = 20 * 60 * 60
 
+@Suppress("unchecked_cast")
 class BattleCards : JavaPlugin(), BattleConfig {
 
     fun loadListeners() {
@@ -89,6 +98,10 @@ class BattleCards : JavaPlugin(), BattleConfig {
         Wrapper.loadCards()
         logger.info("Registered ${registeredCards.size} Cards")
 
+        loadMetadata()
+        Items.RECIPES.forEach { Bukkit.addRecipe(it) }
+        logger.info("Loaded Metadata...")
+
         // UpdateChecker
         UpdateChecker(this, UpdateCheckSource.GITHUB_RELEASE_TAG, github).apply {
             supportLink = "https://discord.gg/WVFNWEvuqX"
@@ -122,7 +135,32 @@ class BattleCards : JavaPlugin(), BattleConfig {
         Bukkit.getOnlinePlayers().forEach { w.removePacketInjector(it) }
         logger.info("Stopping Tasks...")
 
+        saveMetadata()
+        logger.info("Saved Metadata...")
+
         logger.info("Finished!")
+    }
+
+    private fun loadMetadata() {
+        val metadata = File(dataFolder, "metadata").apply { if (!exists()) mkdir() }
+
+        val blockData = File(metadata, "blockdata.dat").apply { if (!exists()) createNewFile() }
+
+        try {
+            BukkitObjectInputStream(blockData.inputStream()).use {
+                CardUtils.BLOCK_DATA.putAll(it.readObject() as MutableMap<Location, BattleBlockData>)
+            }
+        } catch (ignored: EOFException) {}
+    }
+
+    private fun saveMetadata() {
+        val metadata = File(dataFolder, "metadata").apply { if (!exists()) mkdir() }
+
+        val blockData = File(metadata, "blockdata.dat").apply { if (!exists()) createNewFile() }
+
+        BukkitObjectOutputStream(blockData.outputStream()).use {
+            it.writeObject(CardUtils.BLOCK_DATA)
+        }
     }
 
     // BattleConfig Implementation

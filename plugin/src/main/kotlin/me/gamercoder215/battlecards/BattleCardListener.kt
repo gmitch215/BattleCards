@@ -6,10 +6,14 @@ import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
+import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
 import me.gamercoder215.battlecards.util.CardUtils.format
+import me.gamercoder215.battlecards.util.inventory.CONTAINERS_CARD_BLOCKS
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
+import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.vault.VaultChat
+import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
@@ -20,15 +24,19 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.*
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause
 import org.bukkit.event.player.*
+import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import java.lang.reflect.Method
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.set
 
+@Suppress("unchecked_cast")
 internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     init {
@@ -359,15 +367,15 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     @EventHandler
     fun onHitAttachment(event: EntityDamageEvent) {
         val entity = event.entity
-        if (!entity.hasMetadata("battlecards:block_attachment")) return
-        event.isCancelled = true
+        if (entity.hasMetadata("battlecards:block_attachment") || entity["battlecards:block_attachment"] == true)
+            event.isCancelled = true
     }
 
     @EventHandler
     fun onInteractAttachment(event: PlayerArmorStandManipulateEvent) {
         val entity = event.rightClicked
-        if (!entity.hasMetadata("battlecards:block_attachment")) return
-        event.isCancelled = true
+        if (entity.hasMetadata("battlecards:block_attachment") || entity["battlecards:block_attachment"] == true)
+            event.isCancelled = true
     }
 
     @EventHandler
@@ -436,6 +444,84 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         val entity = event.entity
         if (entity.isCard || entity.hasMetadata("battlecards:nointeract"))
             event.isCancelled = true
+    }
+
+    // Item Events
+
+    @EventHandler
+    fun onPlace(event: BlockPlaceEvent) {
+        val item = event.itemInHand
+        val nbt = NBTWrapper.of(item)
+        val id = item.id ?: return
+        if (!item.isCardBlock) return
+
+        val block = event.block
+        block["card_block"] = id
+
+        if (nbt.getBoolean("container"))
+            block["container"] = id
+
+        block["success"] = nbt.getBoolean("success")
+
+        if (nbt.getString("attach").isNotEmpty()) {
+            val attachments = mutableListOf<UUID>()
+
+            val attach = Material.matchMaterial(nbt.getString("attach"))
+            val small = nbt.getBoolean("attach.small")
+
+            val modX = nbt.getDouble("attach.mod.x")
+            val modY = nbt.getDouble("attach.mod.y")
+            val modZ = nbt.getDouble("attach.mod.z")
+
+            attachments.add(block.world.spawn(block.location.add(0.5 + modX, 0.5 + modY, 0.5 + modZ), ArmorStand::class.java).apply {
+                isSmall = small
+                isVisible = false
+                setGravity(false)
+                setBasePlate(false)
+                helmet = ItemStack(attach)
+                this["battlecards:block_attachment"] = true
+            }.uniqueId)
+
+            block["attachments"] = attachments
+        }
+    }
+
+    @EventHandler
+    fun onBreak(event: BlockBreakEvent) {
+        val p = event.player
+        val block = event.block
+        if (!block.isCardBlock) return
+
+        event.isCancelled = true
+        block.type = Material.AIR
+
+        (block["attachments"] as List<UUID>)
+            .mapNotNull { id -> block.world.entities.firstOrNull { it.uniqueId == id } }
+            .filterIsInstance<ArmorStand>()
+            .forEach { it.remove() }
+
+        val id = block["card_block"]
+
+        if (p.gameMode != GameMode.CREATIVE && Items.PUBLIC_ITEMS.containsKey(id))
+            block.world.dropItemNaturally(block.location, Items.PUBLIC_ITEMS[id])
+
+        BLOCK_DATA.remove(block.location)
+    }
+
+    @EventHandler
+    fun onClickBlock(event: PlayerInteractEvent) {
+        if (event.action != Action.RIGHT_CLICK_BLOCK) return
+
+        val p = event.player
+        val block = event.clickedBlock ?: return
+        if (!block.isCardBlock) return
+
+        if (block["container"]?.toString()?.isNotEmpty() == true) {
+            event.isCancelled = true
+            p.openInventory(CONTAINERS_CARD_BLOCKS[block["container"].toString()])
+
+            if (block["success"] as? Boolean == true) p.playSuccess()
+        }
     }
 
 }
