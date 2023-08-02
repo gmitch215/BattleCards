@@ -3,11 +3,13 @@ package me.gamercoder215.battlecards.util
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Server
+import org.bukkit.block.Block
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
@@ -76,6 +78,9 @@ inline val ItemStack.id: String?
         return id
     }
 
+inline val ItemStack.isCardBlock: Boolean
+    get() = NBTWrapper.of(this).getBoolean("card_block")
+
 inline val Player.spawnedCards: List<IBattleCard<*>>
     get() = IBattleCard.spawned.values.filter { it.p == this }
 
@@ -111,12 +116,49 @@ fun Player.playFailure() {
     playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
 }
 
+operator fun Entity.set(key: String, value: Any) {
+    w.setEntityNBT(this, key, value)
+}
+
+operator fun Entity.get(key: String): Any? {
+    return w.getEntityNBT(this, key)
+}
+
 inline val Player.cardInHand: ICard?
     get() = inventory.itemInHand.card
 
 fun Event.call() {
     Bukkit.getPluginManager().callEvent(this)
 }
+
+operator fun Block.get(key: String): Any? {
+    return BLOCK_DATA[this.location]?.attributes?.get(key)
+}
+
+operator fun Block.get(key: String, def: Any?): Any? {
+    return get(key) ?: def
+}
+
+operator fun <T> Block.get(key: String, clazz: Class<T>): T? {
+    return clazz.cast(get(key))
+}
+
+operator fun <T> Block.get(key: String, clazz: Class<T>, def: T): T {
+    return clazz.cast(get(key, def))
+}
+
+operator fun Block.set(key: String, value: Any) {
+    var data = BLOCK_DATA[this.location]
+    if (data == null) {
+        data = BattleBlockData(this)
+        BLOCK_DATA[this.location] = data
+    }
+
+    data.attributes[key] = value
+}
+
+inline val Block.isCardBlock: Boolean
+    get() = get("card_block")?.toString()?.isNotEmpty() == true
 
 fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
