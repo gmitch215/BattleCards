@@ -18,6 +18,9 @@ import java.util.*
 
 object CardUtils {
 
+    @JvmStatic
+    val BLOCK_DATA: MutableMap<Location, BattleBlockData> = mutableMapOf()
+
     // Entity Utils
 
     @JvmStatic
