@@ -4,6 +4,7 @@ import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.util.cardInHand
+import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.EntityType
@@ -31,6 +32,7 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
             handler.autoCompleter
                 .registerParameterSuggestions(BattleCardType::class.java, SuggestionProvider.of { BattleCardType.entries.filter { it != BattleCardType.BASIC }.map { it.name.lowercase() } })
                 .registerParameterSuggestions(EntityType::class.java, SuggestionProvider.of { EntityType.entries.map { it.name.lowercase() } })
+                .registerSuggestion("items", SuggestionProvider.of { Items.PUBLIC_ITEMS.keys })
 
             handler.register(CardCommands(this))
             handler.registerBrigadier()
@@ -117,6 +119,11 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
             val card = p.cardInHand ?: return p.sendMessage(getError("error.argument.held.item.card"))
             setCardExperience(p, card.experience - experience)
         }
+
+        @Subcommand("item")
+        @CommandPermission("battlecards.admin.items")
+        @AutoComplete("@items")
+        fun giveCardItem(p: Player, id: String) = wrapper.giveItem(p, id)
 
     }
 

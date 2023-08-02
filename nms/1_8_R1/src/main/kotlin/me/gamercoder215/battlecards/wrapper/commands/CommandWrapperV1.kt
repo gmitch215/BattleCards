@@ -185,6 +185,14 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
 
                             true
                         }
+                        "item" -> {
+                            if (args.size < 2)
+                                return sender.sendMessage(getError("error.argument.item"), false)
+
+
+                            giveItem(sender, args[1])
+                            true
+                        }
                         else -> {
                             sender.sendMessage(getError("error.argument"))
                             false

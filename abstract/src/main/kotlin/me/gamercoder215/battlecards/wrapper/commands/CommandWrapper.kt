@@ -9,6 +9,7 @@ import me.gamercoder215.battlecards.util.cardInHand
 import me.gamercoder215.battlecards.util.formatName
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
+import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.playSuccess
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
@@ -110,6 +111,17 @@ interface CommandWrapper {
         p.inventory.itemInHand = CardGenerator.toItem(
             card.apply { action(this) }
         )
+        p.playSuccess()
+    }
+
+    fun giveItem(p: Player, id: String) {
+        if (!p.hasPermission("battlecards.admin.items"))
+            return p.sendMessage(getError("error.permission.argument"))
+
+        val item = Items.PUBLIC_ITEMS[id] ?: return p.sendMessage(getError("error.argument.item"))
+
+        p.inventory.addItem(item)
+        p.sendMessage(getSuccess("success.item.given"))
         p.playSuccess()
     }
 
