@@ -15,8 +15,6 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import java.security.SecureRandom
 
-const val PACKET_INJECTOR_ID = "battlecards:packet_injector"
-
 interface Wrapper {
 
     fun sendActionbar(player: Player, component: BaseComponent)
@@ -51,9 +49,15 @@ interface Wrapper {
 
     fun removePacketInjector(p: Player)
 
+    fun getEntityNBT(entity: Entity, key: String): Any?
+
+    fun setEntityNBT(entity: Entity, key: String, value: Any)
+
     companion object {
         @JvmStatic
         val w = getWrapper()
+
+        const val PACKET_INJECTOR_ID = "battlecards:packet_injector"
 
         @JvmStatic
         val r = SecureRandom()

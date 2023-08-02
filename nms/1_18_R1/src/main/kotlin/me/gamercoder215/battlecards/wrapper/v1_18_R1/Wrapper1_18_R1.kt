@@ -6,12 +6,14 @@ import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
-import me.gamercoder215.battlecards.wrapper.PACKET_INJECTOR_ID
 import me.gamercoder215.battlecards.wrapper.Wrapper
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.PACKET_INJECTOR_ID
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
+import net.minecraft.core.MappedRegistry
 import net.minecraft.core.Registry
+import net.minecraft.nbt.*
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
@@ -25,24 +27,72 @@ import net.minecraft.world.entity.boss.wither.WitherBoss
 import net.minecraft.world.entity.monster.CrossbowAttackMob
 import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.monster.RangedAttackMob
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
+import org.bukkit.craftbukkit.v1_18_R1.CraftServer
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftNamespacedKey
-import org.bukkit.entity.Creature
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 
 @Suppress("unchecked_cast", "KotlinConstantConditions")
 internal class Wrapper1_18_R1 : Wrapper {
+
+    override fun setEntityNBT(entity: Entity, key: String, value: Any) {
+        val nms = (entity as CraftEntity).handle
+        val nbt = CompoundTag()
+        nms.save(nbt)
+
+        val root = nbt.getCompound(NBTWrapper.ROOT)
+        when (value) {
+            is String, is Class<*> -> root.putString(key, value.toString())
+            is Int -> root.putInt(key, value)
+            is Double -> root.putDouble(key, value)
+            is Float -> root.putFloat(key, value)
+            is Boolean -> root.putBoolean(key, value)
+            is Long -> root.putLong(key, value)
+            is Short -> root.putShort(key, value)
+            is ByteArray -> root.putByteArray(key, value)
+            else -> throw IllegalArgumentException("Unsupported NBT type: ${value.javaClass}")
+        }
+        nbt.put(NBTWrapper.ROOT, root)
+
+        nms.load(nbt)
+    }
+
+    override fun getEntityNBT(entity: Entity, key: String): Any? {
+        val nms = (entity as CraftEntity).handle
+        val nbt = CompoundTag()
+        nms.save(nbt)
+
+        val root = nbt.getCompound(NBTWrapper.ROOT)
+        val tag = root.get(key) ?: return null
+
+        return when (tag) {
+            is StringTag -> tag.asString
+            is IntTag -> tag.asInt
+            is DoubleTag -> tag.asDouble
+            is FloatTag -> tag.asFloat
+            is ByteTag -> tag.asByte == 1.toByte()
+            is LongTag -> tag.asLong
+            is ShortTag -> tag.asShort
+            is ByteArrayTag -> tag.asByteArray
+            else -> throw IllegalArgumentException("Unsupported NBT type: ${tag.javaClass}")
+        }
+    }
+
+    private fun <T> registry(r: Registry<T>): MappedRegistry<T> {
+        return (Bukkit.getServer() as CraftServer).server.registryAccess().registryOrThrow(r.key()) as MappedRegistry<T>
+    }
+    
     override fun sendActionbar(player: Player, component: BaseComponent) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component)
     }

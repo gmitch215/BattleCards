@@ -6,8 +6,8 @@ import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
-import me.gamercoder215.battlecards.wrapper.PACKET_INJECTOR_ID
 import me.gamercoder215.battlecards.wrapper.Wrapper
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.PACKET_INJECTOR_ID
 import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
@@ -18,18 +18,60 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.craftbukkit.v1_13_R2.CraftWorld
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_13_R2.util.CraftNamespacedKey
-import org.bukkit.entity.Creature
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
+import org.bukkit.entity.Entity
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 
 @Suppress("unchecked_cast")
 internal class Wrapper1_13_R2 : Wrapper {
+
+    override fun setEntityNBT(entity: Entity, key: String, value: Any) {
+        val nms = (entity as CraftEntity).handle
+        val nbt = NBTTagCompound()
+        nms.save(nbt)
+
+        val root = nbt.getCompound(NBTWrapper.ROOT)
+        when (value) {
+            is String, is Class<*> -> root.setString(key, value.toString())
+            is Int -> root.setInt(key, value)
+            is Double -> root.setDouble(key, value)
+            is Float -> root.setFloat(key, value)
+            is Boolean -> root.setBoolean(key, value)
+            is Long -> root.setLong(key, value)
+            is Short -> root.setShort(key, value)
+            is ByteArray -> root.setByteArray(key, value)
+            else -> throw IllegalArgumentException("Unsupported NBT type: ${value.javaClass}")
+        }
+        nbt[NBTWrapper.ROOT] = root
+
+        nms.f(nbt)
+    }
+
+    override fun getEntityNBT(entity: Entity, key: String): Any? {
+        val nms = (entity as CraftEntity).handle
+        val nbt = NBTTagCompound()
+        nms.save(nbt)
+
+        val root = nbt.getCompound(NBTWrapper.ROOT)
+        val tag = root.get(key) ?: return null
+
+        return when (tag) {
+            is NBTTagString -> tag.asString()
+            is NBTTagInt -> tag.asInt()
+            is NBTTagDouble -> tag.asDouble()
+            is NBTTagFloat -> tag.asFloat()
+            is NBTTagByte -> tag.asByte() == 1.toByte()
+            is NBTTagLong -> tag.asLong()
+            is NBTTagShort -> tag.asShort()
+            is NBTTagByteArray -> tag.c()
+            else -> throw IllegalArgumentException("Unsupported NBT type: ${tag.javaClass}")
+        }
+    }
 
     override fun sendActionbar(player: Player, component: BaseComponent) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component)
