@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_18_R2
 
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.goal.Goal
 import net.minecraft.world.entity.ai.goal.target.TargetGoal
@@ -9,12 +10,11 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions
 import net.minecraft.world.level.pathfinder.BlockPathTypes
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
-import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityTargetEvent
 import java.util.*
 
 class FollowCardOwner1_18_R2(
-    private val creature: PathfinderMob,
+    private val creature: Mob,
     card: IBattleCard<*>
 ) : Goal() {
 

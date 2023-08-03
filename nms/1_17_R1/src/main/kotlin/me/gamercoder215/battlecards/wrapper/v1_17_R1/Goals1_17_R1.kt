@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.wrapper.v1_17_R1
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import net.minecraft.server.level.EntityPlayer
 import net.minecraft.world.entity.EntityCreature
+import net.minecraft.world.entity.EntityInsentient
 import net.minecraft.world.entity.ai.goal.PathfinderGoal
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalTarget
 import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition
@@ -12,7 +13,7 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.event.entity.EntityTargetEvent
 
 class FollowCardOwner1_17_R1(
-    private val creature: EntityCreature,
+    private val creature: EntityInsentient,
     card: IBattleCard<*>
 ) : PathfinderGoal() {
 

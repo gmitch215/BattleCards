@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.wrapper.v1_20_R1
 
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.goal.Goal
 import net.minecraft.world.entity.ai.goal.target.TargetGoal
@@ -13,7 +14,7 @@ import org.bukkit.event.entity.EntityTargetEvent
 
 
 internal class FollowCardOwner1_20_R1(
-    private val creature: PathfinderMob,
+    private val creature: Mob,
     card: IBattleCard<*>
 ) : Goal() {
 

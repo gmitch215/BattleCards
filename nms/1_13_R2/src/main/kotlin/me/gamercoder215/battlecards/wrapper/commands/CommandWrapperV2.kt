@@ -34,6 +34,7 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
                 .registerParameterSuggestions(EntityType::class.java, SuggestionProvider.of { EntityType.entries.map { it.name.lowercase() } })
                 .registerSuggestion("items", SuggestionProvider.of { Items.PUBLIC_ITEMS.keys })
 
+            handler.register(this)
             handler.register(CardCommands(this))
             handler.registerBrigadier()
             handler.locale = BattleConfig.config.locale

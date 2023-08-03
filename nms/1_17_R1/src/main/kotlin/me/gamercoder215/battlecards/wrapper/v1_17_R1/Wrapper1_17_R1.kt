@@ -19,6 +19,7 @@ import net.minecraft.resources.MinecraftKey
 import net.minecraft.world.entity.EntityCreature
 import net.minecraft.world.entity.EntityLiving
 import net.minecraft.world.entity.EntityTypes
+import net.minecraft.world.entity.EnumMoveType
 import net.minecraft.world.entity.ai.attributes.AttributeBase
 import net.minecraft.world.entity.ai.attributes.AttributeDefaults
 import net.minecraft.world.entity.ai.attributes.AttributeMapBase
@@ -29,16 +30,14 @@ import net.minecraft.world.entity.boss.wither.EntityWither
 import net.minecraft.world.entity.monster.EntityMonster
 import net.minecraft.world.entity.monster.ICrossbow
 import net.minecraft.world.entity.monster.IRangedEntity
+import net.minecraft.world.phys.Vec3D
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftCreature
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_17_R1.entity.*
 import org.bukkit.craftbukkit.v1_17_R1.util.CraftNamespacedKey
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
@@ -205,6 +204,11 @@ internal class Wrapper1_17_R1 : Wrapper {
         return en
     }
 
+    override fun addFollowGoal(entity: LivingEntity, ownerCard: IBattleCard<*>) {
+        if (entity !is CraftMob) return
+        entity.handle.bQ.a(2, FollowCardOwner1_17_R1(entity.handle, ownerCard))
+    }
+
     private fun removeGoals(goalSelector: PathfinderGoalSelector, targetSelector: PathfinderGoalSelector) {
         goalSelector.c().map { it.j() }.filter {
             it is PathfinderGoalAvoidTarget<*> || it is PathfinderGoalRestrictSun || it is PathfinderGoalFleeSun || it is PathfinderGoalBeg || it is PathfinderGoalBreed
@@ -297,15 +301,14 @@ internal class Wrapper1_17_R1 : Wrapper {
 
         PacketHandler1_17_R1.PACKET_HANDLERS[p.uniqueId] = handler@{ packet ->
             if (packet is PacketPlayInSteerVehicle) {
-                val vehicle = p.vehicle ?: return@handler
+                val vehicle = p.vehicle as? CraftCreature ?: return@handler
                 val card = vehicle.card ?: return@handler
                 if (!card.isRideable) return@handler
 
-                vehicle.setRotation(p.location.yaw, p.location.pitch)
-                vehicle.velocity += (p.location.apply { pitch = 0F }.direction * packet.c()).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.b()) * (card.statistics.speed * 0.75) * if (vehicle.isOnGround) 1 else 0.3
+                vehicle.setRotation(p.location.yaw, vehicle.location.pitch)
 
-                if (packet.d() && vehicle.isOnGround)
-                    (vehicle as CraftCreature).handle.controllerJump.jump()
+                val vector = (p.location.apply { pitch = 0F }.direction * packet.c()).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.b()) * card.statistics.speed * 1.1
+                vehicle.handle.move(EnumMoveType.a, Vec3D(vector.x, vector.y, vector.z))
             }
         }
     }

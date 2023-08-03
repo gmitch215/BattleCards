@@ -53,6 +53,8 @@ interface Wrapper {
 
     fun setEntityNBT(entity: Entity, key: String, value: Any)
 
+    fun addFollowGoal(entity: LivingEntity, ownerCard: IBattleCard<*>)
+
     companion object {
         @JvmStatic
         val w = getWrapper()

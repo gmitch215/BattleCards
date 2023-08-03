@@ -7,7 +7,7 @@ import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer
 import org.bukkit.event.entity.EntityTargetEvent
 
 class FollowCardOwner1_9_R2(
-    private val creature: EntityCreature,
+    private val creature: EntityInsentient,
     card: IBattleCard<*>
 ) : PathfinderGoal() {
 

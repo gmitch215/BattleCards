@@ -17,10 +17,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
-import org.bukkit.entity.Creature
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Player
-import org.bukkit.entity.Wither
+import org.bukkit.entity.*
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 
@@ -176,6 +173,11 @@ internal class Wrapper1_8_R3 : Wrapper {
         return en
     }
 
+    override fun addFollowGoal(entity: LivingEntity, ownerCard: IBattleCard<*>) {
+        val handle = (entity as CraftLivingEntity).handle as? EntityInsentient ?: return
+        handle.goalSelector.a(2, FollowCardOwner1_8_R3(handle, ownerCard))
+    }
+
     private fun removeGoals(goalSelector: PathfinderGoalSelector, targetSelector: PathfinderGoalSelector) {
         val goals = PathfinderGoalSelector::class.java.getDeclaredField("b").apply { isAccessible = true }.get(goalSelector).run {
             (this as Set<Any>).map { it::class.java.getDeclaredField("a").apply { isAccessible = true }.get(it).run { this as PathfinderGoal } }
@@ -297,19 +299,16 @@ internal class Wrapper1_8_R3 : Wrapper {
 
         PacketHandler1_8_R3.PACKET_HANDLERS[p.uniqueId] = handler@{ packet ->
             if (packet is PacketPlayInSteerVehicle) {
-                val vehicle = p.vehicle ?: return@handler
+                val vehicle = p.vehicle as? CraftCreature ?: return@handler
                 val card = vehicle.card ?: return@handler
                 if (!card.isRideable) return@handler
 
-                (vehicle as CraftCreature).handle.apply {
+                vehicle.handle.apply {
                     yaw = p.location.yaw; f(p.location.yaw)
-                    pitch = p.location.pitch
                 }
 
-                vehicle.velocity += (p.location.apply { pitch = 0F }.direction * packet.b()).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.a()) * (card.statistics.speed * 0.75) * if (vehicle.isOnGround) 1 else 0.3
-
-                if (packet.d() && vehicle.isOnGround)
-                    vehicle.handle.controllerJump.a()
+                val vector = (p.location.apply { pitch = 0F }.direction * packet.b()).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.a()) * card.statistics.speed * 1.1
+                vehicle.handle.move(vector.x, vector.y, vector.z)
             }
         }
     }

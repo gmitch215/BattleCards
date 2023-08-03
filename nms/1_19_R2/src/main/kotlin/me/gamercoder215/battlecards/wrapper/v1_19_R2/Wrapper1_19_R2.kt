@@ -16,6 +16,7 @@ import net.minecraft.nbt.*
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeInstance
 import net.minecraft.world.entity.ai.attributes.AttributeMap
@@ -26,14 +27,12 @@ import net.minecraft.world.entity.boss.wither.WitherBoss
 import net.minecraft.world.entity.monster.CrossbowAttackMob
 import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.monster.RangedAttackMob
+import net.minecraft.world.phys.Vec3
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftCreature
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftEntity
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftLivingEntity
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_19_R2.entity.*
 import org.bukkit.craftbukkit.v1_19_R2.util.CraftNamespacedKey
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
@@ -196,6 +195,11 @@ internal class Wrapper1_19_R2 : Wrapper {
         return en
     }
 
+    override fun addFollowGoal(entity: org.bukkit.entity.LivingEntity, ownerCard: IBattleCard<*>) {
+        if (entity !is CraftMob) return
+        entity.handle.goalSelector.addGoal(2, FollowCardOwner1_19_R2(entity.handle, ownerCard))
+    }
+
     private fun removeGoals(goalSelector: GoalSelector, targetSelector: GoalSelector) {
         goalSelector.removeAllGoals {
             it is AvoidEntityGoal<*> || it is RestrictSunGoal || it is FleeSunGoal || it is BegGoal || it is BreedGoal
@@ -288,15 +292,14 @@ internal class Wrapper1_19_R2 : Wrapper {
 
         PacketHandler1_19_R2.PACKET_HANDLERS[p.uniqueId] = handler@{ packet ->
             if (packet is ServerboundPlayerInputPacket) {
-                val vehicle = p.vehicle ?: return@handler
+                val vehicle = p.vehicle as? CraftCreature ?: return@handler
                 val card = vehicle.card ?: return@handler
                 if (!card.isRideable) return@handler
 
-                vehicle.setRotation(p.location.yaw, p.location.pitch)
-                vehicle.velocity += (p.location.apply { pitch = 0F }.direction * packet.zza).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.xxa) * (card.statistics.speed * 0.75) * if (vehicle.isOnGround) 1 else 0.3
+                vehicle.setRotation(p.location.yaw, vehicle.location.pitch)
 
-                if (packet.isJumping && vehicle.isOnGround)
-                    (vehicle as CraftCreature).handle.jumpControl.jump()
+                val vector = (p.location.apply { pitch = 0F }.direction * packet.zza).plus(Vector(0, 1, 0).crossProduct(p.location.apply { pitch = 0F }.direction) * packet.xxa) * card.statistics.speed * 1.1
+                vehicle.handle.move(MoverType.SELF, Vec3(vector.x, vector.y, vector.z))
             }
         }
     }
