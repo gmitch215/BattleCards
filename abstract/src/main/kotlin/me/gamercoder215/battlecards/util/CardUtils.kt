@@ -100,8 +100,12 @@ object CardUtils {
             var str = array[i].replace("&", "${ChatColor.COLOR_CHAR}")
 
             if (!str.startsWith(ChatColor.COLOR_CHAR)) {
-                val strC = str.replace("[.,!]".toRegex(), "")
+                val strC = str.replace("[.,!+]".toRegex(), "")
                 str = when {
+                    strC.contains("-") && strC.split("-").size == 2 -> {
+                        val split = strC.split("-").toTypedArray()
+                        "${color(split[0])}-${color(split[1])}"
+                    }
                     strC.endsWith("%") -> "${ChatColor.DARK_AQUA}$str"
                     strC.endsWith("s") && str.substringBeforeLast("s").toDoubleOrNull() != null -> "${ChatColor.GOLD}$str"
                     strC.endsWith("x") && str.substringBeforeLast("x").toDoubleOrNull() != null -> "${ChatColor.RED}$str"
@@ -110,7 +114,7 @@ object CardUtils {
                 }
             }
 
-            list.add("$str${ChatColor.RESET}")
+            list.add(str)
         }
 
         return list.joinToString(" ")
