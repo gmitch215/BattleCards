@@ -84,7 +84,7 @@ enum class BattleCardType {
     /**
      * Represents a Blaze BattleCard.
      */
-    INFERNO_BLAZE(1, Blaze::class, Rarity.EPIC, Material.matchMaterial("FIRE_CHARGE") ?: Material.matchMaterial("FIREBALL") ?: Material.BLAZE_ROD),
+    INFERNO_BLAZE(1, Blaze::class, Rarity.MYTHICAL, Material.matchMaterial("FIRE_CHARGE") ?: Material.matchMaterial("FIREBALL") ?: Material.BLAZE_ROD),
 
     /**
      * Represents a Stray BattleCard.
@@ -184,7 +184,7 @@ enum class BattleCardType {
     /**
      * Represents a Husk BattleCard.
      */
-    WARRIOR_HUSK(1, "Husk", Rarity.EPIC, Material.DIAMOND_AXE),
+    WARRIOR_HUSK(1, "Husk", Rarity.COMMON, Material.DIAMOND_AXE),
     ;
 
     private val entityClass: Class<out LivingEntity>?
