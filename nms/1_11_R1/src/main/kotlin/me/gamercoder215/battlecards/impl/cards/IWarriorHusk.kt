@@ -9,9 +9,9 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.WARRIOR_HUSK)
 @Attributes(125.0, 14.5, 70.0, 0.24, 10.0, 192.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 0.475)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.7)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.85)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 0.875)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.725)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.95)
 class IWarriorHusk(data: ICard) : IBattleCard<Husk>(data) {
 
     override fun init() {

@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.impl.cards
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
+import me.gamercoder215.battlecards.util.attackable
 import me.gamercoder215.battlecards.util.card
 import org.bukkit.ChatColor
 import org.bukkit.World
@@ -51,7 +52,7 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
         val radius = 2 + ((level - 1) * 0.25).coerceAtMost(8.0)
         val entity = entity.target ?: entity.getNearbyEntities(radius, radius, radius)
             .filterIsInstance<LivingEntity>()
-            .filter { (it is Player && BattleConfig.config.cardAttackPlayers) || it.card != null }
+            .filter { (it is Player && BattleConfig.config.cardAttackPlayers && it.attackable) || it.card != null }
             .filter { it != p && it != entity && it.card?.p != p }
             .minByOrNull { location.distanceSquared(it.location) } ?: return
 

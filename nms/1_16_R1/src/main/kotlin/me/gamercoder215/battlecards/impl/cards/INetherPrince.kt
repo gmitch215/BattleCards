@@ -15,10 +15,10 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.NETHER_PRINCE)
 @Attributes(900.0, 24.0, 60.0, 0.28, 100.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 10.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 3.7)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 11.0)
-@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 4.3)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.28)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 3.525)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 10.39)
+@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 4.325)
 class INetherPrince(data: ICard) : IBattleCard<WitherSkeleton>(data) {
 
     private lateinit var hoglin: Hoglin
@@ -29,16 +29,29 @@ class INetherPrince(data: ICard) : IBattleCard<WitherSkeleton>(data) {
         entity.equipment!!.apply {
             helmet = ItemStack(Material.NETHERITE_HELMET).apply {
                 itemMeta = itemMeta!!.apply {
-                    addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5 + (level / 5), true)
+                    addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5 + (level / 5).coerceAtMost(15), true)
                     addEnchant(Enchantment.PROTECTION_EXPLOSIONS, 10 + (level / 10), true)
+
+                    if (level >= 10)
+                        addEnchant(Enchantment.THORNS, (level / 10).coerceAtMost(4), true)
                 }
             }
+
+            setItemInMainHand(ItemStack(Material.NETHERITE_AXE).apply {
+                itemMeta = itemMeta!!.apply {
+                    addEnchant(Enchantment.DAMAGE_ALL, 1 + (level / 3).coerceAtMost(9), true)
+                    addEnchant(Enchantment.DAMAGE_UNDEAD, 4 + (level / 4).coerceAtMost(16), true)
+                }
+            })
 
             if (level >= 20)
                 chestplate = ItemStack(Material.NETHERITE_CHESTPLATE).apply {
                     itemMeta = itemMeta!!.apply {
-                        addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5 + ((level - 20) / 5), true)
-                        addEnchant(Enchantment.PROTECTION_EXPLOSIONS, 12 + ((level - 20) / 8), true)
+                        addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 5 + ((level - 20) / 5).coerceAtMost(15), true)
+                        addEnchant(Enchantment.PROTECTION_EXPLOSIONS, 12 + ((level - 20) / 8).coerceAtMost(8), true)
+
+                        if (level >= 30)
+                            addEnchant(Enchantment.THORNS, ((level - 20) / 10).coerceAtMost(5), true)
                     }
                 }
         }
@@ -52,13 +65,13 @@ class INetherPrince(data: ICard) : IBattleCard<WitherSkeleton>(data) {
         }
     }
 
-    @CardAbility("card.ability.nether_prince.firepower", ChatColor.YELLOW)
-    @Passive(500, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 300)
+    @CardAbility("card.nether_prince.ability.firepower", ChatColor.YELLOW)
+    @Passive(500, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 260)
     private fun firepower() = minion(Blaze::class.java) {
         getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 30.0 + (level * 0.5)
     }
 
-    @CardAbility("card.ability.nether_prince.nether_aspect", ChatColor.DARK_RED)
+    @CardAbility("card.nether_prince.ability.nether_aspect", ChatColor.DARK_RED)
     @UserOffensive
     @UnlockedAt(20)
     private fun netherAspect(event: EntityDamageByEntityEvent) {
@@ -88,7 +101,7 @@ class INetherPrince(data: ICard) : IBattleCard<WitherSkeleton>(data) {
         }
     }
 
-    @CardAbility("card.ability.nether_prince.decree", ChatColor.DARK_AQUA)
+    @CardAbility("card.nether_prince.ability.decree", ChatColor.DARK_AQUA)
     @Passive(300, CardOperation.SUBTRACT, 2, Long.MAX_VALUE)
     @UnlockedAt(50)
     private fun decree() {

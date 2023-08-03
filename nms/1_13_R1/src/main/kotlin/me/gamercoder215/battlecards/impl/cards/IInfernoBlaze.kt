@@ -11,10 +11,10 @@ import org.bukkit.entity.LargeFireball
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 @Type(BattleCardType.INFERNO_BLAZE)
-@Attributes(100.0, 15.0, 60.0, 0.28, 10.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 2.0)
+@Attributes(300.0, 25.0, 65.0, 0.28, 10.0)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 5.375)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.255)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.05)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.87)
 @BlockAttachment(Material.MAGMA_BLOCK, 0.0, 0.7, 0.0, true)
 class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
 
@@ -36,13 +36,15 @@ class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
     @CardAbility("card.inferno_blaze.ability.heat_protection", ChatColor.YELLOW)
     @UserDefensive(0.15, CardOperation.ADD, 0.075, 0.55)
     @Defensive
+    @UnlockedAt(5)
     private fun heatProtection(event: EntityDamageByEntityEvent) {
         if (event.damager.world.environment == World.Environment.NETHER)
-            event.damage *= 0.8
+            event.damage *= 0.85
     }
 
     @CardAbility("card.inferno_blaze.ability.heat_shield", ChatColor.DARK_RED)
-    @Defensive(0.05, CardOperation.ADD, 0.02, 0.25)
+    @Defensive(0.05, CardOperation.ADD, 0.02, 0.2)
+    @UnlockedAt(30)
     private fun heatSheild(event: EntityDamageByEntityEvent) {
         if (event.damager.world.environment == World.Environment.NETHER) {
             event.isCancelled = true
@@ -50,11 +52,12 @@ class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
         }
     }
 
-    @CardAbility("card.inferno_blaze.ability.ghast", ChatColor.GRAY)
+    @CardAbility("card.inferno_blaze.ability.ghast")
     @Passive(300, CardOperation.SUBTRACT, 10, Long.MAX_VALUE, 100)
-    @UnlockedAt(25)
+    @UnlockedAt(15)
     private fun ghast() {
         val fireball = world.spawn(entity.eyeLocation, LargeFireball::class.java)
+        fireball.direction = entity.eyeLocation.direction
         fireball.yield = 1 + (level / 0.2F).coerceAtMost(3F)
         fireball.velocity = fireball.velocity.multiply(1 + (level / 50))
         fireball.shooter = entity

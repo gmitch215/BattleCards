@@ -11,15 +11,16 @@ import org.bukkit.block.banner.PatternType
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.*
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.BlockStateMeta
 
 @Type(BattleCardType.RAIDER)
 @Attributes(175.0, 7.5, 40.0, 0.3, 20.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 1.2)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.8)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.2)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 2.2)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.8)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 4.06)
 @MinionBlockAttachment(EntityType.IRON_GOLEM, Material.LAPIS_BLOCK, 0.0, 0.69, 0.2)
 class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
 
@@ -65,6 +66,7 @@ class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
 
     @CardAbility("card.raider.ability.raid_golems", ChatColor.BLUE)
     @Passive(600, CardOperation.SUBTRACT, 10, Long.MAX_VALUE, 200)
+    @UnlockedAt(25)
     private fun raidGolems() {
         val count = r.nextInt(1, 4)
         for (i in 0 until count)
@@ -74,12 +76,14 @@ class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
     @CardAbility("card.raider.ability.bombs", ChatColor.YELLOW)
     @Offensive(0.2, CardOperation.ADD, 0.03, 0.5)
     private fun bombs(event: EntityDamageByEntityEvent) {
+        if (event.cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) return
+
         val target = event.entity as? LivingEntity ?: return
         target.world.createExplosion(target.location, r.nextFloat(2.0F, 4.0F), false, true, entity)
     }
 
     @CardAbility("card.raider.ability.illusioner", ChatColor.DARK_PURPLE)
-    @Passive(600, CardOperation.SUBTRACT, 10, Long.MAX_VALUE, 200)
+    @Passive(800, CardOperation.SUBTRACT, 15, Long.MAX_VALUE, 400)
     @UnlockedAt(40)
     private fun illusioner() = minion(Illusioner::class.java)
 

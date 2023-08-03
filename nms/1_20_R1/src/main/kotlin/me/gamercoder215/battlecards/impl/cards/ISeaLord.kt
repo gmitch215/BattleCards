@@ -3,12 +3,15 @@ package me.gamercoder215.battlecards.impl.cards
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
-import me.gamercoder215.battlecards.util.isCard
+import me.gamercoder215.battlecards.util.card
 import me.gamercoder215.battlecards.util.isMinion
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.*
+import org.bukkit.entity.Dolphin
+import org.bukkit.entity.Drowned
+import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Zombie
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
@@ -25,9 +28,9 @@ import org.bukkit.scheduler.BukkitRunnable
 
 @Type(BattleCardType.SEALORD)
 @Attributes(1500.0, 35.0, 145.0, 0.3, 5.0, 128.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 10.5)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 5.45)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.5)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 10.5, 5750.0)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 4.35)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.05)
 class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
 
     private companion object {
@@ -118,11 +121,15 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
     @CardAbility("card.sealord.ability.channeling")
     @Offensive(0.8, CardOperation.ADD, 0.02)
     private fun channeling(event: EntityDamageByEntityEvent) {
-        event.entity.world.strikeLightning(event.entity.location)
+        val target = event.entity as? LivingEntity ?: return
+
+        target.world.strikeLightning(target.location)
+        target.damage(8.0)
     }
 
     @CardAbility("card.sealord.ability.wet", ChatColor.BLUE)
     @Damage
+    @UserDamage
     @UnlockedAt(5)
     private fun wet(event: EntityDamageEvent) {
         if (event.cause == DamageCause.FIRE || event.cause == DamageCause.LAVA || event.cause == DamageCause.FIRE_TICK)
@@ -133,7 +140,7 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
     @Passive(1200)
     @UnlockedAt(15)
     private fun thundering() {
-        if (world.getGameRuleValue(GameRule.DO_WEATHER_CYCLE.name) != "false" && !world.isThundering) {
+        if (world.getGameRuleValue(GameRule.DO_WEATHER_CYCLE.name) != "false" && !world.isThundering && world.environment == World.Environment.NORMAL) {
             world.isThundering = true
             world.thunderDuration = 1200
         }
@@ -142,10 +149,9 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
             override fun run() {
                 world.playSound(entity.location, Sound.ENTITY_ENDER_DRAGON_GROWL, 3F, 0.65F)
 
-                (entity.getNearbyEntities(10.0, 10.0, 10.0) + listOf(target))
+                (entity.getNearbyEntities(10.0, 10.0, 10.0).filter { !it.isMinion(this@ISeaLord) } + listOf(target))
                     .filterIsInstance<LivingEntity>()
-                    .filter { it.isCard && !it.isMinion(this@ISeaLord) }
-                    .filter { if (BattleConfig.config.cardAttackPlayers) it is Player else true }
+                    .filter { it.card?.p != p && it != entity && !it.persistentDataContainer.has(dolphinKey, PersistentDataType.BOOLEAN) }
                     .distinctBy { it.uniqueId }
                     .forEach {
                         it.damage(5.0)

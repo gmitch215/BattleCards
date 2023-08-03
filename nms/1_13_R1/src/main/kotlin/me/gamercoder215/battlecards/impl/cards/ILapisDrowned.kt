@@ -12,9 +12,9 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.LAPIS_DROWNED)
 @Attributes(45.0, 3.1, 5.5, 0.22, 0.18)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 11.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.34)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.22)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 4.4)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.34)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.42)
 class ILapisDrowned(data: ICard) : IBattleCard<Drowned>(data) {
 
     override fun init() {

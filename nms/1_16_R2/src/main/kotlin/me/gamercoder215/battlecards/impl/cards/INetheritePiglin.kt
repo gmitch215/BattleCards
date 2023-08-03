@@ -16,8 +16,8 @@ import org.bukkit.potion.PotionEffectType
 
 @Type(BattleCardType.NETHERITE_PIGLIN)
 @Attributes(400.0, 11.0, 45.0, 0.22, 60.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 11.5)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.5)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.5)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.75)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 7.5)
 class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
 
@@ -63,14 +63,14 @@ class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
     }
 
     @CardAbility("card.netherite_piglin.ability.netherite_rage", ChatColor.RED)
-    @Passive(72000, CardOperation.SUBTRACT, 20, Long.MAX_VALUE, 18000)
+    @Passive(400, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 300)
     private fun netheriteRage() {
-        entity.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, (level + 4) * 20, level / 20, true))
+        entity.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, 5, (level / 15) + 3, true))
     }
 
     @CardAbility("card.netherite_piglin.ability.heat_shield", ChatColor.YELLOW)
     @Damage
-    @UnlockedAt(40)
+    @UnlockedAt(30)
     private fun heatShield(event: EntityDamageEvent) {
         if (event.cause == EntityDamageEvent.DamageCause.LAVA)
             event.isCancelled = true
@@ -78,7 +78,7 @@ class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
 
     @CardAbility("card.netherite_piglin.ability.hoglin", ChatColor.LIGHT_PURPLE)
     @Defensive(0.1, CardOperation.ADD, 0.02, 0.25)
-    @UnlockedAt(55)
+    @UnlockedAt(45)
     private fun hoglin(event: EntityDamageByEntityEvent) {
         event.isCancelled = true
         val sound = BattleSound.ITEM_SHIELD_BLOCK.findOrNull()

@@ -18,13 +18,15 @@ import kotlin.math.atan2
 
 @Type(BattleCardType.BOMBERMAN)
 @Attributes(90.0, 3.5, 30.0, 0.22, 45.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.0)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.5)
-@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 5.0)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.3)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.95)
+@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 5.1)
 class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
 
     override fun init() {
         super.init()
+
+        entity.isBaby = false
 
         entity.equipment!!.helmet = ItemStack(Material.TNT).apply {
             itemMeta = itemMeta!!.apply {
