@@ -48,14 +48,14 @@ class IThunderRevenant(data: ICard) : IBattleCard<Zombie>(data) {
     }
 
     @CardAbility("card.thunder_revenant.ability.paralysis", ChatColor.GOLD)
-    @Offensive(0.4, CardOperation.ADD, 0.05)
+    @Offensive(0.05, CardOperation.ADD, 0.01, 0.25)
     @UnlockedAt(15)
     private fun paralysis(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
 
         target.damage(statistics.attackDamage * 0.3, entity)
-        target.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 * 7, 9))
-        target.addPotionEffect(PotionEffect(PotionEffectType.WEAKNESS, 20 * 10, 4))
+        target.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 * 4, 9))
+        target.addPotionEffect(PotionEffect(PotionEffectType.WEAKNESS, 20 * 12, 4))
     }
 
 }

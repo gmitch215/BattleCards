@@ -18,9 +18,9 @@ import org.bukkit.scheduler.BukkitRunnable
 
 @Type(BattleCardType.SPIDER_QUEEN)
 @Attributes(600.0, 8.5, 20.0, 0.33, 20.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.5)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.25)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 10.0)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 7.5)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.225)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 8.0)
 class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
 
     private lateinit var child: CaveSpider
@@ -45,7 +45,7 @@ class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
         target.addPotionEffect(PotionEffect(PotionEffectType.POISON, ((level / 5) + 2) * 20, level / 25))
     }
 
-    @CardAbility("card.spider_queen.ability.webbing", ChatColor.GRAY)
+    @CardAbility("card.spider_queen.ability.webbing", ChatColor.DARK_GRAY)
     @Offensive(0.2, CardOperation.ADD, 0.01, 0.5)
     @UnlockedAt(15)
     private fun webbing(event: EntityDamageByEntityEvent) {

@@ -11,9 +11,9 @@ import org.bukkit.event.entity.EntityDamageEvent
 
 @Type(BattleCardType.DIAMOND_GOLEM)
 @Attributes(500.0, 18.3, 85.5, 0.23, 60.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.5)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.2)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.02)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 2.6)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.06)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.02, 800.0)
 
 @BlockAttachment(Material.DIAMOND_BLOCK, 0.0, 0.0, 0.2)
 @Rideable

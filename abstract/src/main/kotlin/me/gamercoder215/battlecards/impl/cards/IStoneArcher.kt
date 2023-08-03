@@ -9,9 +9,9 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.STONE_ARCHER)
 @Attributes(40.0, 3.5, 10.0, 0.2, 5.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 0.35)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.5)
-@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 0.15)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 0.7)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.4)
+@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 0.25)
 class IStoneArcher(data: ICard) : IBattleCard<Skeleton>(data) {
 
     override fun init() {

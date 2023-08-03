@@ -11,9 +11,9 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.MESA_ZOMBIE)
 @Attributes(50.0, 2.3, 5.5, 0.2, 0.2)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 15.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.1)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.4)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 4.75)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.15)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.485)
 class IMesaZombie(data: ICard) : IBattleCard<Husk>(data) {
 
     override fun init() {

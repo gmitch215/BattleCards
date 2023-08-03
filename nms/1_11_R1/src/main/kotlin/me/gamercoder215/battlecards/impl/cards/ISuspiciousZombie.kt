@@ -40,7 +40,7 @@ class ISuspiciousZombie(data: ICard) : IBattleCard<Zombie>(data) {
         entity.equipment.itemInMainHand = ItemStack(Material.STICK)
     }
 
-    @CardAbility("card.suspicious_zombie.ability.fangs", ChatColor.GRAY)
+    @CardAbility("card.suspicious_zombie.ability.fangs", ChatColor.DARK_GRAY)
     @Passive(400, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 220)
     private fun fangs() {
         val target = target ?: return
@@ -81,12 +81,13 @@ class ISuspiciousZombie(data: ICard) : IBattleCard<Zombie>(data) {
     }
 
     @CardAbility("card.suspicious_zombie.ability.lightning")
-    @Passive(240, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 120)
+    @Defensive(0.5, CardOperation.ADD, 0.05)
+    @UserDefensive(0.25, CardOperation.ADD, 0.025, 0.75)
     @UnlockedAt(10)
-    private fun lightning() {
-        val target = target ?: return
+    private fun lightning(event: EntityDamageByEntityEvent) {
+        val target = event.damager as? LivingEntity ?: return
         target.world.strikeLightning(target.location)
-        target.damage(6.0, entity)
+        target.damage(6.0.plus((level - 11) * 8.0).coerceAtMost(25.0), entity)
     }
 
 }

@@ -14,9 +14,9 @@ import org.bukkit.scheduler.BukkitRunnable
 
 @Type(BattleCardType.UNDEAD_LUMBERJACK)
 @Attributes(230.0, 11.4, 6.5, 0.25, 2.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 9.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.2)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.04)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 4.25)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.1)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.04, 550.0)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 0.03)
 class IUndeadLumberjack(data: ICard) : IBattleCard<Skeleton>(data) {
 
@@ -47,17 +47,18 @@ class IUndeadLumberjack(data: ICard) : IBattleCard<Skeleton>(data) {
     }
 
     @CardAbility("card.undead_lumberjack.ability.bleeding", ChatColor.DARK_RED)
-    @Offensive(0.2, CardOperation.ADD, 0.02, 0.75)
+    @Offensive(0.05, CardOperation.ADD, 0.01, 0.25)
+    @UnlockedAt(20)
     private fun bleeding(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
-        var i = 0
+        var i = 2
 
         object : BukkitRunnable() {
             override fun run() {
-                if (i > level / 5)
+                if ((i - 2) > level / 8)
                     return cancel()
 
-                target.damage(statistics.attackDamage / 3, entity)
+                target.damage(statistics.attackDamage / 10, entity)
                 i++
             }
         }.runTaskTimer(BattleConfig.plugin, 0L, 65L)

@@ -19,6 +19,7 @@ class ISilverfishHive(data: ICard) : IBattleCard<Silverfish>(data) {
 
         bottom = minion(Silverfish::class.java) {
             passenger = entity
+            maxHealth = statistics.maxHealth * 0.75
         }
     }
 

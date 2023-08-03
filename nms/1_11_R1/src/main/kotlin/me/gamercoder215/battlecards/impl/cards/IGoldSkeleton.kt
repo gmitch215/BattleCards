@@ -8,10 +8,10 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.GOLD_SKELETON)
 
-@Attributes(170.0, 6.5, 20.25, 0.3, 0.22)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 22.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.7)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.2)
+@Attributes(110.0, 6.5, 20.25, 0.3, 0.22)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 4.68)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.4)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.55)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.02)
 class IGoldSkeleton(data: ICard) : IBattleCard<WitherSkeleton>(data) {
 
