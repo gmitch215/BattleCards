@@ -167,14 +167,14 @@ interface BattleConfig {
                     "stray",
                     "phantom",
                     "drowned",
-                    "piglin",
                     "illusioner",
                     "hoglin",
                     "evoker",
                     "pillager",
                     "elder_guardian",
                     "polar_bear",
-                    "zoglin"
+                    "zoglin",
+                    "piglin_brute"
                 ).mapNotNull {
                     when (it) {
                         is EntityType -> it
