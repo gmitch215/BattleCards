@@ -16,6 +16,7 @@ class IRedstoneZombie(data: ICard): IBattleCard<Zombie>(data) {
     override fun init() {
         super.init()
 
+        entity.isBaby = false
         entity.equipment.helmet = ItemStack(Material.REDSTONE_BLOCK)
     }
 

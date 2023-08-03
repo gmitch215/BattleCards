@@ -19,6 +19,12 @@ import org.bukkit.potion.PotionEffectType
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 4.55)
 @Rideable
 class IThunderRevenant(data: ICard) : IBattleCard<Zombie>(data) {
+
+    override fun init() {
+        super.init()
+
+        entity.isBaby = false
+    }
     
     @CardAbility("card.thunder_revenant.ability.heat_resistance", ChatColor.RED)
     @Damage
@@ -31,7 +37,7 @@ class IThunderRevenant(data: ICard) : IBattleCard<Zombie>(data) {
     @Offensive(0.2, CardOperation.ADD, 0.05, 0.75)
     private fun electricity(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
-        target.damage(statistics.attackDamage * 1.1, entity)
+        target.damage(statistics.attackDamage * 1.1)
         target.fireTicks += 20 * 2
     }
 

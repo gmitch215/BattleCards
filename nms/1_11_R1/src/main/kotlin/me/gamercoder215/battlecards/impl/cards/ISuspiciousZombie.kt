@@ -28,6 +28,8 @@ class ISuspiciousZombie(data: ICard) : IBattleCard<Zombie>(data) {
     override fun init() {
         super.init()
 
+        entity.isBaby = false
+
         entity.equipment.helmet = ItemStack(Material.LEATHER_HELMET).apply {
             itemMeta = (itemMeta as LeatherArmorMeta).apply {
                 addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, (1 + (level / 4)).coerceAtMost(10), true)
