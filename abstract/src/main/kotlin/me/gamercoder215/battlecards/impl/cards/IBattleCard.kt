@@ -7,13 +7,12 @@ import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.World
-import org.bukkit.entity.Ageable
-import org.bukkit.entity.Creature
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.scheduler.BukkitRunnable
 import java.lang.reflect.Method
 import java.security.SecureRandom
@@ -52,6 +51,7 @@ abstract class IBattleCard<T : Creature>(
     override lateinit var currentItem: ItemStack
     lateinit var p: Player
 
+    lateinit var healthHologram: ArmorStand
     val attachments: MutableMap<UUID, () -> Location> = mutableMapOf()
     val minions: MutableSet<LivingEntity> = mutableSetOf()
     val minionAttachments: MutableMap<UUID, MutableMap<UUID, () -> Location>> = mutableMapOf()
@@ -102,7 +102,19 @@ abstract class IBattleCard<T : Creature>(
         p.inventory.removeItem(itemUsed)
 
         // Attachments
+        healthHologram = entity.world.spawn(entity.eyeLocation.subtract(0.0, 1.25, 0.0), ArmorStand::class.java).apply {
+            customName = "${ChatColor.GREEN}${entity.health.format()} HP"
+            isCustomNameVisible = true
+            isVisible = false
+            setGravity(false)
+            setMetadata("battlecards:block_attachment", FixedMetadataValue(BattleConfig.plugin, true))
+        }
+
+        attachments[healthHologram.uniqueId] = { entity.eyeLocation.subtract(0.0, 1.25, 0.0) }
+
         CardUtils.createAttachments(this)
+
+        // Attachments - Runnable
         object : BukkitRunnable() {
             override fun run() {
                 if (entity.isDead) {
@@ -145,8 +157,17 @@ abstract class IBattleCard<T : Creature>(
 
                 if ((entity.world.uid != p.world.uid || entity.location.distanceSquared(p.location) > (30 * 30)) && entity.isOnGround) {
                     val target = p.location
-                    if (p.location.subtract(0.0, 1.0, 0.0).block.type.isSolid && !target.block.type.isSolid)
-                        entity.teleport(target)
+                    if (p.location.subtract(0.0, 1.0, 0.0).block.type.isSolid && !target.block.type.isSolid) {
+                        if (entity.vehicle == null)
+                            entity.teleport(target)
+                        else {
+                            var vehicle = entity.vehicle
+                            while (vehicle?.vehicle != null)
+                                vehicle = vehicle.vehicle
+
+                            vehicle?.teleport(target)
+                        }
+                    }
                 }
             }
         }.runTaskTimer(BattleConfig.plugin, 0, 1)
@@ -173,6 +194,12 @@ abstract class IBattleCard<T : Creature>(
 
     open fun uninit() {
         if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
+
+        attachments.forEach {
+            val entity = Bukkit.getServer().getEntity(it.key) ?: return@forEach
+            entity.remove()
+        }
+        attachments.clear()
 
         minions.forEach {
             it.remove()

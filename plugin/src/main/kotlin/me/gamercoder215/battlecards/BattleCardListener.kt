@@ -17,6 +17,7 @@ import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
+import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.*
@@ -184,6 +185,13 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         if (entity.isCard) {
             val card = entity.card!!
+
+            val healthColor = when (entity.health) {
+                in 0.0..(entity.maxHealth / 4) -> ChatColor.RED
+                in (entity.maxHealth / 4)..(entity.maxHealth / 2) -> ChatColor.YELLOW
+                else -> ChatColor.GREEN
+            }
+            card.healthHologram.customName = "$healthColor${entity.health.format()} HP"
 
             val damage = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Damage::class.java) }
             for (m in damage) {
@@ -413,6 +421,19 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     }
 
     @EventHandler
+    fun onHealthChange(event: EntityRegainHealthEvent) {
+        val entity = event.entity as? Creature ?: return
+        val card = entity.card ?: return
+
+        val healthColor = when (entity.health) {
+            in 0.0..(entity.maxHealth / 4) -> ChatColor.RED
+            in (entity.maxHealth / 4)..(entity.maxHealth / 2) -> ChatColor.YELLOW
+            else -> ChatColor.GREEN
+        }
+        card.healthHologram.customName = "$healthColor${entity.health.format()} HP"
+    }
+
+    @EventHandler
     fun onCombust(event: EntityCombustEvent) { checkCardDestruction(event.entity as? Item ?: return, event, DamageCause.FIRE) }
 
     @EventHandler
@@ -424,7 +445,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         when (cause) {
             DamageCause.FIRE, DamageCause.FIRE_TICK, DamageCause.LAVA ->
                 event.isCancelled = !BattleConfig.config.isCardDestroyedFire
-            DamageCause.THORNS ->
+            DamageCause.THORNS, DamageCause.CONTACT ->
                 event.isCancelled = !BattleConfig.config.isCardDestroyedThorns
             DamageCause.ENTITY_EXPLOSION, DamageCause.BLOCK_EXPLOSION ->
                 event.isCancelled = !BattleConfig.config.isCardDestroyedExplosion
