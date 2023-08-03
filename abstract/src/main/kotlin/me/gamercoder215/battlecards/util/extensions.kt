@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.block.Block
@@ -127,6 +128,11 @@ operator fun Entity.get(key: String): Any? {
 inline val Player.cardInHand: ICard?
     get() = inventory.itemInHand.card
 
+inline val Player.attackable: Boolean
+    get() {
+        return gameMode != GameMode.CREATIVE && gameMode != GameMode.SPECTATOR
+    }
+
 fun Event.call() {
     Bukkit.getPluginManager().callEvent(this)
 }
@@ -193,6 +199,14 @@ fun UserOffensive.getChance(level: Int, unlockedAt: Int = 0): Double {
 }
 
 fun Damage.getChance(level: Int, unlockedAt: Int = 0): Double {
+    var chance = this.chance
+    if (!value.isNaN())
+        for (i in 1 until (level - unlockedAt)) chance = operation(chance, value)
+
+    return chance.coerceAtMost(max)
+}
+
+fun UserDamage.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
         for (i in 1 until (level - unlockedAt)) chance = operation(chance, value)
