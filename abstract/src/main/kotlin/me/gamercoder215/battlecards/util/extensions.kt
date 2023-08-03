@@ -206,7 +206,7 @@ fun Passive.getChance(level: Int, unlockedAt: Int = 0): Long {
     if (value != Long.MIN_VALUE)
         for (i in 1 until (level - unlockedAt)) interval = operation(interval.toDouble(), value.toDouble()).toLong()
 
-    return interval
+    return interval.coerceIn(min, max)
 }
 
 fun sync(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTask(BattleConfig.plugin, block)
