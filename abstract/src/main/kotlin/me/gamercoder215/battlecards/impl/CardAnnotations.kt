@@ -177,6 +177,16 @@ annotation class UserOffensive(
     val max: Double = 1.0
 )
 
+@Inherited
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class UserDamage(
+    val chance: Double = 1.0,
+    val operation: CardOperation = CardOperation.ADD,
+    val value: Double = Double.NaN,
+    val max: Double = 1.0
+)
+
 // Other
 
 @Inherited
