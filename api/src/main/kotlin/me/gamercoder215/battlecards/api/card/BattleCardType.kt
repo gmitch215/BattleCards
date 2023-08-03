@@ -54,7 +54,7 @@ enum class BattleCardType {
     /**
      * Represents a Wither Skeleton BattleCard.
      */
-    GOLD_SKELETON(1, "WitherSkeleton", Rarity.RARE, Material.matchMaterial("GOLDEN_CHESTPLATE") ?: Material.matchMaterial("GOLD_CHESTPLATE")),
+    GOLD_SKELETON(1, "WitherSkeleton", Rarity.UNCOMMON, Material.matchMaterial("GOLDEN_CHESTPLATE") ?: Material.matchMaterial("GOLD_CHESTPLATE")),
 
     /**
      * Represents a Zombie BattleCard.
@@ -144,7 +144,7 @@ enum class BattleCardType {
     /**
      * Represents a Zombie BattleCard.
      */
-    SUSPICIOUS_ZOMBIE(1, Zombie::class, Rarity.RARE, Material.matchMaterial("SUSPICIOUS_STEW") ?: Material.BLAZE_ROD),
+    SUSPICIOUS_ZOMBIE(1, Zombie::class, Rarity.EPIC, Material.matchMaterial("SUSPICIOUS_STEW") ?: Material.BLAZE_ROD),
 
     /**`
      * Represents a Stray BattleCard.
