@@ -203,6 +203,21 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     m.invoke(card, event)
             }
         }
+
+        if (entity is Player && entity.spawnedCards.isNotEmpty()) {
+            entity.spawnedCards.forEach { card ->
+                val userDamage = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(UserDamage::class.java) }
+                if (userDamage.isNotEmpty())
+                    for (m in userDamage) {
+                        if (!checkUnlockedAt(m, card)) continue
+                        val annotation = m.getAnnotation(UserDamage::class.java)
+                        m.isAccessible = true
+
+                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
+                            m.invoke(card, event)
+                    }
+            }
+        }
     }
 
     @EventHandler
