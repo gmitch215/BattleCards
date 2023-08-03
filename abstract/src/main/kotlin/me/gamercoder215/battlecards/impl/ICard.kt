@@ -5,7 +5,9 @@ import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.Rarity
+import me.gamercoder215.battlecards.api.events.entity.CardSpawnEvent
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.call
 import me.gamercoder215.battlecards.util.formatName
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.spawnedCards
@@ -56,6 +58,8 @@ class ICard(
 
         val card = constr.newInstance(this)
         card.spawn(owner, itemUsed, owner.location)
+
+        CardSpawnEvent(card).apply { call() }
         
         object : BukkitRunnable() {
             override fun run() {
