@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.util.CardAttackType
 import me.gamercoder215.battlecards.util.attackType
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Ageable
 import org.bukkit.entity.Creature
 import org.bukkit.inventory.ItemStack
 
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 0.65, 150.0)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.7, 200.0)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.4, 100.0)
+@AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 0.25, 100.0)
 @Rideable
 class IBasicCard<T : Creature>(data: ICard) : IBattleCard<T>(data) {
 
@@ -42,6 +44,8 @@ class IBasicCard<T : Creature>(data: ICard) : IBattleCard<T>(data) {
                     }
             }
         ).apply {
+            addUnsafeEnchantment(Enchantment.DURABILITY, 32767)
+
             val amount = (level - 10) / 5
 
             if (level >= 15) {
@@ -63,6 +67,8 @@ class IBasicCard<T : Creature>(data: ICard) : IBattleCard<T>(data) {
                 else -> Material.AIR
             }
         ).apply {
+            addUnsafeEnchantment(Enchantment.DURABILITY, 32767)
+
             if (level >= 30)
                 addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, (level - 30) / 10)
         }
@@ -75,7 +81,12 @@ class IBasicCard<T : Creature>(data: ICard) : IBattleCard<T>(data) {
                 in 121..200 -> Material.DIAMOND_CHESTPLATE
                 else -> Material.AIR
             }
-        )
+        ).apply {
+            addUnsafeEnchantment(Enchantment.DURABILITY, 32767)
+        }
+
+        if (entity is Ageable)
+            (entity as Ageable).setAdult()
     }
 
 }
