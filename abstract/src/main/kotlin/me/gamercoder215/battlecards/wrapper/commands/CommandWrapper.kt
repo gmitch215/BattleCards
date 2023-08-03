@@ -86,8 +86,9 @@ interface CommandWrapper {
         if (p.inventory.firstEmpty() == -1)
             return p.sendMessage(getError("error.inventory.full"))
 
-        if (type == BattleCardType.BASIC && basicType == null)
-            return p.sendMessage(getError("error.argument.basic_type"))
+        if (type == BattleCardType.BASIC)
+            if (basicType == null || !BattleConfig.getValidBasicCards().contains(basicType))
+                return p.sendMessage(getError("error.argument.basic_type"))
 
         p.inventory.addItem(CardGenerator.toItem(type.createCardData().apply { this as ICard; storedEntityType = basicType } ))
         p.sendMessage(format(getSuccess("success.card.created"), type.formatName()))
