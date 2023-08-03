@@ -105,6 +105,7 @@ object CardGenerator {
                                     else if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level, unlockedAt)
                                     else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level, unlockedAt)
                                     else if (isAnnotationPresent(Damage::class.java)) getAnnotation(Damage::class.java).getChance(card.level, unlockedAt)
+                                    else if (isAnnotationPresent(UserDamage::class.java)) getAnnotation(UserDamage::class.java).getChance(card.level, unlockedAt)
                                     else 1.0
                                 ).times(100.0).format()}%${ChatColor.GRAY}"
                             }
@@ -115,6 +116,7 @@ object CardGenerator {
                                 return@run "${ChatColor.GREEN}${(
                                         if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level, unlockedAt)
                                         else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level, unlockedAt)
+                                        else if (isAnnotationPresent(UserDamage::class.java)) getAnnotation(UserDamage::class.java).getChance(card.level, unlockedAt)
                                         else 1.0
                                 ).times(100.0).format()}%${ChatColor.GRAY}"
                             }
