@@ -97,26 +97,31 @@ object CardGenerator {
                             val placeholders = mutableMapOf<String, String>()
 
                             placeholders["%bch"] = it.run {
+                                val unlockedAt = if (isAnnotationPresent(UnlockedAt::class.java)) getAnnotation(UnlockedAt::class.java).level else 0
+
                                 return@run "${ChatColor.GREEN}${(
-                                    if (isAnnotationPresent(Defensive::class.java)) getAnnotation(Defensive::class.java).getChance(card.level)
-                                    else if (isAnnotationPresent(Offensive::class.java)) getAnnotation(Offensive::class.java).getChance(card.level)
-                                    else if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level)
-                                    else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level)
-                                    else if (isAnnotationPresent(Damage::class.java)) getAnnotation(Damage::class.java).getChance(card.level)
+                                    if (isAnnotationPresent(Defensive::class.java)) getAnnotation(Defensive::class.java).getChance(card.level, unlockedAt)
+                                    else if (isAnnotationPresent(Offensive::class.java)) getAnnotation(Offensive::class.java).getChance(card.level, unlockedAt)
+                                    else if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level, unlockedAt)
+                                    else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level, unlockedAt)
+                                    else if (isAnnotationPresent(Damage::class.java)) getAnnotation(Damage::class.java).getChance(card.level, unlockedAt)
                                     else 1.0
                                 ).times(100.0).format()}%${ChatColor.GRAY}"
                             }
 
                             placeholders["%bcu"] = it.run {
+                                val unlockedAt = if (isAnnotationPresent(UnlockedAt::class.java)) getAnnotation(UnlockedAt::class.java).level else 0
+
                                 return@run "${ChatColor.GREEN}${(
-                                        if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level)
-                                        else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level)
+                                        if (isAnnotationPresent(UserDefensive::class.java)) getAnnotation(UserDefensive::class.java).getChance(card.level, unlockedAt)
+                                        else if (isAnnotationPresent(UserOffensive::class.java)) getAnnotation(UserOffensive::class.java).getChance(card.level, unlockedAt)
                                         else 1.0
                                 ).times(100.0).format()}%${ChatColor.GRAY}"
                             }
 
                             placeholders["%bcint"] = it.run {
-                                return@run if (isAnnotationPresent(Passive::class.java)) "${ChatColor.GOLD}${getAnnotation(Passive::class.java).interval.div(20.0).format()}s${ChatColor.GRAY}" else ""
+                                val unlockedAt = if (isAnnotationPresent(UnlockedAt::class.java)) getAnnotation(UnlockedAt::class.java).level else 0
+                                return@run if (isAnnotationPresent(Passive::class.java)) "${ChatColor.GOLD}${getAnnotation(Passive::class.java).getChance(card.level, unlockedAt).div(20.0).format()}s${ChatColor.GRAY}" else ""
                             }
 
                             it.getAnnotation(CardAbility::class.java) to placeholders
