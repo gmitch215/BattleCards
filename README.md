@@ -7,7 +7,7 @@
     <summary>About</summary>
 
 BattleCards is a premium Minecraft Plugin developed for Spigot 1.8+ servers. It creates a unique combat system inspired from games like Clash Royale where entities can drop collectible cards that are upgradable and usable in PvP and PvE combat.
-Created by GamerCoder, it allows for an amazing and unique Minecraft Experience for all ages.
+Created by GamerCoder, it allows for an amazing and unique Minecraft Experience for all ages. Deploy your Cards!
 </details>
 
 ---
