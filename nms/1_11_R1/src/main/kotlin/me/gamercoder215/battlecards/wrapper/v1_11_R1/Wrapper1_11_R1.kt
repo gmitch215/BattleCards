@@ -153,7 +153,7 @@ internal class Wrapper1_11_R1 : Wrapper {
         val en = card.world.spawn(card.location, clazz)
 
         en.isCustomNameVisible = true
-        en.customName = "${ownerCard.rarity.color}${ownerCard.name}'s Minion"
+        en.customName = "${ownerCard.rarity.color}${ownerCard.name}'s Minion (${ownerCard.p.name})"
 
         val equipment = en.equipment!!
         equipment.itemInMainHandDropChance = 0F
