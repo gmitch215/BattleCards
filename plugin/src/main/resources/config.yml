@@ -41,6 +41,9 @@ Cards:
   # This Configuration option does not prevent non-card entities from attacking BattleCards.
   TargetCards: true
 
+  # The maximum amount of BattleCards a player can have spawned at once.
+  MaxSpawned: 2
+
   # Card Destruction Configuration
   Destruction:
     # Whether Card Items are destroyed by cactus

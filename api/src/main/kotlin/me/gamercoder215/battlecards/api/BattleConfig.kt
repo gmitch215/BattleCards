@@ -103,6 +103,7 @@ interface BattleConfig {
             if (!config.isList("Cards.Disabled")) config["Cards.Disabled"] = listOf<String>()
             if (!config.isBoolean("Cards.AttackPlayers")) config["Cards.AttackPlayers"] = false
             if (!config.isBoolean("Cards.TargetCards")) config["Cards.TargetCards"] = true
+            if (!config.isInt("Cards.MaxSpawned")) config["Cards.MaxSpawned"] = 2
 
             if (!config.isConfigurationSection("Cards.Destruction")) config.createSection("Cards.Destruction")
             if (!config.isBoolean("Cards.Destruction.Cactus")) config["Cards.Destruction.Cactus"] = false
@@ -434,5 +435,17 @@ interface BattleConfig {
          * @param value true if can despawn, false otherwise
          */
         set(value) = setConfig("Cards.Destruction.Despawn", value)
+
+    var maxCardsSpawned: Int
+        /**
+         * Fetches the maximum number of Battle Cards that can be spawned at once.
+         * @return Maximum Cards
+         */
+        get() = configuration.getInt("Cards.MaxSpawned")
+        /**
+         * Sets the maximum number of Battle Cards that can be spawned at once.
+         * @param value Maximum Cards
+         */
+        set(value) = setConfig("Cards.MaxSpawned", value)
 
 }

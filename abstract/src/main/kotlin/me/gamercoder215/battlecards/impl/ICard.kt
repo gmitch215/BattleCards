@@ -51,7 +51,7 @@ class ICard(
     override fun spawnCard(owner: Player): IBattleCard<*> = spawnCard(owner, itemStack)
 
     fun spawnCard(owner: Player, itemUsed: ItemStack): IBattleCard<*> {
-        if (owner.spawnedCards.size >= 2) throw IllegalStateException("Player already has 2 spawned cards")
+        if (owner.spawnedCards.size >= BattleConfig.config.maxCardsSpawned) throw IllegalStateException("Player already has ${BattleConfig.config.maxCardsSpawned} spawned cards")
 
         val constr = entityCardClass.asSubclass(IBattleCard::class.java).getDeclaredConstructor(ICard::class.java)
         constr.isAccessible = true
