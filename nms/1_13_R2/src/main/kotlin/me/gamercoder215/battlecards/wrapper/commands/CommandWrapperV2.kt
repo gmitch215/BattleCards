@@ -121,10 +121,21 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
             setCardExperience(p, card.experience - experience)
         }
 
+        @Subcommand("edit max")
+        @CommandPermission("battlecards.admin.card.edit")
+        fun maxCard(p: Player) {
+            val card = p.cardInHand ?: return p.sendMessage(getError("error.argument.held.item.card"))
+            addCardExperience(p, card.maxCardExperience)
+        }
+
         @Subcommand("item")
         @CommandPermission("battlecards.admin.items")
         @AutoComplete("@items")
         fun giveCardItem(p: Player, id: String) = wrapper.giveItem(p, id)
+
+        @Subcommand("despawn")
+        @CommandPermission("battlecards.user.despawn")
+        fun despawnCards(p: Player) = wrapper.despawnCards(p)
 
     }
 

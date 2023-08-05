@@ -4,19 +4,18 @@ import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.ICard
+import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.format
-import me.gamercoder215.battlecards.util.cardInHand
-import me.gamercoder215.battlecards.util.formatName
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Items
-import me.gamercoder215.battlecards.util.playSuccess
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import java.util.*
 
 interface CommandWrapper {
 
@@ -54,6 +53,8 @@ interface CommandWrapper {
 
         @JvmStatic
         fun getSuccess(key: String): String = "${get("plugin.prefix")} ${ChatColor.GREEN}${get(key)}"
+
+        private val COOLDOWN: MutableMap<String, MutableMap<UUID, Long>> = mutableMapOf()
     }
 
     fun reloadPlugin(sender: CommandSender) {
@@ -123,6 +124,29 @@ interface CommandWrapper {
 
         p.inventory.addItem(item)
         p.sendMessage(getSuccess("success.item.given"))
+        p.playSuccess()
+    }
+
+    private fun cooldown(id: String, p: Player): Long {
+        val map = COOLDOWN[id] ?: mutableMapOf()
+        return map[p.uniqueId] ?: 0
+    }
+
+    private fun cooldown(id: String, p: Player, amount: Long) {
+        val map = COOLDOWN[id] ?: mutableMapOf()
+
+        map[p.uniqueId] = System.currentTimeMillis() + amount
+        COOLDOWN[id] = map
+    }
+
+    fun despawnCards(p: Player) {
+        if (cooldown("despawn", p) > System.currentTimeMillis() && !p.hasPermission("battlecards.admin.cooldown"))
+            return p.sendMessage(format(getError("error.cooldown"), (cooldown("despawn", p) - System.currentTimeMillis()).formatTime()))
+
+        if (!p.hasPermission("battlecards.admin.cooldown"))
+            cooldown("despawn", p, 1000 * 30)
+
+        p.spawnedCards.forEach { it.despawn() }
         p.playSuccess()
     }
 

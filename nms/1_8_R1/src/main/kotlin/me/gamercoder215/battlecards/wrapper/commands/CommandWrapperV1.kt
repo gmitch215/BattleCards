@@ -177,6 +177,7 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
                                         }
                                     }
                                 }
+                                "max" -> editCard(sender) { it.experience = card.maxCardExperience }
                                 else -> {
                                     sender.sendMessage(getError("error.argument"))
                                     return false
@@ -189,8 +190,11 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
                             if (args.size < 2)
                                 return sender.sendMessage(getError("error.argument.item"), false)
 
-
                             giveItem(sender, args[1])
+                            true
+                        }
+                        "despawn" -> {
+                            despawnCards(sender)
                             true
                         }
                         else -> {
