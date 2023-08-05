@@ -139,7 +139,7 @@ enum class BattleCardType {
     /**
      * Represents a Cave Spider BattleCard.
      */
-    SPIDER_HIVE(1, CaveSpider::class, Rarity.UNCOMMON, Material.SPIDER_EYE),
+    SPIDER_HIVE(1, CaveSpider::class, Rarity.RARE, Material.SPIDER_EYE),
 
     /**
      * Represents a Zombie BattleCard.
@@ -169,7 +169,7 @@ enum class BattleCardType {
     /**
      * Represents a Silverfish BattleCard.
      */
-    SILVERFISH_HIVE(1, Silverfish::class, Rarity.RARE),
+    SILVERFISH_HIVE(1, Silverfish::class, Rarity.UNCOMMON),
 
     /**
      * Represents a Zombie BattleCard.
