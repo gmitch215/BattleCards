@@ -63,6 +63,7 @@ class IKnight(data: ICard) : IBattleCard<Vindicator>(data) {
         horse.inventory.saddle = ItemStack(Material.SADDLE)
         horse.inventory.armor = ItemStack(Material.IRON_HORSE_ARMOR)
         horse.addPassenger(entity)
+        minions.add(horse)
     }
 
     override fun uninit() {

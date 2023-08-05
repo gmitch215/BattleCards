@@ -58,6 +58,7 @@ class INetherPrince(data: ICard) : IBattleCard<WitherSkeleton>(data) {
 
         hoglin = minion(Hoglin::class.java).apply {
             isImmuneToZombification = true
+            setAdult()
             getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 100.0 + (level * 5.5)
             getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK)!!.baseValue = (statistics.knockbackResistance / 20).coerceAtMost(13.5)
 
