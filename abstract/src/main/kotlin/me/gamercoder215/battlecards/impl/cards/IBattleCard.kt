@@ -6,6 +6,7 @@ import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -210,7 +211,11 @@ abstract class IBattleCard<T : Creature>(
         }
         minions.clear()
 
-        p.inventory.addItem(currentItem)
+        if (p.inventory.firstEmpty() == -1) {
+            p.sendMessage(getError("error.inventory.full.card_dropped"))
+            p.world.dropItemNaturally(p.location, currentItem)
+        } else
+            p.inventory.addItem(currentItem)
         spawned.remove(entity.uniqueId)
     }
 
