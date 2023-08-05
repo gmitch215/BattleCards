@@ -60,12 +60,14 @@ class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
     @EventHandler
     private fun childDeath(event: EntityDeathEvent) {
         if (event.entity != child) return
+        if (entity.isDead) return
 
         entity.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 20 * 10, 1))
         entity.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 20, 3))
 
         object : BukkitRunnable() {
             override fun run() {
+                if (entity.isDead) return
                 world.playSound(location, BattleSound.ENTITY_ENDER_DRAGON_GROWL.findOrNull() ?: return, 2F, 1.5F)
             }
         }.runTaskLater(BattleConfig.plugin, 30)
