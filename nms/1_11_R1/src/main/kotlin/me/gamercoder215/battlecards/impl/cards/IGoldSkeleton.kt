@@ -2,7 +2,7 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
-import org.bukkit.Material
+import me.gamercoder215.battlecards.util.BattleMaterial
 import org.bukkit.entity.WitherSkeleton
 import org.bukkit.inventory.ItemStack
 
@@ -18,13 +18,13 @@ class IGoldSkeleton(data: ICard) : IBattleCard<WitherSkeleton>(data) {
     override fun init() {
         super.init()
 
-        entity.equipment.helmet = ItemStack(Material.GOLD_HELMET).apply {
+        entity.equipment.helmet = ItemStack(BattleMaterial.GOLDEN_HELMET.find()).apply {
             itemMeta = itemMeta.apply {
                 isUnbreakable = true
             }
         }
 
-        entity.equipment.itemInMainHand = ItemStack(Material.GOLD_AXE).apply {
+        entity.equipment.itemInMainHand = ItemStack(BattleMaterial.GOLDEN_AXE.find()).apply {
             itemMeta = itemMeta.apply {
                 isUnbreakable = true
             }

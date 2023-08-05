@@ -56,6 +56,16 @@ enum class BattleMaterial(
         { ItemStack(matchMaterial("crafting_table")) }
     ),
 
+    GOLDEN_AXE(
+        { ItemStack(matchMaterial("gold_axe")) },
+        { ItemStack(matchMaterial("golden_axe")) }
+    ),
+
+    GOLDEN_PICKAXE(
+        { ItemStack(matchMaterial("gold_pickaxe")) },
+        { ItemStack(matchMaterial("golden_pickaxe")) }
+    ),
+
     ;
 
     fun findStack(): ItemStack = if (Wrapper.legacy) onLegacy() else onModern()

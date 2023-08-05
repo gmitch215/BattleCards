@@ -2,8 +2,8 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
+import me.gamercoder215.battlecards.util.BattleMaterial
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.ZombieVillager
 import org.bukkit.inventory.ItemStack
@@ -21,7 +21,7 @@ class IMiner(data: ICard) : IBattleCard<ZombieVillager>(data) {
     override fun init() {
         super.init()
 
-        entity.equipment.helmet = ItemStack(Material.GOLD_HELMET).apply {
+        entity.equipment.helmet = ItemStack(BattleMaterial.GOLDEN_HELMET.find()).apply {
             itemMeta = itemMeta.apply {
                 addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2, true)
                 addEnchant(Enchantment.PROTECTION_EXPLOSIONS, 20, true)
@@ -30,7 +30,7 @@ class IMiner(data: ICard) : IBattleCard<ZombieVillager>(data) {
             }
         }
 
-        entity.equipment.itemInMainHand = ItemStack(Material.GOLD_PICKAXE).apply {
+        entity.equipment.itemInMainHand = ItemStack(BattleMaterial.GOLDEN_PICKAXE.find()).apply {
             itemMeta = itemMeta.apply {
                 isUnbreakable = true
             }
