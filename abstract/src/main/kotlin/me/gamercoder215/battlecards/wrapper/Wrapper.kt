@@ -123,7 +123,7 @@ interface Wrapper {
             val loaded: MutableList<Class<out IBattleCard<*>>> = mutableListOf(
                 IBasicCard::class.java,
                 IDiamondGolem::class.java,
-                IKingWither::class.java,
+                IWitherKing::class.java,
                 IWitherman::class.java,
                 ISniper::class.java,
                 IRedstoneZombie::class.java,
