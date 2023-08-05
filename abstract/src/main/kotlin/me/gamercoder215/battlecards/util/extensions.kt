@@ -4,7 +4,9 @@ import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
+import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -35,7 +37,7 @@ fun ItemStack.nbt(nbt: (NBTWrapper) -> Unit): ItemStack {
 inline val Entity.isCard: Boolean
     get() {
         if (this !is Creature) return false
-        return w.isCard(this) || IBattleCard.spawned.containsKey(uniqueId)
+        return card != null
     }
 
 inline val Item.isCard: Boolean
@@ -48,10 +50,7 @@ inline val Entity.isMinion: Boolean
     }
 
 inline val Entity.card: IBattleCard<*>?
-    get() {
-        if (!isCard) return null
-        return IBattleCard.byEntity(this as Creature)
-    }
+    get() = IBattleCard.byEntity(this as Creature)
 
 inline val Entity.cardByMinion: IBattleCard<*>?
     get() {
@@ -132,6 +131,9 @@ inline val Player.attackable: Boolean
     get() {
         return gameMode != GameMode.CREATIVE && gameMode != GameMode.SPECTATOR
     }
+
+inline val Player.gameName: String
+    get() = displayName ?: name
 
 fun Event.call() {
     Bukkit.getPluginManager().callEvent(this)
@@ -270,15 +272,15 @@ operator fun Vector.times(other: Number): Vector = multiply(other.toDouble())
 
 fun Number.format(): String {
     return when (this) {
-        is Int, is Long -> CardUtils.format("%,d", this)
-        else -> CardUtils.format("%,.2f", this).replace(".00", "")
+        is Int, is Long -> format("%,d", this)
+        else -> format("%,.2f", this).replace(".00", "")
     }
 }
 
 fun Number.formatInt(): String {
     return when (this) {
         is Int, is Long -> format()
-        else -> CardUtils.format("%,.0f", this)
+        else -> format("%,.0f", this)
     }
 }
 
@@ -306,6 +308,22 @@ fun Number.toRoman(): String {
     return if (number == l) ROMAN_NUMERALS[number]!! else ROMAN_NUMERALS[l] + (number - l).toRoman()
 }
 
+fun Long.formatTime(): String {
+    val seconds = this / 1000; val minutes = seconds / 60; val hours = minutes / 60
+    val days = hours / 24; val weeks = days / 7
+    val months = weeks / 4; val years = months / 12
+
+    return when {
+        years > 0 -> format(get("time.years"), years)
+        months > 0 -> format(get("time.months"), months)
+        weeks > 0 -> format(get("time.weeks"), weeks)
+        days > 0 -> format(get("time.days"), days)
+        hours > 0 -> format(get("time.hours"), hours)
+        minutes > 0 -> format(get("time.minutes"), minutes)
+        else -> format(get("time.seconds"), seconds)
+    }
+}
+
 private const val SUFFIXES = "KMBTQEXSON"
 
 fun Number.withSuffix(): String {
@@ -316,7 +334,7 @@ fun Number.withSuffix(): String {
     val index = (log10(num) / 3).toInt()
     val suffix = SUFFIXES[index - 1].toString()
 
-    return CardUtils.format("%.1f%s", num / 1000.0.pow(index), suffix)
+    return format("%.1f%s", num / 1000.0.pow(index), suffix)
 }
 
 fun Enum<*>.formatName(): String {
