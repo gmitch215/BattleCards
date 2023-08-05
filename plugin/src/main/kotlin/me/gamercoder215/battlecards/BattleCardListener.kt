@@ -46,6 +46,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     private fun isIgnoredByCooldown(p: Player): Boolean {
         if (p.isOp) return true
+        if (p.hasPermission("battlecards.admin.cooldown")) return true
 
         val ignored = plugin.playerCooldownIgnored
 
@@ -120,6 +121,12 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     return
                 }
 
+                if (p.spawnedCards.size >= BattleConfig.config.maxCardsSpawned) {
+                    p.sendMessage(format(getError("error.card.max_spawned"), BattleConfig.config.maxCardsSpawned.formatInt()))
+                    p.playFailure()
+                    return
+                }
+
                 addExperience(card, plugin.growthUseMultiplier * card.level)
                 card.spawnCard(p, item)
                 w.spawnParticle(BattleParticle.CLOUD, p.location, 30, 0.0, 1.0, 0.0, 0.2)
@@ -183,8 +190,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         // Damage
 
-        if (entity.isCard) {
-            val card = entity.card!!
+        if (entity.isCard) run {
+            val card = entity.card ?: return@run
 
             val healthColor = when (entity.health) {
                 in 0.0..(entity.maxHealth / 4) -> ChatColor.RED
@@ -237,10 +244,15 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         // Defensive
 
-        if (entity.isCard) {
-            val card = entity.card!!
+        if (damager is Player && entity.cardByMinion?.p == damager) {
+            event.isCancelled = true
+            return
+        }
 
-            if (event.damager is Player && (event.damager.uniqueId == card.p.uniqueId || !BattleConfig.config.cardAttackPlayers)) {
+        if (entity.isCard) run {
+            val card = entity.card ?: return@run
+
+            if (damager is Player && damager.uniqueId == card.p.uniqueId) {
                 event.isCancelled = true
                 return
             }
@@ -285,8 +297,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             return
         }
 
-        if (damager.isCard) {
-            val card = damager.card!!
+        if (damager.isCard) run {
+            val card = damager.card ?: return@run
 
             if (entity.isMinion && entity.cardByMinion == card) {
                 event.isCancelled = true
@@ -324,9 +336,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             card.currentItem = card.data.itemStack
         }
 
-        if (event.damager is Player && (event.damager as Player).spawnedCards.isNotEmpty()) {
-            val p = event.damager as Player
-            p.spawnedCards.forEach { card ->
+        if (damager is Player && damager.spawnedCards.isNotEmpty()) {
+            damager.spawnedCards.forEach { card ->
                 val userOffensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(UserOffensive::class.java) }
                 if (userOffensive.isNotEmpty())
                     for (m in userOffensive) {

@@ -48,6 +48,12 @@ permissions:
     children:
       battlecards.admin.card: true
 
+  battlecards.admin.cooldown:
+    description: Bypass all Cooldowns
+    default: op
+    children:
+      battlecards.admin.card: true
+
   # User Permissions
   battlecards.user:
     description: Gives access to all BattleCards user commands
@@ -61,6 +67,12 @@ permissions:
 
   battlecards.user.query:
     description: Gives access to the /bquery command
+    default: true
+    children:
+      battlecards.user: true
+
+  battlecards.user.despawn:
+    description: Gives access to the /card despawn command, despawning all of their cards on a cooldown
     default: true
     children:
       battlecards.user: true
