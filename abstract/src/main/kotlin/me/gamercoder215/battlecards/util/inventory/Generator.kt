@@ -134,7 +134,7 @@ object Generator {
 
     @JvmStatic
     fun generateCardTable(): BattleInventory {
-        val inv = genGUI(45, get("menu.card_table"))
+        val inv = genGUI("card_table", 45, get("menu.card_table"))
 
         for (i in 4..7)
             for (j in 1..3) inv[i + j.times(9)] = Items.GUI_BACKGROUND
