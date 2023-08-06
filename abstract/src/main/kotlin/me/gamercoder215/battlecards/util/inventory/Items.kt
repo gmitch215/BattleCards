@@ -2,6 +2,9 @@ package me.gamercoder215.battlecards.util.inventory
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.util.BattleMaterial
+import me.gamercoder215.battlecards.util.card
+import me.gamercoder215.battlecards.util.isCard
+import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.builder
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -32,6 +35,38 @@ object Items {
     )
 
     @JvmStatic
+    val TINY_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
+        { displayName = "${ChatColor.RESET}Tiny Card Experience Book" },
+        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 100.0 }
+    )
+
+    @JvmStatic
+    val SMALL_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
+        { displayName = "${ChatColor.RESET}Small Card Experience Book" },
+        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2500.0 }
+    )
+
+    @JvmStatic
+    val MEDIUM_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
+        { displayName = "${ChatColor.RESET}Medium Card Experience Book" },
+        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 10000.0 }
+    )
+
+    @JvmStatic
+    val LARGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
+        { displayName = "${ChatColor.RESET}Large Card Experience Book" },
+        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 500000.0 }
+    )
+
+    @JvmStatic
+    val HUGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
+        { displayName = "${ChatColor.RESET}Huge Card Experience Book" },
+        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2000000.0 }
+    )
+
+    // Static Util
+
+    @JvmStatic
     fun builder(material: Material, action: (ItemMeta) -> Unit): ItemStack {
         return ItemStack(material).apply {
             itemMeta = itemMeta.apply {
@@ -54,6 +89,8 @@ object Items {
         }
     }
 
+    // Recipes & Public Items
+
     @JvmStatic
     val RECIPES: List<Recipe> = listOf(
         createShapedRecipe("card_table", CARD_TABLE).apply {
@@ -65,8 +102,48 @@ object Items {
     )
 
     @JvmStatic
-    val PUBLIC_ITEMS: Map<String, ItemStack> = mapOf(
-        "card_table" to CARD_TABLE
+    val CARD_TABLE_RECIPES: List<CardWorkbenchRecipe> = listOf(
+        CardWorkbenchRecipe(
+            { matrix ->
+                matrix.filter { it.isCard }.size == 1 && matrix.any { it.nbt.getBoolean("exp_book") } && matrix.firstOrNull { it.isCard }?.card?.isMaxed != true
+            },
+            result@{ matrix ->
+                val expBooks = matrix.filter { it.nbt.getBoolean("exp_book") }
+                if (expBooks.isEmpty()) return@result null
+
+                val card = matrix.firstOrNull { it.isCard }?.card ?: return@result null
+                card.experience = (card.experience + expBooks.sumOf { it.nbt.getDouble("amount") }).coerceAtMost(card.maxCardExperience)
+
+                return@result card.itemStack
+            }
+        )
     )
+
+    @JvmStatic
+    val PUBLIC_ITEMS: Map<String, ItemStack> = mapOf(
+        "card_table" to CARD_TABLE,
+        "tiny_experience_book" to TINY_EXPERIENCE_BOOK,
+        "small_experience_book" to SMALL_EXPERIENCE_BOOK,
+        "medium_experience_book" to MEDIUM_EXPERIENCE_BOOK,
+        "large_experience_book" to LARGE_EXPERIENCE_BOOK,
+        "huge_experience_book" to HUGE_EXPERIENCE_BOOK
+    )
+
+    class CardWorkbenchRecipe {
+
+        val result: (Array<ItemStack>) -> ItemStack?
+        val predicate: (Array<ItemStack>) -> Boolean
+
+        constructor(predicate: (Array<ItemStack>) -> Boolean, result: (Array<ItemStack>) -> ItemStack?) {
+            this.result = result
+            this.predicate = predicate
+        }
+
+        constructor(predicate: (Array<ItemStack>) -> Boolean, result: ItemStack?) {
+            this.result = { result }
+            this.predicate = predicate
+        }
+
+    }
 
 }

@@ -1,16 +1,20 @@
 package me.gamercoder215.battlecards
 
 import com.google.common.collect.ImmutableMap
+import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
 import me.gamercoder215.battlecards.util.id
+import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.of
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryMoveItemEvent
+import org.bukkit.inventory.ItemStack
 
 
 internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
@@ -22,13 +26,44 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
     companion object {
 
         @JvmStatic
-        private val CLICK_ITEMS = ImmutableMap.builder<String, (BattleInventory, InventoryClickEvent) -> Unit>()
+        private val cardTableSlots = listOf(
+            10, 11, 12, 19, 20, 21, 24, 28, 29, 30
+        )
+
+        @JvmStatic
+        private val CLICK_ITEMS = ImmutableMap.builder<String, (InventoryClickEvent, BattleInventory) -> Unit>()
 
             .build()
 
         @JvmStatic
-        private val CLICK_INVENTORIES = ImmutableMap.builder<String, (BattleInventory, InventoryClickEvent) -> Unit>()
+        private val CLICK_INVENTORIES = ImmutableMap.builder<String, (InventoryClickEvent, BattleInventory) -> Unit>()
+            .put("card_table") { e, inv ->
+                val p = e.whoClicked as? Player ?: return@put
+                if (e.slot !in cardTableSlots) return@put
 
+                when (e.slot) {
+                    24 -> cardTableSlots.filter { it != 24 }.forEach { inv[it] = null }
+                    else -> {
+                        val matrix = arrayOf(
+                            inv[10], inv[11], inv[12],
+                            inv[19], inv[20], inv[21],
+                            inv[28], inv[29], inv[30]
+                        ).run {
+                            forEachIndexed { i, stack -> if (stack == null) this[i] = ItemStack(Material.AIR) }
+
+                            filterNotNull().toTypedArray()
+                        }
+
+                        for (recipe in Items.CARD_TABLE_RECIPES)
+                            if (recipe.predicate(matrix)) {
+                                val event = PrepareCardCraftEvent(p, matrix, recipe.result(matrix))
+                                if (!event.isCancelled)
+                                    inv[24] = event.result
+                                break
+                            }
+                    }
+                }
+            }
             .build()
     }
 
@@ -51,9 +86,9 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
         val w = of(item)
 
         if (w.hasTag("_cancel")) e.isCancelled = true
-        if (CLICK_INVENTORIES.containsKey(inv.id)) CLICK_INVENTORIES[inv.id]!!(inv, e)
+        if (CLICK_INVENTORIES.containsKey(inv.id)) CLICK_INVENTORIES[inv.id]!!(e, inv)
         if (CLICK_ITEMS.containsKey(w.id)) {
-            CLICK_ITEMS[w.id]!!(inv, e)
+            CLICK_ITEMS[w.id]!!(e, inv)
             e.isCancelled = true
         }
     }
