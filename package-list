@@ -6,6 +6,7 @@ $dokka.location:me.gamercoder215.battlecards.api.card/Card.Companion///PointingT
 $dokka.location:me.gamercoder215.battlecards.api.events.entity/CardUseAbilityEvent.AbilityType///PointingToDeclaration/me/gamercoder215/battlecards/api/events/entity/CardUseAbilityEvent.AbilityType.html
 $dokka.location:me.gamercoder215.battlecards.api.events.entity/EntityCardEvent.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/events/entity/EntityCardEvent.Companion.html
 $dokka.location:me.gamercoder215.battlecards.api.events/CardEvent.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/events/CardEvent.Companion.html
+$dokka.location:me.gamercoder215.battlecards.api.events/PrepareCardCraftEvent.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/events/PrepareCardCraftEvent.Companion.html
 $dokka.location:me.gamercoder215.battlecards.api/BattleConfig.Companion///PointingToDeclaration/me/gamercoder215/battlecards/api/BattleConfig.Companion.html
 me.gamercoder215.battlecards.api
 me.gamercoder215.battlecards.api.card
