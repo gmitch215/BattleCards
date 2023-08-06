@@ -79,7 +79,7 @@ interface Card : ConfigurationSerializable {
          * @param value New Experience
          */
         set(value) {
-            if (statistics.cardExperience > maxCardExperience) throw IllegalArgumentException("Experience cannot be greater than max card experience")
+            if (value > maxCardExperience) throw IllegalArgumentException("Experience cannot be greater than max card experience")
             statistics.cardExperience = value.coerceIn(0.0, maxCardExperience)
         }
 
