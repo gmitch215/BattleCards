@@ -29,7 +29,7 @@ import kotlin.math.pow
 import kotlin.math.sin
 
 fun ItemStack.nbt(nbt: (NBTWrapper) -> Unit): ItemStack {
-    val w = NBTWrapper.of(this)
+    val w = this.nbt
     nbt(w)
     return w.item
 }
@@ -60,7 +60,6 @@ inline val Entity.cardByMinion: IBattleCard<*>?
 
 inline val ItemStack.card: ICard?
     get() {
-        val nbt = NBTWrapper.of(this)
         val bytes = nbt.getByteArray("card")
         if (bytes.isEmpty()) return null
 
@@ -68,18 +67,18 @@ inline val ItemStack.card: ICard?
     }
 
 inline val ItemStack.isCard: Boolean
-    get() = NBTWrapper.of(this).getByteArray("card").isNotEmpty()
+    get() = nbt.getByteArray("card").isNotEmpty()
 
 inline val ItemStack.id: String?
     get() {
-        val id = NBTWrapper.of(this).id
+        val id = nbt.id
         if (id.isEmpty()) return null
 
         return id
     }
 
 inline val ItemStack.isCardBlock: Boolean
-    get() = NBTWrapper.of(this).getBoolean("card_block")
+    get() = nbt.getBoolean("card_block")
 
 inline val Player.spawnedCards: List<IBattleCard<*>>
     get() = IBattleCard.spawned.values.filter { it.p == this }
@@ -102,6 +101,9 @@ inline var Creature.attackType: CardAttackType
 inline var IBattleCard<*>.attackType: CardAttackType
     get() = this.entity.attackType
     set(value) { this.entity.attackType = value }
+
+inline val ItemStack.nbt
+    get() = NBTWrapper.of(this)
 
 fun Entity.isMinion(card: IBattleCard<*>): Boolean {
     if (this !is Creature) return false
