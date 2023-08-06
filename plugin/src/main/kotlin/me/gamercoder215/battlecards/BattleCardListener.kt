@@ -13,7 +13,6 @@ import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.vault.VaultChat
-import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
@@ -498,7 +497,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     @EventHandler
     fun onPlace(event: BlockPlaceEvent) {
         val item = event.itemInHand
-        val nbt = NBTWrapper.of(item)
+        val nbt = item.nbt
         val id = item.id ?: return
         if (!item.isCardBlock) return
 

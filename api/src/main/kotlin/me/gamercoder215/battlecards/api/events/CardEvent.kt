@@ -11,7 +11,7 @@ abstract class CardEvent(card: Card, async: Boolean = false) : Event(async) {
 
     companion object {
         @JvmStatic
-        val handlerList: HandlerList = HandlerList()
+        val handlerList = HandlerList()
     }
 
     /**
@@ -23,6 +23,6 @@ abstract class CardEvent(card: Card, async: Boolean = false) : Event(async) {
         this.card = card
     }
 
-    override fun getHandlers(): HandlerList = handlerList
+    override fun getHandlers() = handlerList
 
 }
