@@ -37,7 +37,7 @@ class IThunderRevenant(data: ICard) : IBattleCard<Zombie>(data) {
     @Offensive(0.2, CardOperation.ADD, 0.05, 0.75)
     private fun electricity(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
-        target.damage(statistics.attackDamage * 1.1)
+        event.damage += statistics.attackDamage * 1.1
         target.fireTicks += 20 * 2
     }
 
@@ -49,7 +49,7 @@ class IThunderRevenant(data: ICard) : IBattleCard<Zombie>(data) {
         val target = event.entity as? LivingEntity ?: return
 
         target.world.strikeLightning(target.location)
-        target.damage(if (event.damager.isCard) statistics.attackDamage * 1.15 else r.nextDouble(5.0, 20.0))
+        event.damage += if (event.damager.isCard) statistics.attackDamage * 1.15 else r.nextDouble(5.0, 20.0)
         target.fireTicks += 20 * 4
     }
 
@@ -59,7 +59,7 @@ class IThunderRevenant(data: ICard) : IBattleCard<Zombie>(data) {
     private fun paralysis(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
 
-        target.damage(statistics.attackDamage * 0.3, entity)
+        event.damage += statistics.attackDamage * 0.3
         target.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 * 4, 9))
         target.addPotionEffect(PotionEffect(PotionEffectType.WEAKNESS, 20 * 12, 4))
     }

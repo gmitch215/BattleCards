@@ -27,7 +27,7 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
     override fun init() {
         super.init()
 
-        crystal = world.spawn(entity.eyeLocation, EnderCrystal::class.java).apply {
+        crystal = entity.world.spawn(entity.eyeLocation, EnderCrystal::class.java).apply {
             isInvulnerable = true
             isShowingBottom = false
             setMetadata("battlecards:nointeract", FixedMetadataValue(BattleConfig.plugin, true))
@@ -54,7 +54,7 @@ class IEyeOfEnderman(data: ICard) : IBattleCard<Enderman>(data) {
             .filterIsInstance<LivingEntity>()
             .filter { (it is Player && BattleConfig.config.cardAttackPlayers && it.attackable) || it.card != null }
             .filter { it != p && it != entity && it.card?.p != p }
-            .minByOrNull { location.distanceSquared(it.location) } ?: return
+            .minByOrNull { entity.location.distanceSquared(it.location) } ?: return
 
         crystal.beamTarget = entity.location
         crystalTarget = entity

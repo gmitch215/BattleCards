@@ -53,7 +53,7 @@ class IInfernoBlaze(data: ICard) : IBattleCard<Blaze>(data) {
     }
 
     @CardAbility("card.inferno_blaze.ability.ghast")
-    @Passive(300, CardOperation.SUBTRACT, 10, Long.MAX_VALUE, 100)
+    @Passive(300, CardOperation.SUBTRACT, 10, min = 100)
     @UnlockedAt(15)
     private fun ghast() {
         val fireball = world.spawn(entity.eyeLocation, LargeFireball::class.java)

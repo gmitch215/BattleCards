@@ -40,8 +40,8 @@ class ISniper(data: ICard) : IBattleCard<Skeleton>(data) {
         event.projectile.velocity.multiply(1 + (level / 50.0))
 
         if (r.nextInt(100) < (20 + (level * 5))) {
-            world.spawn(event.projectile.location.apply { yaw += 30 }, event.projectile::class.java)
-            world.spawn(event.projectile.location.apply { yaw -= 30 }, event.projectile::class.java)
+            entity.world.spawn(event.projectile.location.apply { yaw += 30 }, event.projectile::class.java)
+            entity.world.spawn(event.projectile.location.apply { yaw -= 30 }, event.projectile::class.java)
         }
     }
 

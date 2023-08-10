@@ -24,7 +24,7 @@ class ISilverfishHive(data: ICard) : IBattleCard<Silverfish>(data) {
     }
 
     @CardAbility("card.silverfish_hive.ability.hivemind", ChatColor.YELLOW)
-    @Passive(220, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 90)
+    @Passive(220, CardOperation.SUBTRACT, 5, min = 90)
     private fun hivemind() {
         if (minions.size >= 50) return
 

@@ -53,7 +53,7 @@ class IKnight(data: ICard) : IBattleCard<Vindicator>(data) {
             }
         }
 
-        horse = world.spawn(location, Horse::class.java)
+        horse = entity.world.spawn(entity.location, Horse::class.java)
         horse.style = Horse.Style.BLACK_DOTS
         horse.color = Horse.Color.entries.random()
         horse.isTamed = true

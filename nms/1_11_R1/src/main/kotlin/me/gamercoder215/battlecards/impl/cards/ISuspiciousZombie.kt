@@ -43,9 +43,9 @@ class ISuspiciousZombie(data: ICard) : IBattleCard<Zombie>(data) {
     }
 
     @CardAbility("card.suspicious_zombie.ability.fangs", ChatColor.DARK_GRAY)
-    @Passive(400, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 220)
+    @Passive(400, CardOperation.SUBTRACT, 5, min = 220)
     private fun fangs() {
-        val target = target ?: return
+        val target = entity.target ?: return
         val locs = listOf<Location>(
             target.location,
             target.location + Vector(0, 0, 1),

@@ -79,7 +79,7 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
     }
 
     @CardAbility("card.sealord.ability.sea_military", ChatColor.DARK_AQUA)
-    @Passive(1500, CardOperation.SUBTRACT, 20, Long.MAX_VALUE, 400)
+    @Passive(1500, CardOperation.SUBTRACT, 20, min = 400)
     private fun seaMilitary() {
         val amount = r.nextInt(2, 6)
 
@@ -124,7 +124,7 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
         val target = event.entity as? LivingEntity ?: return
 
         target.world.strikeLightning(target.location)
-        target.damage(8.0)
+        event.damage += 8.0 + (level * 1.2)
     }
 
     @CardAbility("card.sealord.ability.wet", ChatColor.BLUE)
@@ -140,16 +140,16 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
     @Passive(1200)
     @UnlockedAt(15)
     private fun thundering() {
-        if (world.getGameRuleValue(GameRule.DO_WEATHER_CYCLE.name) != "false" && !world.isThundering && world.environment == World.Environment.NORMAL) {
-            world.isThundering = true
-            world.thunderDuration = 1200
+        if (entity.world.getGameRuleValue(GameRule.DO_WEATHER_CYCLE) != false && !entity.world.isThundering && entity.world.environment == World.Environment.NORMAL) {
+            entity.world.isThundering = true
+            entity.world.thunderDuration = 1200
         }
 
         object : BukkitRunnable() {
             override fun run() {
-                world.playSound(entity.location, Sound.ENTITY_ENDER_DRAGON_GROWL, 3F, 0.65F)
+                entity.world.playSound(entity.location, Sound.ENTITY_ENDER_DRAGON_GROWL, 3F, 0.65F)
 
-                (entity.getNearbyEntities(10.0, 10.0, 10.0).filter { !it.isMinion(this@ISeaLord) } + listOf(target))
+                (entity.getNearbyEntities(10.0, 10.0, 10.0).filter { !it.isMinion(this@ISeaLord) } + listOf(entity.target))
                     .filterIsInstance<LivingEntity>()
                     .filter { it.card?.p != p && it != entity && !it.persistentDataContainer.has(dolphinKey, PersistentDataType.BOOLEAN) }
                     .distinctBy { it.uniqueId }

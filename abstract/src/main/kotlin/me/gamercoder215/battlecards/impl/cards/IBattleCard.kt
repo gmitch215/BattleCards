@@ -227,15 +227,6 @@ abstract class IBattleCard<T : Creature>(
 
     // Utilities
 
-    val target: LivingEntity?
-        get() = entity.target
-
-    val location: Location
-        get() = entity.location
-
-    val world: World
-        get() = entity.world
-
     private fun checkUnlockedAt(method: Method): Boolean =
         level >= unlockedAt(method)
 

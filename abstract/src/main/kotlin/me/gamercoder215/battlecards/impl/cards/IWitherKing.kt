@@ -89,7 +89,7 @@ class IWitherKing(data: ICard) : IBattleCard<Wither>(data) {
     }
 
     @CardAbility("card.wither_king.ability.decree", ChatColor.DARK_AQUA)
-    @Passive(300, CardOperation.SUBTRACT, 2, Long.MAX_VALUE, 100)
+    @Passive(300, CardOperation.SUBTRACT, 2, min = 100)
     @UnlockedAt(30)
     private fun decree() {
         val distance = (25.0 + (level - 30) * 2.0).coerceAtMost(60.0)

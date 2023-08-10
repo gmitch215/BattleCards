@@ -65,7 +65,7 @@ class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
     }
 
     @CardAbility("card.raider.ability.raid_golems", ChatColor.BLUE)
-    @Passive(780, CardOperation.SUBTRACT, 10, Long.MAX_VALUE, 300)
+    @Passive(780, CardOperation.SUBTRACT, 10, min = 300)
     @UnlockedAt(25)
     private fun raidGolems() {
         val count = r.nextInt(1, 3)
@@ -83,7 +83,7 @@ class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
     }
 
     @CardAbility("card.raider.ability.illusioner", ChatColor.DARK_PURPLE)
-    @Passive(900, CardOperation.SUBTRACT, 15, Long.MAX_VALUE, 450)
+    @Passive(900, CardOperation.SUBTRACT, 15, min = 450)
     @UnlockedAt(40)
     private fun illusioner() = minion(Illusioner::class.java)
 

@@ -58,7 +58,7 @@ class IUndeadLumberjack(data: ICard) : IBattleCard<Skeleton>(data) {
                 if ((i - 2) > level / 8)
                     return cancel()
 
-                target.damage(statistics.attackDamage / 10, entity)
+                target.damage(statistics.attackDamage / 10)
                 i++
             }
         }.runTaskTimer(BattleConfig.plugin, 0L, 65L)

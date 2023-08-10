@@ -163,7 +163,7 @@ internal class Wrapper1_10_R1 : Wrapper {
         equipment.leggingsDropChance = 0F
         equipment.bootsDropChance = 0F
 
-        en.target = ownerCard.target
+        en.target = ownerCard.entity.target
 
         val nms = (en as CraftCreature).handle
 

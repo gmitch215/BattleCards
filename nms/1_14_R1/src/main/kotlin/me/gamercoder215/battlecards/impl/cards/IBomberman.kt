@@ -86,7 +86,7 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
     }
 
     @CardAbility("card.bomberman.ability.tntlings", ChatColor.RED)
-    @Passive(600, CardOperation.SUBTRACT, 10, Long.MAX_VALUE, 200)
+    @Passive(600, CardOperation.SUBTRACT, 10, min = 200)
     @UnlockedAt(15)
     private fun tntLings() {
         val amount = r.nextInt(1, (1 + (level / 15)).coerceAtMost(6))
@@ -112,11 +112,11 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
     }
 
     @CardAbility("card.bomberman.ability.meteor")
-    @Passive(1200, CardOperation.SUBTRACT, 20, Long.MAX_VALUE, 300)
+    @Passive(1200, CardOperation.SUBTRACT, 20, min = 300)
     @UnlockedAt(35)
     private fun meteor() {
-        val target = target ?: return
-        world.spawn(target.location.add(0.0, 3.5, 0.0), LargeFireball::class.java).apply {
+        val target = entity.target ?: return
+        entity.world.spawn(target.location.add(0.0, 3.5, 0.0), LargeFireball::class.java).apply {
             setIsIncendiary(true)
             shooter = entity
             yield = 5F + ((level - 35) / 7F).coerceAtMost(1.5F)
@@ -128,7 +128,7 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
 
             direction = Location(null, 0.0, 0.0, 0.0, yaw, pitch).direction
         }
-        world.playSound(location, Sound.ENTITY_GHAST_SHOOT, 2F, 1F)
+        entity.world.playSound(entity.location, Sound.ENTITY_GHAST_SHOOT, 2F, 1F)
     }
 
 }

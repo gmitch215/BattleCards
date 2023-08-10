@@ -67,7 +67,7 @@ class INetherPrince(data: ICard) : IBattleCard<WitherSkeleton>(data) {
     }
 
     @CardAbility("card.nether_prince.ability.firepower", ChatColor.YELLOW)
-    @Passive(500, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 260)
+    @Passive(500, CardOperation.SUBTRACT, 5, min = 260)
     private fun firepower() = minion(Blaze::class.java) {
         getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 30.0 + (level * 0.5)
     }

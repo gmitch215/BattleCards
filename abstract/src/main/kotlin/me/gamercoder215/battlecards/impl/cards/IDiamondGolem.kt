@@ -31,7 +31,7 @@ class IDiamondGolem(data: ICard) : IBattleCard<IronGolem>(data) {
         val target = event.entity as? Player ?: return
         val amplifier: Double = ((level / 20.0) + 1.25).coerceAtMost(10.0)
 
-        target.velocity = location.direction.multiply(amplifier)
+        target.velocity = entity.location.direction.multiply(amplifier)
     }
 
     @CardAbility("card.diamond_golem.ability.thorns", ChatColor.RED)

@@ -15,7 +15,7 @@ import org.bukkit.entity.CaveSpider
 class ISpiderHive(data: ICard) : IBattleCard<CaveSpider>(data) {
 
     @CardAbility("card.spider_hive.ability.colony")
-    @Passive(200, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 140)
+    @Passive(200, CardOperation.SUBTRACT, 5, min = 140)
     private fun colony() {
         if (minions.size >= 50) return
 

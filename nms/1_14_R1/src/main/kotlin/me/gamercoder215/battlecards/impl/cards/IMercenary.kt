@@ -34,7 +34,7 @@ class IMercenary(data: ICard) : IBattleCard<Pillager>(data) {
     }
 
     @CardAbility("card.mercenary.ability.rage", ChatColor.DARK_RED)
-    @Passive(1200, CardOperation.SUBTRACT, 20, Long.MAX_VALUE, 200)
+    @Passive(1200, CardOperation.SUBTRACT, 20, min = 200)
     private fun rage() {
         entity.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, 20 * 20, 2))
         entity.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 20 * 15, 1))

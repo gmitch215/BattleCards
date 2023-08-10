@@ -28,7 +28,7 @@ class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
     override fun init() {
         super.init()
 
-        child = world.spawn(location, CaveSpider::class.java)
+        child = entity.world.spawn(entity.location, CaveSpider::class.java)
         child.maxHealth = data.statistics.maxHealth / 15
         entity.passenger = child
     }
@@ -68,7 +68,7 @@ class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
         object : BukkitRunnable() {
             override fun run() {
                 if (entity.isDead) return
-                world.playSound(location, BattleSound.ENTITY_ENDER_DRAGON_GROWL.findOrNull() ?: return, 2F, 1.5F)
+                entity.world.playSound(entity.location, BattleSound.ENTITY_ENDER_DRAGON_GROWL.findOrNull() ?: return, 2F, 1.5F)
             }
         }.runTaskLater(BattleConfig.plugin, 30)
     }
@@ -80,7 +80,7 @@ class ISpiderQueen(data: ICard) : IBattleCard<Spider>(data) {
         if (child.isDead) return
 
         event.isCancelled = true
-        BattleSound.ITEM_SHIELD_BLOCK.play(location, 3F, 1F)
+        BattleSound.ITEM_SHIELD_BLOCK.play(entity.location, 3F, 1F)
 
         minion(CaveSpider::class.java) {
             maxHealth = child.health

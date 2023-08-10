@@ -63,7 +63,7 @@ class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
     }
 
     @CardAbility("card.netherite_piglin.ability.netherite_rage", ChatColor.RED)
-    @Passive(400, CardOperation.SUBTRACT, 5, Long.MAX_VALUE, 300)
+    @Passive(400, CardOperation.SUBTRACT, 5, min = 300)
     private fun netheriteRage() {
         entity.addPotionEffect(PotionEffect(PotionEffectType.INCREASE_DAMAGE, 5, (level / 15) + 3, true))
     }
@@ -82,7 +82,7 @@ class INetheritePiglin(data: ICard) : IBattleCard<PiglinBrute>(data) {
     private fun hoglin(event: EntityDamageByEntityEvent) {
         event.isCancelled = true
         val sound = BattleSound.ITEM_SHIELD_BLOCK.findOrNull()
-        if (sound != null) world.playSound(location, sound, 3F, 1F)
+        if (sound != null) entity.world.playSound(entity.location, sound, 3F, 1F)
 
         minion(Hoglin::class.java) {
             isImmuneToZombification = true
