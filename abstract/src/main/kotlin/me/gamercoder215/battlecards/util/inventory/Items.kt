@@ -6,6 +6,7 @@ import me.gamercoder215.battlecards.util.card
 import me.gamercoder215.battlecards.util.isCard
 import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.builder
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
@@ -128,6 +129,39 @@ object Items {
         "large_experience_book" to LARGE_EXPERIENCE_BOOK,
         "huge_experience_book" to HUGE_EXPERIENCE_BOOK
     )
+
+    @JvmStatic
+    private val GENERATED_ITEMS: Map<String, Double> = mapOf(
+        "tiny_experience_book" to 0.4,
+        "small_experience_book" to 0.1,
+        "medium_experience_book" to 0.02,
+        "large_experience_book" to 0.001,
+        "huge_experience_book" to 0.00005
+    )
+
+    @JvmStatic
+    val EFFECTIVE_GENERATED_ITEMS = GENERATED_ITEMS.mapNotNull {
+        val item = PUBLIC_ITEMS[it.key] ?: return@mapNotNull null
+        item to (it.value / GENERATED_ITEMS.values.sum())
+    }.toMap()
+
+    fun <T> Map<T, Double>.randomCumulative(reroll: Int = 0): T {
+        val distribution = DoubleArray(size)
+        var cumulative = 0.0
+
+        for ((i, value) in values.withIndex()) {
+            cumulative += value
+            distribution[i] = cumulative
+        }
+
+        val random = r.nextDouble(); var i = 0
+        while (i < distribution.size && random > distribution[i]) i++
+
+        if (reroll > 0)
+            return randomCumulative(reroll - 1)
+
+        return keys.elementAt(i)
+    }
 
     class CardWorkbenchRecipe {
 
