@@ -135,6 +135,7 @@ interface Wrapper {
                 ISpiderQueen::class.java,
                 IStoneArcher::class.java,
                 IThunderRevenant::class.java,
+                INecromancer::class.java,
             )
 
             versions.subList(0, versions.indexOf(current) + 1).forEach {
