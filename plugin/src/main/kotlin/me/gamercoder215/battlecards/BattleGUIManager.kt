@@ -1,10 +1,13 @@
 package me.gamercoder215.battlecards
 
 import com.google.common.collect.ImmutableMap
+import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
 import me.gamercoder215.battlecards.util.id
+import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
+import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.of
 import org.bukkit.Material
@@ -32,13 +35,21 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
         @JvmStatic
         private val CLICK_ITEMS = ImmutableMap.builder<String, (InventoryClickEvent, BattleInventory) -> Unit>()
+            .put("card:info_item") { e, inv ->
+                val p = e.whoClicked as Player
+                val item = e.currentItem
+                val card = inv["card", Card::class.java] ?: return@put
 
+                when (item.nbt.getString("type")) {
+                    "quests" -> p.openInventory(Generator.generateCardQuests(card))
+                }
+            }
             .build()
 
         @JvmStatic
         private val CLICK_INVENTORIES = ImmutableMap.builder<String, (InventoryClickEvent, BattleInventory) -> Unit>()
             .put("card_table") { e, inv ->
-                val p = e.whoClicked as? Player ?: return@put
+                val p = e.whoClicked as Player
                 if (e.slot !in cardTableSlots) return@put
 
                 when (e.slot) {
