@@ -185,6 +185,16 @@ enum class BattleCardType {
      * Represents a Husk BattleCard.
      */
     WARRIOR_HUSK(1, "Husk", Rarity.COMMON, Material.DIAMOND_AXE),
+
+    /**
+     * Represents a Skeleton BattleCard.
+     */
+    NECROMANCER(1, Skeleton::class, Rarity.EPIC, Material.ROTTEN_FLESH),
+
+    /**
+     * Represents a Husk BattleCard.
+     */
+    ETERNAL_HUSK(1, "Husk", Rarity.MYTHICAL, Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("ENDER_PORTAL_FRAME") ?: Material.BEDROCK)
     ;
 
     private val entityClass: Class<out LivingEntity>?
