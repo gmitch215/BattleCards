@@ -1,9 +1,11 @@
 package me.gamercoder215.battlecards.util.inventory
 
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.util.BattleMaterial
 import me.gamercoder215.battlecards.util.CardUtils
+import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -103,6 +105,7 @@ object Generator {
     fun generateCardInfo(card: Card): BattleInventory {
         val inv = genGUI(27, get("menu.card.info"))
         inv.isCancelled = true
+        inv["card"] = card
 
         inv[4] = (if (card.type.icon == null) typeToItem[card.entityCardType] ?: BattleMaterial.FILLED_MAP.findStack() else ItemStack(card.type.icon)).apply {
             itemMeta = itemMeta.apply {
@@ -126,6 +129,17 @@ object Generator {
         } else
             inv[13] = info
 
+        inv[22] = ItemStack(Material.CHEST).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.GOLD}${get("menu.card_quests")}" // TODO Translate
+            }
+
+            nbt { nbt ->
+                nbt.id = "card:info_item"
+                nbt["type"] = "quests"
+            }
+        }
+
         while (inv.firstEmpty() != -1)
             inv[inv.firstEmpty()] = Items.GUI_BACKGROUND
 
@@ -142,6 +156,15 @@ object Generator {
         inv[24] = null
 
         return inv
+    }
+
+    @JvmStatic
+    fun generateCardQuests(card: Card, quest: CardQuest? = null): BattleInventory {
+        if (quest == null) {
+            TODO("Create General Quest Inventory")
+        } else {
+            TODO("Create Quest Inventory")
+        }
     }
 
 }
