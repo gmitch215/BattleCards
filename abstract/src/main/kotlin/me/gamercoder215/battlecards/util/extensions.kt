@@ -8,10 +8,7 @@ import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.Server
+import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
@@ -170,6 +167,18 @@ operator fun Block.set(key: String, value: Any) {
 inline val Block.isCardBlock: Boolean
     get() = get("card_block")?.toString()?.isNotEmpty() == true
 
+inline val Chunk.blocks: Set<Block>
+    get() {
+        val blocks = mutableSetOf<Block>()
+
+        for (x in 0..15)
+            for (y in 0..255)
+                for (z in 0..15)
+                    blocks.add(getBlock(x, y, z))
+
+        return blocks
+    }
+
 fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
     var chance = this.chance
     if (!value.isNaN())
@@ -275,7 +284,7 @@ operator fun Vector.times(other: Number): Vector = multiply(other.toDouble())
 fun Number.format(): String {
     return when (this) {
         is Int, is Long -> format("%,d", this)
-        else -> format("%,.2f", this).replace(".00", "")
+        else -> format("%,.2f", this).dropLastWhile { it == '0' }.dropLastWhile { it == '.' }
     }
 }
 
