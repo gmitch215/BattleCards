@@ -29,11 +29,11 @@ object CardUtils {
         if (attachments.isEmpty()) return
 
         for (attachment in attachments) {
-            val newLocation = local(card.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ))
+            val newLocation = local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ))
             newLocation.yaw = w.getYBodyRot(card.entity)
             newLocation.pitch = 0f
 
-            val entity = card.world.spawn(newLocation, ArmorStand::class.java).apply {
+            val entity = card.entity.world.spawn(newLocation, ArmorStand::class.java).apply {
                 isSmall = attachment.small
                 isVisible = false
                 setGravity(false)
@@ -42,7 +42,7 @@ object CardUtils {
             }
 
             card.attachments[entity.uniqueId] = {
-                local(card.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
+                local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
                     yaw = w.getYBodyRot(card.entity)
                     pitch = 0f
                 }
