@@ -11,7 +11,8 @@ internal class CardLoader1_11_R1 : CardLoader {
         IBandit::class.java,
         IMiner::class.java,
         ISuspiciousZombie::class.java,
-        IEmeraldHusk::class.java
+        IEmeraldHusk::class.java,
+        IEternalHusk::class.java
     )
 
 }
