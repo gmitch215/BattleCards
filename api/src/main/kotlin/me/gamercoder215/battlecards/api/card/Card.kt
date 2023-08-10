@@ -186,6 +186,14 @@ interface Card : ConfigurationSerializable {
             it.entityClass == type.getEntityClass()
         }
 
+    /**
+     * Fetches the quest completion percentage for this [Card].
+     * @param quest Quest to Use
+     * @return Percentage Completion
+     * @see CardQuest.getProgress
+     */
+    fun getQuestCompletion(quest: CardQuest): Double = quest.getProgress(this)
+
     // Serialization
 
     /**
