@@ -57,7 +57,7 @@ class IPhantomRider(data: ICard) : IBattleCard<Stray>(data) {
                 }
         }
 
-        phantom = world.spawn(location, Phantom::class.java).apply {
+        phantom = entity.world.spawn(entity.location, Phantom::class.java).apply {
             target = entity.target
             getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = statistics.maxHealth / 2
             getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)!!.baseValue = statistics.speed + 0.04
