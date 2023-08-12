@@ -135,11 +135,12 @@ annotation class UnlockedAt(val level: Int)
 @Target(AnnotationTarget.CLASS)
 annotation class BlockAttachment(
     val material: Material,
-    // Uses Directional (^ ^ ^) offsets
     val offsetX: Double,
     val offsetY: Double,
     val offsetZ: Double,
-    val small: Boolean = false
+    val offsetYaw: Float = 0.0F,
+    val small: Boolean = false,
+    val local: Boolean = true
 )
 
 @Inherited
@@ -148,11 +149,12 @@ annotation class BlockAttachment(
 annotation class MinionBlockAttachment(
     val type: EntityType,
     val material: Material,
-    // Uses Directional (^ ^ ^) offsets
     val offsetX: Double,
     val offsetY: Double,
     val offsetZ: Double,
-    val small: Boolean = false
+    val offsetYaw: Float = 0.0F,
+    val small: Boolean = false,
+    val local: Boolean = true
 )
 
 // User Grants

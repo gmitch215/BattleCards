@@ -29,8 +29,17 @@ object CardUtils {
         if (attachments.isEmpty()) return
 
         for (attachment in attachments) {
-            val newLocation = local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ))
-            newLocation.yaw = w.getYBodyRot(card.entity)
+            val newLocation =
+                if (attachment.local)
+                    local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ))
+                else
+                    card.entity.location.apply {
+                        x += attachment.offsetX
+                        y += attachment.offsetY
+                        z += attachment.offsetZ
+                    }
+
+            newLocation.yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
             newLocation.pitch = 0f
 
             val entity = card.entity.world.spawn(newLocation, ArmorStand::class.java).apply {
@@ -42,10 +51,17 @@ object CardUtils {
             }
 
             card.attachments[entity.uniqueId] = {
-                local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
-                    yaw = w.getYBodyRot(card.entity)
-                    pitch = 0f
-                }
+                if (attachment.local)
+                    local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
+                        yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
+                        pitch = 0f
+                    }
+                else
+                    card.entity.location.apply {
+                        x += attachment.offsetX
+                        y += attachment.offsetY
+                        z += attachment.offsetZ
+                    }
             }
         }
     }
@@ -55,13 +71,20 @@ object CardUtils {
         val attachments = card.javaClass.getAnnotationsByType(MinionBlockAttachment::class.java).filter { it.type == minion.type }
         if (attachments.isEmpty()) return
 
-        val reference = minion.location
-
         val map = mutableMapOf<UUID, () -> Location>()
 
         for (attachment in attachments) {
-            val newLocation = local(reference, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ))
-            newLocation.yaw = w.getYBodyRot(card.entity)
+            val newLocation =
+                if (attachment.local)
+                    local(minion.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ))
+                else
+                    minion.location.apply {
+                        x += attachment.offsetX
+                        y += attachment.offsetY
+                        z += attachment.offsetZ
+                    }
+
+            newLocation.yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
             newLocation.pitch = 0f
 
             val entity = minion.world.spawn(newLocation, ArmorStand::class.java).apply {
@@ -73,10 +96,17 @@ object CardUtils {
             }
 
             map[entity.uniqueId] = {
-                local(minion.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
-                    yaw = w.getYBodyRot(minion)
-                    pitch = 0f
-                }
+                if (attachment.local)
+                    local(minion.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
+                        yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
+                        pitch = 0f
+                    }
+                else
+                    minion.location.apply {
+                        x += attachment.offsetX
+                        y += attachment.offsetY
+                        z += attachment.offsetZ
+                    }
             }
         }
 
