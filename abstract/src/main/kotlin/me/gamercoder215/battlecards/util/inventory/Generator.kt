@@ -67,47 +67,12 @@ object Generator {
     }
 
     @JvmStatic
-    private val typeToItem: Map<EntityType, ItemStack> =
-        mapOf<Any, Any>(
-            EntityType.BLAZE to "MHF_Blaze",
-            EntityType.CAVE_SPIDER to "MHF_CaveSpider",
-            EntityType.CREEPER to "MHF_Creeper",
-            EntityType.ENDERMAN to "MHF_Enderman",
-            EntityType.IRON_GOLEM to "MHF_Golem",
-            EntityType.SKELETON to "MHF_Skeleton",
-            EntityType.SPIDER to "MHF_Spider",
-            EntityType.WITHER to Material.NETHER_STAR,
-
-            "wither_skeleton" to "MHF_WSkeleton",
-        ).mapNotNull {
-            val type: EntityType = when (val key = it.key) {
-                is EntityType -> key
-                is String -> try { EntityType.valueOf(key.uppercase()) } catch (e: IllegalArgumentException) { null }
-                else -> throw IllegalArgumentException("Invalid Type ${it.key::class.simpleName}")
-            } ?: return@mapNotNull null
-
-            val item: ItemStack = when (val value = it.value) {
-                is Material -> ItemStack(value)
-                is ItemStack -> value
-                is String -> BattleMaterial.PLAYER_HEAD.findStack().apply {
-                    itemMeta = (itemMeta as SkullMeta).apply { owner = value }
-                }
-                else -> throw IllegalArgumentException("Invalid Type ${it.value::class.simpleName}")
-            }
-
-            type to item
-        }.toMap().toMutableMap().apply {
-            for (type in EntityType.entries.filter { Creature::class.java.isAssignableFrom(it.entityClass ?: LivingEntity::class.java) })
-                if (!containsKey(type)) this[type] = ItemStack(Material.matchMaterial("${type.name}_SPAWN_EGG") ?: BattleMaterial.FILLED_MAP.find())
-        }
-
-    @JvmStatic
     fun generateCardInfo(card: Card): BattleInventory {
         val inv = genGUI(27, get("menu.card.info"))
         inv.isCancelled = true
         inv["card"] = card
 
-        inv[4] = (if (card.type.icon == null) typeToItem[card.entityCardType] ?: BattleMaterial.FILLED_MAP.findStack() else ItemStack(card.type.icon)).apply {
+        inv[4] = ItemStack(card.icon).apply {
             itemMeta = itemMeta.apply {
                 displayName = CardUtils.format(get("constants.card"), "${card.rarity.color}${card.name}")
 
@@ -160,11 +125,29 @@ object Generator {
 
     @JvmStatic
     fun generateCardQuests(card: Card, quest: CardQuest? = null): BattleInventory {
+        val inv: BattleInventory
+
         if (quest == null) {
-            TODO("Create General Quest Inventory")
+            inv = genGUI(27, get("menu.card_quests"))
+
+            for (q in CardQuest.entries)
+                inv.addItem(ItemStack(q.icon).apply {
+                    itemMeta = itemMeta.apply {
+                        displayName = "${ChatColor.GOLD}${get("menu.card_quests.${q.name.lowercase()}")}"
+                    }
+
+                    nbt { nbt ->
+                        nbt.id = "card:quest_item"
+                        nbt["quest"] = q.ordinal
+                    }
+                })
         } else {
-            TODO("Create Quest Inventory")
+            inv = genGUI(54, "${get("menu.card_quests")} | ${get("menu.card_quests.${quest.name.lowercase()}")}")
         }
+
+        inv[4] = card.icon
+
+        return inv
     }
 
 }

@@ -1,11 +1,16 @@
 package me.gamercoder215.battlecards.api.card
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.serialization.ConfigurationSerializable
+import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
+import java.lang.AssertionError
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.pow
@@ -187,6 +192,17 @@ interface Card : ConfigurationSerializable {
         }
 
     /**
+     * Fetches the ItemStack icon for this Card.
+     * @return Card Icon
+     */
+    val icon: ItemStack
+        get() {
+            if (type.icon != null) return ItemStack(type.icon)
+
+            return typeToItem[entityCardType] ?: throw AssertionError("No icon found for card type ${type.name}")
+        }
+
+    /**
      * Fetches the quest completion percentage for this [Card].
      * @param quest Quest to Use
      * @return Percentage Completion
@@ -210,6 +226,43 @@ interface Card : ConfigurationSerializable {
          * The maximum level any BattleCard can be
          */
         const val MAX_LEVEL = 200
+
+        private val typeToItem: Map<EntityType, ItemStack> =
+            mapOf<Any, Any>(
+                EntityType.BLAZE to "MHF_Blaze",
+                EntityType.CAVE_SPIDER to "MHF_CaveSpider",
+                EntityType.CREEPER to "MHF_Creeper",
+                EntityType.ENDERMAN to "MHF_Enderman",
+                EntityType.IRON_GOLEM to "MHF_Golem",
+                EntityType.SKELETON to "MHF_Skeleton",
+                EntityType.SPIDER to "MHF_Spider",
+                EntityType.WITHER to Material.NETHER_STAR,
+
+                "wither_skeleton" to "MHF_WSkeleton",
+            ).mapNotNull {
+                val type: EntityType = when (val key = it.key) {
+                    is EntityType -> key
+                    is String -> try { EntityType.valueOf(key.uppercase()) } catch (e: IllegalArgumentException) { null }
+                    else -> throw IllegalArgumentException("Invalid Type ${it.key::class.simpleName}")
+                } ?: return@mapNotNull null
+
+                val item: ItemStack = when (val value = it.value) {
+                    is Material -> ItemStack(value)
+                    is ItemStack -> value
+                    is String -> {
+                        val head = Material.matchMaterial("PLAYER_HEAD")
+                        (if (head == null) ItemStack(Material.matchMaterial("SKULL_ITEM"), 1, 3) else ItemStack(head)).apply {
+                            itemMeta = (itemMeta as SkullMeta).apply { owner = value }
+                        }
+                    }
+                    else -> throw IllegalArgumentException("Invalid Type ${it.value::class.simpleName}")
+                }
+
+                type to item
+            }.toMap().toMutableMap().apply {
+                for (type in EntityType.entries.filter { Creature::class.java.isAssignableFrom(it.entityClass ?: LivingEntity::class.java) })
+                    if (!containsKey(type)) this[type] = ItemStack(Material.matchMaterial("${type.name}_SPAWN_EGG") ?: (Material.matchMaterial("FILLED_MAP") ?: Material.matchMaterial("MAP")))
+            }
 
         /**
          * Converts a BattleCard's Experience to the corresponding level.
