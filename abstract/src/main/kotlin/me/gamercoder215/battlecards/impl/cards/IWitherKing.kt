@@ -21,7 +21,7 @@ import kotlin.math.floor
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.1, 2500.0)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.67)
 
-@BlockAttachment(Material.BEDROCK, 0.0, 2.5, 0.0, true)
+@BlockAttachment(Material.BEDROCK, 0.0, 2.5, 0.0, small = true, local = false)
 class IWitherKing(data: ICard) : IBattleCard<Wither>(data) {
 
     override fun init() {

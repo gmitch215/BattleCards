@@ -11,7 +11,7 @@ import org.bukkit.entity.CaveSpider
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.1)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 0.102)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.007)
-@BlockAttachment(Material.IRON_BLOCK, 0.0, -0.4, 0.2, true)
+@BlockAttachment(Material.IRON_BLOCK, 0.0, -0.4, 0.2, small = true)
 class ISpiderHive(data: ICard) : IBattleCard<CaveSpider>(data) {
 
     @CardAbility("card.spider_hive.ability.colony")
