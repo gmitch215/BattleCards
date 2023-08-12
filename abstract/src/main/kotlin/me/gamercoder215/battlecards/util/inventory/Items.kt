@@ -1,19 +1,27 @@
 package me.gamercoder215.battlecards.util.inventory
 
+import com.mojang.authlib.GameProfile
+import com.mojang.authlib.properties.Property
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.util.BattleMaterial
 import me.gamercoder215.battlecards.util.card
 import me.gamercoder215.battlecards.util.isCard
 import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.builder
+import me.gamercoder215.battlecards.wrapper.Wrapper
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.Material.matchMaterial
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.plugin.Plugin
+import java.util.*
+
 
 object Items {
 
@@ -73,6 +81,48 @@ object Items {
             itemMeta = itemMeta.apply {
                 action(this)
             }
+        }
+    }
+
+    @JvmStatic
+    fun next(key: String): ItemStack =
+        head("arrow_right") {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.GREEN}${get("constants.next")}"
+            }
+        }.nbt { nbt -> nbt.id = "scroll:$key"; nbt["operation"] = 1 }
+
+    @JvmStatic
+    fun prev(key: String): ItemStack =
+        head("arrow_left") {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.AQUA}${get("constants.prev")}"
+            }
+        }.nbt { nbt -> nbt.id = "scroll:$key"; nbt["operation"] = -1 }
+
+    @JvmStatic
+    fun back(key: String = "stored"): ItemStack =
+        head("arrow_left_log") {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.RED}${get("constants.back")}"
+            }
+        }.nbt { nbt -> nbt.id = "back:$key" }
+
+    @JvmStatic
+    fun head(key: String, action: ItemStack.() -> Unit = {}): ItemStack {
+        val p = Properties().apply { load(Items::class.java.getResourceAsStream("/util/heads.properties")) }
+        val value = p.getProperty(key) ?: throw IllegalArgumentException("Head not found: $key")
+
+        return (if (Wrapper.legacy) ItemStack(matchMaterial("SKULL_ITEM"), 1, 3.toShort()) else ItemStack(matchMaterial("PLAYER_HEAD"))).apply {
+            itemMeta = (itemMeta as SkullMeta).apply {
+                val profile = GameProfile(UUID.randomUUID(), null).apply {
+                    properties.put("textures", Property("textures", value))
+                }
+
+                javaClass.getDeclaredMethod("setProfile", GameProfile::class.java).apply { isAccessible = true }.invoke(this, profile)
+            }
+
+            action(this)
         }
     }
 
