@@ -14,6 +14,8 @@ import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Material.matchMaterial
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.Recipe
 import org.bukkit.inventory.ShapedRecipe
@@ -45,31 +47,31 @@ object Items {
 
     @JvmStatic
     val TINY_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Tiny Card Experience Book" },
+        { displayName = "${ChatColor.RESET}Tiny Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 100.0 }
     )
 
     @JvmStatic
     val SMALL_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Small Card Experience Book" },
+        { displayName = "${ChatColor.RESET}Small Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2500.0 }
     )
 
     @JvmStatic
     val MEDIUM_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Medium Card Experience Book" },
+        { displayName = "${ChatColor.RESET}Medium Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 10000.0 }
     )
 
     @JvmStatic
     val LARGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Large Card Experience Book" },
+        { displayName = "${ChatColor.RESET}Large Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 500000.0 }
     )
 
     @JvmStatic
     val HUGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Huge Card Experience Book" },
+        { displayName = "${ChatColor.RESET}Huge Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2000000.0 }
     )
 
@@ -85,7 +87,7 @@ object Items {
     }
 
     @JvmStatic
-    fun next(key: String): ItemStack =
+    fun next(key: String = "stored"): ItemStack =
         head("arrow_right") {
             itemMeta = itemMeta.apply {
                 displayName = "${ChatColor.GREEN}${get("constants.next")}"
@@ -93,7 +95,7 @@ object Items {
         }.nbt { nbt -> nbt.id = "scroll:$key"; nbt["operation"] = 1 }
 
     @JvmStatic
-    fun prev(key: String): ItemStack =
+    fun prev(key: String = "stored"): ItemStack =
         head("arrow_left") {
             itemMeta = itemMeta.apply {
                 displayName = "${ChatColor.AQUA}${get("constants.prev")}"
@@ -101,7 +103,7 @@ object Items {
         }.nbt { nbt -> nbt.id = "scroll:$key"; nbt["operation"] = -1 }
 
     @JvmStatic
-    fun back(key: String = "stored"): ItemStack =
+    fun back(key: String = "action"): ItemStack =
         head("arrow_left_log") {
             itemMeta = itemMeta.apply {
                 displayName = "${ChatColor.RED}${get("constants.back")}"
