@@ -5,17 +5,19 @@ import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.attackable
 import me.gamercoder215.battlecards.util.isCard
 import me.gamercoder215.battlecards.util.isMinion
+import me.gamercoder215.battlecards.util.put
+import org.bukkit.ChatColor
 import org.bukkit.Color
+import org.bukkit.DyeColor
 import org.bukkit.Material
 import org.bukkit.attribute.Attribute
+import org.bukkit.block.banner.Pattern
+import org.bukkit.block.banner.PatternType
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
-import org.bukkit.entity.ShulkerBullet
-import org.bukkit.entity.Skeleton
-import org.bukkit.entity.WitherSkeleton
+import org.bukkit.entity.*
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BannerMeta
 import org.bukkit.inventory.meta.LeatherArmorMeta
 
 @Type(BattleCardType.NECROMANCER)
@@ -23,8 +25,27 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 8.32)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 4.57)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.ADD, 1.58)
-@BlockAttachment(Material.GREEN_BANNER, 0.0, -2.0, 0.0, 180.0F, local = false)
+@BlockAttachment(Material.LIGHT_GRAY_BANNER, 0.0, -2.0, -0.5, 180.0F)
 class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
+
+    private companion object {
+        @JvmStatic
+        val capePattern = listOf(
+            Pattern(DyeColor.BLACK, PatternType.GRADIENT_UP),
+            Pattern(DyeColor.WHITE, PatternType.SKULL)
+        )
+    }
+
+    override fun loadAttachmentMods() {
+        attachmentMods.put(
+            { it.helmet.type == Material.GREEN_BANNER },
+            {
+                helmet = ItemStack(Material.GREEN_BANNER).apply {
+                    itemMeta = (itemMeta as BannerMeta).apply { patterns = capePattern }
+                }
+            }
+        )
+    }
 
     override fun init() {
         super.init()
@@ -38,7 +59,7 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
         entity.equipment.itemInMainHand = ItemStack(Material.BLAZE_ROD)
     }
 
-    @CardAbility("card.necromancer.ability.bullet")
+    @CardAbility("card.necromancer.ability.bullet", ChatColor.AQUA)
     @Passive(100, CardOperation.SUBTRACT, 2, 70)
     private fun bullet() {
         val target = (entity.getNearbyEntities(20.0, 20.0, 20.0) + listOf(entity.target))
@@ -52,7 +73,7 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
         }
     }
 
-    @CardAbility("card.necromancer.ability.rise_of_the_undead")
+    @CardAbility("card.necromancer.ability.rise_of_the_undead", ChatColor.GOLD)
     @Passive(180, CardOperation.SUBTRACT, 4, 140)
     private fun riseUndead() {
         val minionCap = (15 + level).coerceAtMost(30)
@@ -91,7 +112,7 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
         event.damage += 9.0 + (0.25 * level).coerceAtMost(11.0)
     }
 
-    @CardAbility("card.necromancer.ability.undead_monster")
+    @CardAbility("card.necromancer.ability.undead_monster", ChatColor.DARK_GREEN)
     @Passive(300, CardOperation.SUBTRACT, 5, 200)
     @UnlockedAt(25)
     private fun undeadMonster() {

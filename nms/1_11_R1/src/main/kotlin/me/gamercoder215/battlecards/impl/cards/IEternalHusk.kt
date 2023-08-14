@@ -3,18 +3,21 @@ package me.gamercoder215.battlecards.impl.cards
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.BattleMaterial
+import me.gamercoder215.battlecards.util.BattleParticle
 import me.gamercoder215.battlecards.util.isCard
 import me.gamercoder215.battlecards.util.isMinion
+import org.bukkit.ChatColor
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Husk
-import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 
@@ -29,12 +32,10 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
     override fun init() {
         super.init()
 
-        entity.equipment.helmet = ItemStack(Material.LEATHER_HELMET).apply {
-            itemMeta = (itemMeta as LeatherArmorMeta).apply {
-                color = Color.GREEN
-                isUnbreakable = true
-
-                addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, level / 7, true)
+        entity.equipment.helmet = ItemStack(BattleMaterial.SPAWNER.find()).apply {
+            itemMeta = itemMeta.apply {
+                addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, (level / 7) + 1, true)
+                addEnchant(Enchantment.THORNS, (level / 8) + 1, true)
             }
         }
 
@@ -58,9 +59,27 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
             }
     }
 
+    override fun particles() {
+        circle(entity.eyeLocation, BattleParticle.FLAME, 10, 2.0)
+    }
+
     private var chargedDamage: Double = 0.0
 
-    @CardAbility("card.eternal_husk.ability.charge")
+    @CardAbility("card.eternal_husk.ability.deathly_healing", ChatColor.DARK_GRAY)
+    @UserDamage
+    private fun deathlyHealing(event: EntityDamageEvent) {
+        val causes = setOf(
+            DamageCause.POISON,
+            if (level >= 5) DamageCause.WITHER else null
+        ).filterNotNull()
+
+        if (event.cause in causes) {
+            event.isCancelled = true
+            p.health += event.finalDamage.coerceAtMost(p.maxHealth - p.health)
+        }
+    }
+
+    @CardAbility("card.eternal_husk.ability.charge", ChatColor.AQUA)
     @Defensive(0.7, CardOperation.ADD, 0.02)
     private fun charge(event: EntityDamageByEntityEvent) {
         chargedDamage += event.finalDamage / 2.0
@@ -76,7 +95,7 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
         entity.world.playSound(entity.location, Sound.ENTITY_WITHER_BREAK_BLOCK, 2F, 1F)
     }
 
-    @CardAbility("card.eternal_husk.ability.advisors")
+    @CardAbility("card.eternal_husk.ability.advisors", ChatColor.YELLOW)
     @Passive(140)
     @UnlockedAt(5)
     private fun advisors() {
@@ -95,6 +114,9 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
                         isUnbreakable = true
                     }
                 }
+
+                getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 100.0 + ((level - 5) * 5.0).coerceAtMost(100.0)
+                getAttribute(Attribute.GENERIC_ARMOR)!!.baseValue = 20.0 + ((level - 5) * 0.25).coerceAtMost(15.0)
 
                 target = entity.target
             }
@@ -121,7 +143,7 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
         }
     }
 
-    @CardAbility("card.eternal_husk.ability.undead_supreme")
+    @CardAbility("card.eternal_husk.ability.undead_supreme", ChatColor.DARK_RED)
     @Passive(360, CardOperation.SUBTRACT, 10, min = 200)
     @UnlockedAt(20)
     private fun undeadSupreme() {
