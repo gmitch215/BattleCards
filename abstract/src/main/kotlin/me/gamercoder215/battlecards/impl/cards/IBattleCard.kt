@@ -10,7 +10,6 @@ import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.ge
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
-import org.bukkit.World
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
@@ -56,6 +55,7 @@ abstract class IBattleCard<T : Creature>(
     val attachments: MutableMap<UUID, () -> Location> = mutableMapOf()
     val minions: MutableSet<LivingEntity> = mutableSetOf()
     val minionAttachments: MutableMap<UUID, MutableMap<UUID, () -> Location>> = mutableMapOf()
+    val attachmentMods: MutableSet<Pair<(ArmorStand) -> Boolean, ArmorStand.() -> Unit>> = mutableSetOf()
 
     fun spawn(player: Player, card: ItemStack, location: Location): T {
         if (this::entity.isInitialized) throw IllegalStateException("Entity already spawned")
@@ -98,6 +98,10 @@ abstract class IBattleCard<T : Creature>(
 
     // Implementation
 
+    open fun particles() {}
+
+    open fun loadAttachmentMods() {}
+
     open fun init() {
         if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
         p.inventory.removeItem(itemUsed)
@@ -113,9 +117,10 @@ abstract class IBattleCard<T : Creature>(
 
         attachments[healthHologram.uniqueId] = { entity.eyeLocation.subtract(0.0, 1.25, 0.0) }
 
+        loadAttachmentMods()
         CardUtils.createAttachments(this)
 
-        // Attachments - Runnable
+        // Attachments & Util Runnable
         object : BukkitRunnable() {
             override fun run() {
                 if (entity.isDead) {
@@ -152,6 +157,8 @@ abstract class IBattleCard<T : Creature>(
                         }
                     }
                 }
+
+                particles()
 
                 if (entity is Ageable)
                     (entity as Ageable).setBreed(false)
@@ -195,6 +202,7 @@ abstract class IBattleCard<T : Creature>(
 
     open fun uninit() {
         if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
+        statistics.checkQuestCompletions()
 
         attachments.forEach {
             val entity = Bukkit.getServer().getEntity(it.key) ?: return@forEach
@@ -210,6 +218,7 @@ abstract class IBattleCard<T : Creature>(
             }
         }
         minions.clear()
+        currentItem = data.itemStack
 
         if (p.inventory.firstEmpty() == -1) {
             p.sendMessage(getError("error.inventory.full.card_dropped"))
