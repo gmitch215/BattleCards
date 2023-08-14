@@ -15,6 +15,7 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import org.bukkit.scheduler.BukkitTask
@@ -84,7 +85,7 @@ inline val PlayerInventory.cards: Map<Int, ICard>
     get() {
         val cards = mutableMapOf<Int, ICard>()
         for (i in 0 until size) {
-            val item = getItem(i) ?: continue
+            val item = this[i] ?: continue
             cards[i] = item.card ?: continue
         }
 
@@ -279,7 +280,12 @@ operator fun Vector.times(other: Vector): Vector = multiply(other)
 operator fun Vector.times(other: Location): Vector = multiply(other.toVector())
 operator fun Vector.times(other: Number): Vector = multiply(other.toDouble())
 
+operator fun Inventory.get(index: Int): ItemStack? = getItem(index)
+operator fun Inventory.set(index: Int, item: ItemStack?) = setItem(index, item)
+
 // Kotlin Util
+
+fun <K, V> MutableCollection<Pair<K, V>>.put(first: K, second: V) = add(first to second)
 
 fun Number.format(): String {
     return when (this) {
@@ -339,6 +345,7 @@ private const val SUFFIXES = "KMBTQEXSON"
 
 fun Number.withSuffix(): String {
     val num = toDouble()
+    if (num.isNaN()) return num.toString()
     if (num < 0) return "-" + (-num).withSuffix()
     if (num < 1000) return format()
 
