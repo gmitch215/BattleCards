@@ -50,6 +50,8 @@ object CardUtils {
                 helmet = ItemStack(attachment.material)
             }
 
+            card.attachmentMods.forEach { if (it.first(entity)) it.second(entity) }
+
             card.attachments[entity.uniqueId] = {
                 if (attachment.local)
                     local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
