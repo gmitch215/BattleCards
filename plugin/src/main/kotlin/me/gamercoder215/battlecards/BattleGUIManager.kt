@@ -2,14 +2,13 @@ package me.gamercoder215.battlecards
 
 import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
-import me.gamercoder215.battlecards.util.id
+import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
-import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.BattleInventory
-import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.of
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -18,8 +17,9 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.inventory.ItemStack
+import java.util.function.Consumer
 
-
+@Suppress("unchecked_cast")
 internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
     init {
@@ -44,6 +44,30 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     "quests" -> p.openInventory(Generator.generateCardQuests(card))
                 }
             }
+            .put("scroll:stored") { e, inv ->
+                val p = e.whoClicked as Player
+                val page = inv["page", Int::class.java] ?: return@put
+                val stored = inv["stored", List::class.java] as List<BattleInventory>
+                val operation = e.currentItem.nbt.getInt("operation")
+
+                p.openInventory(stored[page + operation])
+                BattleSound.ITEM_BOOK_TURN_PAGE.play(p.location)
+            }
+            .put("back:action") { e, inv ->
+                val p = e.whoClicked as Player
+                val back = inv["back", Consumer::class.java] as Consumer<Player>
+
+                back.accept(p)
+                p.playFailure()
+            }
+            .put("card:quest_item") { e, inv ->
+                val p = e.whoClicked as Player
+                val item = e.currentItem
+                val quest = CardQuest.entries[item.nbt.getInt("quest")]
+                val card = inv["card", Card::class.java] ?: return@put
+
+                p.openInventory(Generator.generateCardQuests(card, quest))
+            }
             .build()
 
         @JvmStatic
@@ -53,7 +77,10 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 if (e.slot !in cardTableSlots) return@put
 
                 when (e.slot) {
-                    24 -> cardTableSlots.filter { it != 24 }.forEach { inv[it] = null }
+                    24 -> {
+                        if (inv[24] == null) return@put e.setCancelled(true)
+                        cardTableSlots.filter { it != 24 }.forEach { inv[it] = null }
+                    }
                     else -> {
                         val matrix = arrayOf(
                             inv[10], inv[11], inv[12],
@@ -80,26 +107,24 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
     @EventHandler
     fun click(e: InventoryClickEvent) {
-        if (e.clickedInventory !is BattleInventory) return
         if (e.whoClicked !is Player) return
 
-        val inv = e.clickedInventory as BattleInventory
+        val inv = e.clickedInventory as? BattleInventory ?: return
         e.isCancelled = inv.isCancelled
 
-        if (e.currentItem == null) return
-        val item = e.currentItem
+        val item = e.currentItem ?: return
 
         if (item.isSimilar(GUI_BACKGROUND)) {
             e.isCancelled = true
             return
         }
 
-        val w = of(item)
+        if (item.nbt.hasTag("_cancel")) e.isCancelled = true
 
-        if (w.hasTag("_cancel")) e.isCancelled = true
         if (CLICK_INVENTORIES.containsKey(inv.id)) CLICK_INVENTORIES[inv.id]!!(e, inv)
-        if (CLICK_ITEMS.containsKey(w.id)) {
-            CLICK_ITEMS[w.id]!!(e, inv)
+
+        if (CLICK_ITEMS.containsKey(item.nbt.id)) {
+            CLICK_ITEMS[item.nbt.id]!!(e, inv)
             e.isCancelled = true
         }
     }
