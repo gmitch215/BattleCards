@@ -76,7 +76,11 @@ interface CommandWrapper {
         if (p.inventory.itemInHand == null)
             return p.sendMessage(getError("error.argument.item.held"))
 
-        p.openInventory(Generator.generateCardInfo(p.cardInHand ?: return p.sendMessage(getError("error.argument.item.held.card"))))
+        val card = p.cardInHand ?: return p.sendMessage(getError("error.argument.item.held.card"))
+        card.statistics.checkQuestCompletions()
+        p.inventory.itemInHand = CardGenerator.toItem(card)
+
+        p.openInventory(Generator.generateCardInfo(card))
         p.playSuccess()
     }
     

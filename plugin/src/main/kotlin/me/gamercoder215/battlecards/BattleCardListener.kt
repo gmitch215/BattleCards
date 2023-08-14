@@ -208,6 +208,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                     m.invoke(card, event)
             }
+
+            card.statistics.checkQuestCompletions()
         }
 
         if (entity is Player && entity.spawnedCards.isNotEmpty()) {
@@ -222,6 +224,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                         if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
                             m.invoke(card, event)
                     }
+
+                card.statistics.checkQuestCompletions()
             }
         }
     }
@@ -271,7 +275,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 }
 
             card.data.statistics.damageReceived += event.finalDamage
-            card.currentItem = card.data.itemStack
+            card.statistics.checkQuestCompletions()
         }
 
         if (entity is Player && entity.spawnedCards.isNotEmpty()) {
@@ -317,22 +321,21 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 }
             }
 
-            card.data.statistics.damageDealt += event.finalDamage
-
+            card.statistics.damageDealt += event.finalDamage
             if (entity.health - event.finalDamage <= 0) {
                 var modifier: Double = plugin.growthKillMultiplier
                 when {
-                    entity is Player -> card.data.statistics.playerKills++
+                    entity is Player -> card.statistics.playerKills++
                     entity.isCard -> {
-                        card.data.statistics.cardKills++
+                        card.statistics.cardKills++
                         modifier = plugin.growthKillCardMultiplier
                     }
-                    else -> card.data.statistics.entityKills++
+                    else -> card.statistics.entityKills++
                 }
 
                 addExperience(card.data, modifier * entity.maxHealth * (if (entity.isCard) plugin.growthKillCardMultiplier else 1.0))
             }
-            card.currentItem = card.data.itemStack
+            card.statistics.checkQuestCompletions()
         }
 
         if (damager is Player && damager.spawnedCards.isNotEmpty()) {
@@ -347,6 +350,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                         if (r.nextDouble() <= annotation.getChance(card.level))
                             m.invoke(card, event)
                     }
+
+                card.statistics.checkQuestCompletions()
             }
         }
     }

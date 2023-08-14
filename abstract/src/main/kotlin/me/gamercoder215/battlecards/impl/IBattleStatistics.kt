@@ -2,6 +2,10 @@ package me.gamercoder215.battlecards.impl
 
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.BattleStatistics
+import me.gamercoder215.battlecards.api.card.CardQuest
+import me.gamercoder215.battlecards.api.events.CardExperienceChangeEvent
+import me.gamercoder215.battlecards.api.events.CardQuestLevelUpEvent
+import me.gamercoder215.battlecards.util.call
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import kotlin.math.pow
 import kotlin.reflect.full.findAnnotations
@@ -105,6 +109,30 @@ class IBattleStatistics(
             CardAttribute.SPEED to speed,
             CardAttribute.KNOCKBACK_RESISTANCE to knockbackResistance
         )
+
+    // Checkers
+
+    fun checkQuestCompletions() {
+        for (quest in CardQuest.entries) {
+            val level = (card.stats["quest.${quest.name.lowercase()}"] ?: 0).toInt()
+            if (level >= quest.maxLevel) continue
+
+            val current = card.getQuestLevel(quest)
+            if (current > level) {
+                var exp = 0.0
+                for (i in level until current) exp += quest.getExperienceReward(card, level)
+
+                val event1 = CardQuestLevelUpEvent(card, quest, level, current, exp).apply { call() }
+                exp = event1.experienceAdded
+
+                val event2 = CardExperienceChangeEvent(card, cardExperience, cardExperience + exp).apply { call() }
+                if (!event2.isCancelled)
+                    cardExperience += exp
+
+                card.stats["quest.${quest.name.lowercase()}"] = current
+            }
+        }
+    }
 
     // Other
 
