@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.api.card
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.serialization.ConfigurationSerializable
@@ -8,9 +9,10 @@ import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
-import java.lang.AssertionError
+import org.bukkit.util.ChatPaginator
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.pow
@@ -94,7 +96,7 @@ interface Card : ConfigurationSerializable {
          * @return Experience to next level
          */
         get() {
-            if (level == maxCardLevel) return 0.0
+            if (level >= maxCardLevel) return 0.0
             return toExperience(level + 1, rarity) - experience
         }
 
@@ -197,18 +199,37 @@ interface Card : ConfigurationSerializable {
      */
     val icon: ItemStack
         get() {
-            if (type.icon != null) return ItemStack(type.icon)
+            val item = if (type.icon != null) ItemStack(type.icon) else typeToItem[entityCardType] ?: throw AssertionError("No icon found for card type ${type.name}")
 
-            return typeToItem[entityCardType] ?: throw AssertionError("No icon found for card type ${type.name}")
+            return ItemStack(item).apply {
+                itemMeta = itemMeta.apply {
+                    displayName = String.format(BattleConfig.config.locale, BattleConfig.config.get("constants.card"), "${rarity.color}$name")
+
+                    if (rarity != Rarity.BASIC)
+                        lore = listOf(rarity.toString(), " ") + ChatPaginator.wordWrap("\"${BattleConfig.config.get("card.${this@Card.type.name.lowercase()}")}\"", 30).map { s -> "${ChatColor.YELLOW}$s" } +
+                                listOf(" ") +
+                                ChatPaginator.wordWrap(BattleConfig.config.get("card.${this@Card.type.name.lowercase()}.desc"), 30).map { s -> "${ChatColor.GRAY}$s" }
+
+                    addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)
+                }
+            }
         }
+
+    /**
+     * Fetches the current level of the quest for this [Card].
+     * @param quest Quest to Use
+     * @return Current Quest Level
+     * @see CardQuest.getCurrentLevel
+     */
+    fun getQuestLevel(quest: CardQuest): Int = quest.getCurrentLevel(this)
 
     /**
      * Fetches the quest completion percentage for this [Card].
      * @param quest Quest to Use
-     * @return Percentage Completion
-     * @see CardQuest.getProgress
+     * @return Percentage Completion until next level
+     * @see CardQuest.getProgressPercentage
      */
-    fun getQuestCompletion(quest: CardQuest): Double = quest.getProgress(this)
+    fun getQuestCompletion(quest: CardQuest): Double = quest.getProgressPercentage(this)
 
     // Serialization
 
