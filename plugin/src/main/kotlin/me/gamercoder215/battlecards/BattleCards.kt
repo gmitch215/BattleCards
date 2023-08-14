@@ -17,6 +17,7 @@ import me.gamercoder215.battlecards.util.BattleBlockData
 import me.gamercoder215.battlecards.util.CardUtils
 import me.gamercoder215.battlecards.util.cards
 import me.gamercoder215.battlecards.util.inventory.Items
+import me.gamercoder215.battlecards.util.set
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -57,7 +58,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
                         Bukkit.getOnlinePlayers().forEach {
                             it.inventory.cards.forEach { (slot, card) ->
                                 card.statistics.cardExperience += this@BattleCards.growthPassiveAmount
-                                it.inventory.setItem(slot, card.itemStack)
+                                it.inventory[slot] = card.itemStack
                             }
                         }
                     }
