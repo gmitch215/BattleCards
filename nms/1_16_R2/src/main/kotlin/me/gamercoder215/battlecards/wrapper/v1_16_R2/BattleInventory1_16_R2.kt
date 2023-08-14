@@ -11,7 +11,7 @@ internal class BattleInventory1_16_R2(
     size: Int
 ) : CraftInventoryCustom(null, size, name), BattleInventory {
 
-    private val attributes = mutableMapOf<String, Any>()
+    override val attributes = mutableMapOf<String, Any>()
 
     init {
         set("_id", id)
@@ -20,10 +20,6 @@ internal class BattleInventory1_16_R2(
 
     override fun set(key: String, value: Any) {
         attributes[key] = value
-    }
-
-    override fun getAttributes(): Map<String, Any> {
-        return attributes
     }
 
 }

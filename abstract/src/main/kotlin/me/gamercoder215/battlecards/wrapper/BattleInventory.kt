@@ -1,11 +1,11 @@
 package me.gamercoder215.battlecards.wrapper
 
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
 
+@Suppress("unchecked_cast")
 interface BattleInventory : Inventory {
 
-    fun getAttributes(): Map<String, Any>
+    val attributes: Map<String, Any>
 
     override fun getTitle(): String = get("_name", String::class.java, "Inventory")
 
@@ -13,21 +13,31 @@ interface BattleInventory : Inventory {
         get() = get("_id", String::class.java)
 
     var isCancelled: Boolean
-        get() = get("_cancel", Boolean::class.javaObjectType, false)
+        get() = get("_cancel", Boolean::class.java, false)
         set(value) = set("_cancel", value)
 
     operator fun set(key: String, value: Any)
 
-    operator fun get(key: String): Any? = getAttributes()[key]
+    operator fun get(key: String): Any? = attributes[key]
 
-    operator fun get(key: String, def: Any): Any = getAttributes()[key] ?: def
+    operator fun get(key: String, def: Any): Any = attributes[key] ?: def
 
-    operator fun <T> get(key: String, cast: Class<T>): T? = cast.cast(get(key))
+    operator fun <T> get(key: String, cast: Class<T>): T? = (if (cast in wrappers) (cast as Class<*>).kotlin.javaObjectType else cast).cast(get(key)) as? T
 
     operator fun <T> get(key: String, cast: Class<T>, def: T) = get(key, cast) ?: def
 
-    operator fun get(index: Int): ItemStack? = getItem(index)
+    private companion object {
 
-    operator fun set(index: Int, item: ItemStack?) = setItem(index, item)
+        private val wrappers = setOf(
+            Double::class,
+            Float::class,
+            Long::class,
+            Int::class,
+            Short::class,
+            Byte::class,
+            Char::class,
+            Boolean::class,
+        ).map { it.java }
 
+    }
 }
