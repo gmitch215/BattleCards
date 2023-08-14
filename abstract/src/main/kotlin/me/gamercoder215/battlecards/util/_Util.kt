@@ -24,7 +24,9 @@ enum class BattleSound(
 
     ENTITY_ENDER_DRAGON_GROWL("ENDERDRAGON_GROWL", "ENTITY_ENDERDRAGON_GROWL"),
 
-    ENTITY_WITHER_AMBIENT("WITHER_IDLE")
+    ENTITY_WITHER_AMBIENT("WITHER_IDLE"),
+
+    ITEM_BOOK_TURN_PAGE
 
     ;
 
@@ -136,6 +138,21 @@ enum class BattleMaterial(
     SPAWNER(
         { ItemStack(Material.matchMaterial("mob_spawner")) },
         { ItemStack(Material.matchMaterial("spawner")) }
+    ),
+
+    RED_STAINED_GLASS_PANE(
+        { ItemStack(Material.matchMaterial("stained_glass_pane"), 1, 14) },
+        { ItemStack(Material.matchMaterial("red_stained_glass_pane")) }
+    ),
+
+    YELLOW_STAINED_GLASS_PANE(
+        { ItemStack(Material.matchMaterial("stained_glass_pane"), 1, 4) },
+        { ItemStack(Material.matchMaterial("yellow_stained_glass_pane")) }
+    ),
+
+    LIME_STAINED_GLASS_PANE(
+        { ItemStack(Material.matchMaterial("stained_glass_pane"), 1, 5) },
+        { ItemStack(Material.matchMaterial("lime_stained_glass_pane")) }
     ),
 
     ;
