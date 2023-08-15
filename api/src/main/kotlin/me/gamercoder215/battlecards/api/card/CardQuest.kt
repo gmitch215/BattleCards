@@ -7,6 +7,8 @@ import java.lang.String.format
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
+private const val RARITY_MODIFIER = 0.248
+
 /**
  * Represents a Quest Road for a BattleCard
  */
@@ -22,45 +24,45 @@ enum class CardQuest(
      * Card Kills Quest
      */
     CARD_HUNTER(Material.matchMaterial("FILLED_MAP") ?: Material.MAP, 50,
-        { card, current -> (15.0 + (10 * current) + (5 * current.minus(1))).pow(1 + card.rarity.ordinal.times(0.07)).roundTo(50) },
+        { card, current -> (15.0 + (10 * current) + (5 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(50) },
         { card, needed -> card.statistics.cardKills / needed },
-        { card, level -> (100.0 * level) + (50.0 * level.minus(1)).pow(1 + card.rarity.ordinal.times(0.21)) }
+        { card, level -> (100.0 * level) + (50.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.232) }
     ),
 
     /**
      * Entity & Player Kills Quest
      */
     ENTITY_HUNTER(Material.matchMaterial("SPAWNER") ?: Material.matchMaterial("MOB_SPAWNER")!!, 100,
-        { card, current -> (30.0 + (20 * current) + (15 * current.minus(1))).pow(1 + card.rarity.ordinal.times(0.07)).roundTo(100) },
+        { card, current -> (30.0 + (20 * current) + (15 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(100) },
         { card, needed -> (card.statistics.entityKills + card.statistics.playerKills) / needed },
-        { card, level -> (75.0 * level) + (25.0 * level.minus(1)).pow(1 + card.rarity.ordinal.times(0.21)) }
+        { card, level -> (75.0 * level) + (25.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.23) }
     ),
 
     /**
      * Damage Dealt Quest
      */
     DAMAGER(Material.DIAMOND_SWORD, 60,
-        { card, current -> (250.0 + (100.0 * current) + (50.0 * current.minus(1))).pow(1 + card.rarity.ordinal.times(0.07)).roundTo(500) },
+        { card, current -> (250.0 + (100.0 * current) + (50.0 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(500) },
         { card, needed -> card.statistics.damageDealt / needed },
-        { card, level -> (100.0 * level) + (50.0 * level.minus(1)).pow(1 + card.rarity.ordinal.times(0.17)) }
+        { card, level -> (100.0 * level) + (50.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.237) }
     ),
 
     /**
      * Damage Received Quest
      */
     TANK(Material.IRON_CHESTPLATE, 60,
-        { card, current -> (350.0 + (125.0 * current) + (55.0 * current.minus(1))).pow(1 + card.rarity.ordinal.times(0.07)).roundTo(500) },
+        { card, current -> (350.0 + (125.0 * current) + (55.0 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(500) },
         { card, needed -> card.statistics.damageReceived / needed },
-        { card, level -> (150.0 * level) + (50.0 * level.minus(1)).pow(1 + card.rarity.ordinal.times(0.185)) }
+        { card, level -> (150.0 * level) + (50.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.24) }
     ),
 
     /**
      * Deaths Quest
      */
     REVIVER(Material.matchMaterial("TOTEM_OF_UNDYING") ?: Material.matchMaterial("TOTEM") ?: Material.DIAMOND, 30,
-        { card, current -> (20.0 + (5 * current) + (5 * current)).pow(1 + card.rarity.ordinal.times(0.07)).roundTo(5) },
+        { card, current -> (20.0 + (5 * current) + (5 * current)).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(5) },
         { card, needed -> card.statistics.deaths.toDouble() / needed },
-        { card, level -> (40.0 * level) + (20.0 * level.minus(1)).pow(1 + card.rarity.ordinal.times(0.26)) }
+        { card, level -> (40.0 * level) + (20.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.26) }
     )
 
     ;
@@ -100,7 +102,7 @@ enum class CardQuest(
         while (completion(card, stackedNeeded(card, i)).toDouble() >= 1.0)
             i++
 
-        return i - 1
+        return (i - 1).coerceAtLeast(0)
     }
 
     /**
@@ -135,6 +137,20 @@ enum class CardQuest(
         if (level == 0) return 0.0
 
         return expReward(card, level)
+    }
+
+    /**
+     * Fetches the total amount of experience this quest can offer.
+     * @param card Card to Use
+     * @return Total Experience Reward
+     * @see CardQuest.getExperienceReward
+     */
+    fun getTotalExperience(card: Card): Double {
+        var total = 0.0
+        for (i in 1..maxLevel)
+            total += getExperienceReward(card, i)
+
+        return total
     }
 
     private object Util {
