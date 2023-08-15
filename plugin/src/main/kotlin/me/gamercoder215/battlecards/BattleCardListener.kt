@@ -21,6 +21,7 @@ import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.*
 import org.bukkit.event.Cancellable
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -568,8 +569,10 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         if (!block.isCardBlock) return
 
         if (block["container"]?.toString()?.isNotEmpty() == true) {
-            event.isCancelled = true
-            p.openInventory(CONTAINERS_CARD_BLOCKS[block["container"].toString()])
+            event.setUseInteractedBlock(Event.Result.DENY)
+            if (p.isSneaking && p.itemInHand != null) return
+
+            p.openInventory(CONTAINERS_CARD_BLOCKS[block["container"].toString()].let { if (it == null) return else it() })
 
             if (block["success"] as? Boolean == true) p.playSuccess()
         }
