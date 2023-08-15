@@ -47,31 +47,31 @@ object Items {
 
     @JvmStatic
     val TINY_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Tiny Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+        { displayName = "${ChatColor.WHITE}Tiny Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 100.0 }
     )
 
     @JvmStatic
     val SMALL_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Small Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+        { displayName = "${ChatColor.GREEN}Small Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2500.0 }
     )
 
     @JvmStatic
     val MEDIUM_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Medium Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+        { displayName = "${ChatColor.BLUE}Medium Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 10000.0 }
     )
 
     @JvmStatic
     val LARGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Large Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+        { displayName = "${ChatColor.DARK_PURPLE}Large Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 500000.0 }
     )
 
     @JvmStatic
     val HUGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
-        { displayName = "${ChatColor.RESET}Huge Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+        { displayName = "${ChatColor.GOLD}Huge Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2000000.0 }
     )
 
@@ -158,16 +158,47 @@ object Items {
     val CARD_TABLE_RECIPES: List<CardWorkbenchRecipe> = listOf(
         CardWorkbenchRecipe(
             { matrix ->
-                matrix.filter { it.isCard }.size == 1 && matrix.any { it.nbt.getBoolean("exp_book") } && matrix.firstOrNull { it.isCard }?.card?.isMaxed != true
+                matrix.filter { it.isCard }.sumOf { it.amount } == 1 && matrix.any { it.nbt.getBoolean("exp_book") } && matrix.firstOrNull { it.isCard }?.card?.isMaxed != true
             },
             result@{ matrix ->
                 val expBooks = matrix.filter { it.nbt.getBoolean("exp_book") }
                 if (expBooks.isEmpty()) return@result null
 
                 val card = matrix.firstOrNull { it.isCard }?.card ?: return@result null
-                card.experience = (card.experience + expBooks.sumOf { it.nbt.getDouble("amount") }).coerceAtMost(card.maxCardExperience)
+
+                var nothing = true
+                add@for (book in expBooks) {
+                    for (i in 0 until book.amount) {
+                        if (card.experience + book.nbt.getDouble("amount") >= card.maxCardExperience) break@add
+
+                        card.experience += book.nbt.getDouble("amount")
+                        nothing = false
+                    }
+                }
+
+                if (nothing) return@result null
 
                 return@result card.itemStack
+            },
+            edit@{ matrix ->
+                matrix.apply {
+                    val card = this[indexOfFirst { it.isCard }].card!!
+
+                    this[indexOfFirst { it.isCard }] = ItemStack(Material.AIR)
+
+                    while (indexOfFirst { it.nbt.getBoolean("exp_book") } != -1) {
+                        val index = indexOfFirst { it.nbt.getBoolean("exp_book") }
+                        val expAdd = this[index].nbt.getDouble("amount")
+
+                        if (card.experience + expAdd >= card.maxCardExperience) break
+
+                        this[index] = this[index].apply {
+                            if (amount == 1) type = Material.AIR else amount -= 1
+                        }
+
+                        card.experience += expAdd
+                    }
+                }
             }
         )
     )
@@ -184,11 +215,11 @@ object Items {
 
     @JvmStatic
     private val GENERATED_ITEMS: Map<String, Double> = mapOf(
-        "tiny_experience_book" to 0.4,
-        "small_experience_book" to 0.1,
-        "medium_experience_book" to 0.02,
-        "large_experience_book" to 0.001,
-        "huge_experience_book" to 0.00005
+        "tiny_experience_book" to 0.04,
+        "small_experience_book" to 0.001,
+        "medium_experience_book" to 0.0002,
+        "large_experience_book" to 0.00001,
+        "huge_experience_book" to 0.0000005
     )
 
     @JvmStatic
@@ -215,19 +246,32 @@ object Items {
         return keys.elementAt(i)
     }
 
+    fun <T> Map<T, Double>.random(reroll: Int = 0): T? {
+        val (key, value) = entries.elementAt(r.nextInt(size))
+        if (r.nextDouble() < value) return key
+
+        if (reroll > 0)
+            return random(reroll - 1)
+
+        return null
+    }
+
     class CardWorkbenchRecipe {
 
         val result: (Array<ItemStack>) -> ItemStack?
         val predicate: (Array<ItemStack>) -> Boolean
+        val editMatrix: (Array<ItemStack>) -> Array<ItemStack>
 
-        constructor(predicate: (Array<ItemStack>) -> Boolean, result: (Array<ItemStack>) -> ItemStack?) {
+        constructor(predicate: (Array<ItemStack>) -> Boolean, result: (Array<ItemStack>) -> ItemStack?, editMatrix: (Array<ItemStack>) -> Array<ItemStack>) {
             this.result = result
             this.predicate = predicate
+            this.editMatrix = editMatrix
         }
 
-        constructor(predicate: (Array<ItemStack>) -> Boolean, result: ItemStack?) {
+        constructor(predicate: (Array<ItemStack>) -> Boolean, result: ItemStack?, editMatrix: (Array<ItemStack>) -> Array<ItemStack>) {
             this.result = { result }
             this.predicate = predicate
+            this.editMatrix = editMatrix
         }
 
     }

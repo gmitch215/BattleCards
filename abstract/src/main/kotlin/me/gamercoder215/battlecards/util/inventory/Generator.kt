@@ -14,7 +14,9 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import java.util.function.BiConsumer
 import java.util.function.Consumer
+import kotlin.math.ceil
 import kotlin.math.floor
 
 @Suppress("unchecked_cast")
@@ -99,6 +101,23 @@ object Generator {
     fun generateCardTable(): BattleInventory {
         val inv = genGUI("card_table", 45, get("menu.card_table"))
 
+        inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
+            val items = listOf(
+                inventory[10], inventory[11], inventory[12],
+                inventory[19], inventory[20], inventory[21],
+                inventory[28], inventory[29], inventory[30]
+            ).filterNotNull().toTypedArray()
+
+            items.withIndex().forEach { (i, item) ->
+                if (p.inventory.firstEmpty() == -1)
+                    p.world.dropItemNaturally(p.location, item)
+                else
+                    p.inventory.addItem(item)
+
+                inventory[i] = null
+            }
+        }
+
         for (i in 4..7)
             for (j in 1..3) inv[i + j.times(9)] = Items.GUI_BACKGROUND
 
@@ -135,7 +154,7 @@ object Generator {
 
             inv[22] = Items.back()
         } else {
-            val count = (quest.maxLevel / progressString.size) + 1
+            val count = ceil(quest.maxLevel / progressString.size.toDouble()).toInt()
             val invs = mutableListOf<BattleInventory>()
 
             var lvl = 1
@@ -152,7 +171,8 @@ object Generator {
                         displayName = "${ChatColor.GOLD}${get("menu.card_quests.${quest.name.lowercase()}")}"
 
                         lore = listOf(
-                            "${ChatColor.AQUA}${format(get("constants.level"), card.getQuestLevel(quest).formatInt())}"
+                            "${ChatColor.AQUA}${format(get("constants.level"), card.getQuestLevel(quest).formatInt())}",
+                            "${ChatColor.YELLOW}${format(get("constants.total_experience_reward"), quest.getTotalExperience(card).withSuffix())}"
                         )
 
                         addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)

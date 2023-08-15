@@ -5,7 +5,7 @@ import org.bukkit.inventory.Inventory
 @Suppress("unchecked_cast")
 interface BattleInventory : Inventory {
 
-    val attributes: Map<String, Any>
+    val attributes: Map<String, Any?>
 
     override fun getTitle(): String = get("_name", String::class.java, "Inventory")
 
@@ -16,7 +16,7 @@ interface BattleInventory : Inventory {
         get() = get("_cancel", Boolean::class.java, false)
         set(value) = set("_cancel", value)
 
-    operator fun set(key: String, value: Any)
+    operator fun set(key: String, value: Any?)
 
     operator fun get(key: String): Any? = attributes[key]
 
