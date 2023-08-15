@@ -182,11 +182,13 @@ object CardUtils {
     fun createLine(card: Card): String {
         val builder = StringBuilder()
 
-        val nextExp = Card.toExperience(card.level + 1, card.rarity)
-        val add = (nextExp - Card.toExperience(card.level, card.rarity)) / 20
+        val min = Card.toExperience(card.level, card.rarity)
+        val next = Card.toExperience(card.level + 1, card.rarity)
+
+        val add = (next - min) / 20.0
 
         for (i in 1..20) {
-            if (nextExp - card.remainingExperience >= add * (i + 1)) builder.append("=")
+            if ((next - min) - card.remainingExperience >= add * (i + 1)) builder.append("=")
             else builder.append("-")
         }
 
