@@ -9,14 +9,14 @@ internal class BattleInventory1_10_R1(
     size: Int
 ) : CraftInventoryCustom(null, size, name), BattleInventory {
 
-    override val attributes = mutableMapOf<String, Any>()
+    override val attributes = mutableMapOf<String, Any?>()
 
     init {
         set("_id", id)
         set("_name", name)
     }
 
-    override fun set(key: String, value: Any) {
+    override fun set(key: String, value: Any?) {
         attributes[key] = value
     }
     override fun getTitle() = super<BattleInventory>.getTitle()
