@@ -125,11 +125,12 @@ class IBattleStatistics(
                 val event1 = CardQuestLevelUpEvent(card, quest, level, current, exp).apply { call() }
                 exp = event1.experienceAdded
 
-                val event2 = CardExperienceChangeEvent(card, cardExperience, cardExperience + exp).apply { call() }
-                if (!event2.isCancelled)
-                    cardExperience += exp
-
                 card.stats["quest.${quest.name.lowercase()}"] = current
+                if (card.isMaxed) continue
+
+                val event2 = CardExperienceChangeEvent(card, cardExperience, (cardExperience + exp).coerceAtMost(maxCardExperience)).apply { call() }
+                if (!event2.isCancelled)
+                    cardExperience = (cardExperience + exp).coerceAtMost(maxCardExperience)
             }
         }
     }
