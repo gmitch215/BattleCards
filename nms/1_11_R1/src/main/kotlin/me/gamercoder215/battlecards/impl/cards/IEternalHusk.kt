@@ -15,6 +15,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Creature
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Husk
+import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause
@@ -68,6 +69,7 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
     @CardAbility("card.eternal_husk.ability.deathly_healing", ChatColor.DARK_GRAY)
     @UserDamage
     private fun deathlyHealing(event: EntityDamageEvent) {
+        val p: Player = this.p
         val causes = setOf(
             DamageCause.POISON,
             if (level >= 5) DamageCause.WITHER else null
@@ -75,7 +77,7 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
 
         if (event.cause in causes) {
             event.isCancelled = true
-            p.health += event.finalDamage.coerceAtMost(p.maxHealth - p.health)
+            p.health += event.finalDamage.coerceAtMost(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).value - p.health)
         }
     }
 
