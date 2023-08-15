@@ -13,11 +13,8 @@ import me.gamercoder215.battlecards.impl.Type
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.impl.cards.IBattleCardListener
 import me.gamercoder215.battlecards.placeholderapi.BattlePlaceholders
-import me.gamercoder215.battlecards.util.BattleBlockData
-import me.gamercoder215.battlecards.util.CardUtils
-import me.gamercoder215.battlecards.util.cards
+import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.inventory.Items
-import me.gamercoder215.battlecards.util.set
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -34,6 +31,10 @@ import java.io.EOFException
 import java.io.File
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 private const val bstats = 18166
 private const val github = "GamerCoder215/BattleCards"
@@ -62,7 +63,13 @@ class BattleCards : JavaPlugin(), BattleConfig {
                             }
                         }
                     }
-                }.runTaskTimer(this, hourTicks, hourTicks)
+                }.runTaskTimer(this, hourTicks, hourTicks),
+                object : BukkitRunnable() {
+                    override fun run() {
+                        saveMetadata()
+                        BattleUtil.sync({ loadBlockMetadata() })
+                    }
+                }.runTaskTimerAsynchronously(this, 600, 600)
             )
         )
     }
@@ -132,7 +139,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
         for (card in IBattleCard.spawned.values) card.despawn()
         logger.info("Unloaded Cards...")
 
-        tasks.forEach(BukkitTask::cancel)
+        tasks.forEach { try { it.cancel() } catch (ignored: IllegalStateException) {} }
         Bukkit.getOnlinePlayers().forEach { w.removePacketInjector(it) }
         logger.info("Stopping Tasks...")
 
@@ -142,25 +149,67 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Finished!")
     }
 
-    private fun loadMetadata() {
+    private fun loadBlockMetadata(): Map<Location, BattleBlockData> {
         val metadata = File(dataFolder, "metadata").apply { if (!exists()) mkdir() }
+        val blockMetadata = File(metadata, "blocks").apply { if (!exists()) mkdir() }
 
-        val blockData = File(metadata, "blockdata.dat").apply { if (!exists()) createNewFile() }
+        val map = mutableMapOf<Location, BattleBlockData>()
+        for (folder in blockMetadata.listFiles() ?: arrayOf()) {
+            if (!folder.isDirectory) continue
 
-        try {
-            BukkitObjectInputStream(blockData.inputStream()).use {
-                CardUtils.BLOCK_DATA.putAll(it.readObject() as MutableMap<Location, BattleBlockData>)
+            for (chunkFile in folder.listFiles() ?: arrayOf()) {
+                if (!chunkFile.isFile) continue
+
+                try {
+                    val marked = AtomicBoolean(false)
+                    BukkitObjectInputStream(chunkFile.inputStream()).use { stream ->
+                        val m = (stream.readObject() as MutableMap<Location, BattleBlockData>)
+                            .filterKeys { !it.block.isEmpty && !it.block.isLiquid }
+
+                        if (m.isEmpty())
+                            marked.set(true)
+                        else
+                            map.putAll(m)
+                    }
+
+                    if (marked.get()) chunkFile.delete()
+                } catch (e: EOFException) {
+                    chunkFile.delete()
+                }
             }
-        } catch (ignored: EOFException) {}
+        }
+
+        return map
     }
 
-    private fun saveMetadata() {
+    private fun loadMetadata() {
+//        val metadata = File(dataFolder, "metadata").apply { if (!exists()) mkdir() }
+
+        // Block Metadata
+        CardUtils.BLOCK_DATA.putAll(loadBlockMetadata())
+    }
+
+    fun saveMetadata() {
         val metadata = File(dataFolder, "metadata").apply { if (!exists()) mkdir() }
 
-        val blockData = File(metadata, "blockdata.dat").apply { if (!exists()) createNewFile() }
+        // Block Metadata
 
-        BukkitObjectOutputStream(blockData.outputStream()).use {
-            it.writeObject(CardUtils.BLOCK_DATA)
+        val blockMetadata = File(metadata, "blocks").apply { if (!exists()) mkdir() }
+        val splitBlockData: MutableMap<File, MutableMap<Location, BattleBlockData>> = mutableMapOf()
+
+        for ((location, data) in CardUtils.BLOCK_DATA) {
+            if (location.world == null) continue
+            val parent = File(blockMetadata, location.world.uid.toString()).apply { if (!exists()) mkdir() }
+            val file = File(parent, "bd.${location.chunk.x}.${location.chunk.z}.dat").apply { if (!exists()) createNewFile() }
+
+            splitBlockData.putIfAbsent(file, mutableMapOf())
+            splitBlockData[file]!![location] = data
+        }
+
+        for ((file, data) in splitBlockData) {
+            BukkitObjectOutputStream(file.outputStream()).use {
+                it.writeObject(data)
+            }
         }
     }
 
