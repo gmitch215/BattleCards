@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.api.card
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
@@ -271,6 +272,8 @@ interface Card : ConfigurationSerializable {
                     is Material -> ItemStack(value)
                     is ItemStack -> value
                     is String -> {
+                        if (Bukkit.getServer() == null) return@mapNotNull null
+
                         val head = Material.matchMaterial("PLAYER_HEAD")
                         (if (head == null) ItemStack(Material.matchMaterial("SKULL_ITEM"), 1, 3) else ItemStack(head)).apply {
                             itemMeta = (itemMeta as SkullMeta).apply { owner = value }
@@ -293,12 +296,14 @@ interface Card : ConfigurationSerializable {
          */
         @JvmStatic
         fun toLevel(experience: Double, rarity: Rarity = Rarity.COMMON): Int {
-            return when (experience) {
-                in 0.0..600.0 -> 1
-                in Double.NEGATIVE_INFINITY..0.0 -> throw IllegalArgumentException("Experience cannot be negative!")
+            return when {
+                experience > rarity.maxCardExperience -> throw IllegalArgumentException("Experience cannot be greater than ${rarity.maxCardExperience}!")
+                experience < 0.0 -> throw IllegalArgumentException("Experience cannot be negative!")
                 else -> {
+                    if (experience == rarity.maxCardExperience) return rarity.maxCardLevel
+
                     var level = 1
-                    while (toExperience(level, rarity) < experience) level++
+                    while (experience >= toExperience(level + 1, rarity)) level++
                     level
                 }
             }
@@ -315,15 +320,14 @@ interface Card : ConfigurationSerializable {
             return when (level) {
                 in (rarity.maxCardLevel + 1)..Int.MAX_VALUE -> throw IllegalArgumentException("Level must be less than or equal to ${rarity.maxCardLevel}!")
                 in Int.MIN_VALUE.. 0 -> throw IllegalArgumentException("Level must be positive!")
-                1 -> 0.0
                 else -> {
                     var exp = 0.0
-                    for (i in 2..level)
+                    for (i in 1 until level)
                         exp += floor(rarity.experienceModifier.pow(i / 2.0) * 500)
 
                     val rem = exp % 50
 
-                    if (exp >= 25) exp - rem + 50 else exp - rem
+                    if (rem >= 25) exp - rem + 50 else exp - rem
                 }
             }
         }
