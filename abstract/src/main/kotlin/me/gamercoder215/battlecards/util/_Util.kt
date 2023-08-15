@@ -1,11 +1,14 @@
 package me.gamercoder215.battlecards.util
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitRunnable
+import org.bukkit.scheduler.BukkitTask
 import java.io.Serializable
 
 // Enums
@@ -178,5 +181,17 @@ class BattleBlockData(block: Block) : Serializable {
     private val location: Location = block.location
 
     internal val attributes: MutableMap<String, Any> = mutableMapOf()
+
+    override fun toString(): String = "BattleBlockData(location=$location, attributes=$attributes)"
+
+}
+
+// Objects
+
+object BattleUtil {
+
+    fun sync(runnable: () -> Unit, delay: Long = 0L): BukkitTask = object : BukkitRunnable() { override fun run() = runnable() }.runTaskLater(BattleConfig.plugin, delay)
+
+    fun async(runnable: () -> Unit, delay: Long = 0L): BukkitTask = object : BukkitRunnable() { override fun run() = runnable() }.runTaskLaterAsynchronously(BattleConfig.plugin, delay)
 
 }
