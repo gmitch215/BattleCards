@@ -38,9 +38,9 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
 
     override fun loadAttachmentMods() {
         attachmentMods.put(
-            { it.helmet.type == Material.GREEN_BANNER },
+            { it.helmet.type == Material.LIGHT_GRAY_BANNER },
             {
-                helmet = ItemStack(Material.GREEN_BANNER).apply {
+                helmet = ItemStack(Material.LIGHT_GRAY_BANNER).apply {
                     itemMeta = (itemMeta as BannerMeta).apply { patterns = capePattern }
                 }
             }
@@ -60,7 +60,7 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
     }
 
     @CardAbility("card.necromancer.ability.bullet", ChatColor.AQUA)
-    @Passive(100, CardOperation.SUBTRACT, 2, 70)
+    @Passive(200, CardOperation.SUBTRACT, 2, min = 100)
     private fun bullet() {
         val target = (entity.getNearbyEntities(20.0, 20.0, 20.0) + listOf(entity.target))
             .filterIsInstance<LivingEntity>()
@@ -74,7 +74,7 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
     }
 
     @CardAbility("card.necromancer.ability.rise_of_the_undead", ChatColor.GOLD)
-    @Passive(180, CardOperation.SUBTRACT, 4, 140)
+    @Passive(400, CardOperation.SUBTRACT, 4, min = 220)
     private fun riseUndead() {
         val minionCap = (15 + level).coerceAtMost(30)
         if (minions.size >= minionCap) return
@@ -82,10 +82,10 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
         val count = r.nextInt(2, 5).coerceAtMost( minionCap - minions.size)
         for (i in 0 until count)
             minion(Skeleton::class.java) {
-                entity.equipment.helmet = ItemStack(Material.IRON_BLOCK)
+                equipment.helmet = ItemStack(Material.IRON_BLOCK)
 
                 if (r.nextBoolean())
-                    entity.equipment.itemInMainHand = ItemStack(Material.IRON_SWORD).apply {
+                    equipment.itemInMainHand = ItemStack(Material.IRON_SWORD).apply {
                         itemMeta = itemMeta.apply {
                             isUnbreakable = true
 
@@ -93,7 +93,7 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
                         }
                     }
                 else
-                    entity.equipment.itemInMainHand = ItemStack(Material.BOW).apply {
+                    equipment.itemInMainHand = ItemStack(Material.BOW).apply {
                         itemMeta = itemMeta.apply {
                             isUnbreakable = true
 
@@ -113,17 +113,21 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
     }
 
     @CardAbility("card.necromancer.ability.undead_monster", ChatColor.DARK_GREEN)
-    @Passive(300, CardOperation.SUBTRACT, 5, 200)
+    @Passive(460, CardOperation.SUBTRACT, 5, min = 300)
     @UnlockedAt(25)
     private fun undeadMonster() {
         val minionCap = (15 + level).coerceAtMost(30)
         if (minions.size >= minionCap) return
 
         minion(WitherSkeleton::class.java) {
-            entity.equipment.helmet = ItemStack(Material.DIAMOND_BLOCK)
+            equipment.helmet = ItemStack(Material.DIAMOND_BLOCK)
 
-            getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 100.0 + ((level - 25) * 1.5).coerceAtMost(25.0)
-            getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)!!.baseValue = 9.5 + ((level - 25) * 0.1).coerceAtMost(1.5)
+            val health = 100.0 + ((level - 25) * 1.5).coerceAtMost(25.0)
+
+            getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = health
+            this.health = health
+
+            getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)!!.baseValue = 9.5 + ((level - 25) * 0.25).coerceAtMost(11.5)
             getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE)!!.baseValue = 150.0
         }
     }
