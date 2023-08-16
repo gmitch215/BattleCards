@@ -183,7 +183,7 @@ interface Card : ConfigurationSerializable {
          * Fetches the BattleCard Entity class for this Card Data.
          * @return BattleCard Entity Class
          */
-        get() = type.getEntityClass()
+        get() = type.entityClass
 
     val entityCardType: EntityType?
         /**
@@ -191,7 +191,7 @@ interface Card : ConfigurationSerializable {
          * @return BattleCard EntityType, or null if not found
          */
         get() = EntityType.entries.firstOrNull {
-            it.entityClass == type.getEntityClass()
+            it.entityClass == type.entityClass
         }
 
     /**

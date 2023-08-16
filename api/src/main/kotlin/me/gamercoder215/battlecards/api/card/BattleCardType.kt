@@ -197,8 +197,6 @@ enum class BattleCardType {
     ETERNAL_HUSK(1, "Husk", Rarity.MYTHICAL, Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("ENDER_PORTAL_FRAME") ?: Material.BEDROCK)
     ;
 
-    private val entityClass: Class<out LivingEntity>?
-
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null) : this(
         generation,
         try {
@@ -248,7 +246,7 @@ enum class BattleCardType {
      * Fetches the Entity Class that this BattleCardType uses.
      * @return Entity Class found, or null if not found
      */
-    fun getEntityClass(): Class<out LivingEntity>? = entityClass
+    val entityClass: Class<out LivingEntity>?
 
     /**
      * Creates an empty card data object.
@@ -265,7 +263,7 @@ enum class BattleCardType {
          */
         @JvmStatic
         fun fromClass(clazz: Class<out BattleCard<*>>): BattleCardType? {
-            return entries.firstOrNull { it.getEntityClass() == clazz }
+            return entries.firstOrNull { it.entityClass == clazz }
         }
 
     }
