@@ -111,3 +111,9 @@ Cards:
       # RegEx Pattern against an entity name to match for it to not drop a Basic Card
       # RegEx Tutorial: https://www.sitepoint.com/learn-regex/
       Ignore: ""
+
+  # Management for Card Trades for Villagers (1.14+)
+  Trades:
+    # The Chance of a Villager getting its replenished trade with a BattleCard-Related Trade
+    # Example: 0.2 = 20% Chance
+    Chance: 0.2

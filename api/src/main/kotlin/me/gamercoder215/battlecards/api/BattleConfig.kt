@@ -137,6 +137,9 @@ interface BattleConfig {
             if (!config.isBoolean("Cards.Basic.Drops.Enabled")) config["Cards.Basic.Drops.Enabled"] = true
             if (!config.isString("Cards.Basic.Drops.Ignore")) config["Cards.Basic.Drops.Ignore"] = ""
 
+            if (!config.isConfigurationSection("Cards.Trades")) config.createSection("Cards.Trades")
+            if (!config.isDouble("Cards.Trades.Chance")) config["Cards.Trades.Cjamce"] = 0.2
+
             config.save(configurationFile)
 
             return config
@@ -447,5 +450,17 @@ interface BattleConfig {
          * @param value Maximum Cards
          */
         set(value) = setConfig("Cards.MaxSpawned", value)
+
+    var cardTradesChance: Double
+        /**
+         * Fetches the chance that a villager will get a BattleCard-related trade.
+         * @return Chance
+         */
+        get() = configuration.getDouble("Cards.Trades.Chance")
+        /**
+         * Sets the chance that a villager will get a BattleCard-related trade.
+         * @param value Chance
+         */
+        set(value) = setConfig("Cards.Trades.Chance", value)
 
 }
