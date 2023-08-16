@@ -34,7 +34,7 @@ class IPrinceHusk(data: ICard) : IBattleCard<Husk>(data) {
     }
 
     @CardAbility("card.prince_husk.ability.royal_guard", ChatColor.DARK_BLUE)
-    @Passive(600, CardOperation.SUBTRACT, 5, 600, 100)
+    @Passive(600, CardOperation.SUBTRACT, 5, min = 100)
     private fun royalGuard() {
         minion(Husk::class.java) {
             equipment.itemInMainHand = ItemStack(if (r.nextDouble() < 0.25) Material.IRON_AXE else Material.IRON_SWORD)
