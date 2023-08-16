@@ -93,7 +93,9 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
         for (i in 0..amount)
             minion(Zombie::class.java) {
                 isBaby = true
-                getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 20.0 + (level / 5.0)
+                val health = 20.0 + (level / 5.0)
+                getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = health
+                this.health = health
 
                 entity.equipment!!.helmet = ItemStack(Material.TNT).apply {
                     itemMeta = itemMeta!!.apply {
@@ -104,6 +106,7 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
 
                 object : BukkitRunnable() {
                     override fun run() {
+                        if (isDead) return cancel()
                         remove()
                         world.createExplosion(location, 2F, false, false, entity)
                     }
