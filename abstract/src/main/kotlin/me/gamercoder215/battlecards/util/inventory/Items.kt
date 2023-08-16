@@ -34,6 +34,12 @@ object Items {
     )
 
     @JvmStatic
+    val LOCKED: ItemStack =
+        builder(Material.BEDROCK) { displayName = "${ChatColor.DARK_PURPLE}${get("constants.locked")}" }
+
+    // Card Items
+
+    @JvmStatic
     val CARD_TABLE: ItemStack = builder(BattleMaterial.CRAFTING_TABLE,
         { displayName = "${ChatColor.RESET}Card Table" },
         { nbt -> nbt["card_block"] = true; nbt.id = "card_table"
@@ -78,7 +84,7 @@ object Items {
     // Static Util
 
     @JvmStatic
-    fun builder(material: Material, action: (ItemMeta) -> Unit): ItemStack {
+    fun builder(material: Material, action: ItemMeta.() -> Unit): ItemStack {
         return ItemStack(material).apply {
             itemMeta = itemMeta.apply {
                 action(this)
