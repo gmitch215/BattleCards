@@ -82,14 +82,24 @@ object Generator {
         } else
             inv[13] = info
 
-        inv[22] = ItemStack(Material.CHEST).apply {
-            itemMeta = itemMeta.apply {
-                displayName = "${ChatColor.GOLD}${get("menu.card_quests")}" // TODO Translate
-            }
-        }.nbt { nbt ->
-            nbt.id = "card:info_item"
-            nbt["type"] = "quests"
-        }
+        inv[22] =
+            if (card.level >= floor(card.maxCardLevel / 2.0))
+                ItemStack(Material.CHEST).apply {
+                    itemMeta = itemMeta.apply {
+                        displayName = "${ChatColor.GOLD}${get("menu.card_quests")}"
+                    }
+                }.nbt { nbt ->
+                    nbt.id = "card:info_item"
+                    nbt["type"] = "quests"
+                }
+            else
+                Items.LOCKED.clone().apply {
+                    itemMeta = itemMeta.apply {
+                        lore = listOf(
+                            "${ChatColor.YELLOW}${format(get("constants.unlocks_at_level"), floor(card.maxCardLevel / 2.0).format())}"
+                        )
+                    }
+                }
 
         while (inv.firstEmpty() != -1)
             inv[inv.firstEmpty()] = Items.GUI_BACKGROUND
@@ -196,7 +206,7 @@ object Generator {
                         lvl < (currentLvl + 1) -> BattleMaterial.LIME_STAINED_GLASS_PANE.findStack()
                         else -> BattleMaterial.RED_STAINED_GLASS_PANE.findStack()
                     }.apply {
-                        val unlocked = lvl < currentLvl
+                        val unlocked = lvl <= currentLvl
                         val color = if (unlocked) ChatColor.GREEN else ChatColor.AQUA
 
                         itemMeta = itemMeta.apply {

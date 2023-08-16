@@ -7,7 +7,7 @@ import java.lang.String.format
 import kotlin.math.pow
 import kotlin.math.roundToLong
 
-private const val RARITY_MODIFIER = 0.248
+private const val RARITY_MODIFIER = 0.478
 
 /**
  * Represents a Quest Road for a BattleCard
