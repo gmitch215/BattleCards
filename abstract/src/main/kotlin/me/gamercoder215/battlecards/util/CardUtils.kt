@@ -40,7 +40,7 @@ object CardUtils {
                     }
 
             newLocation.yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
-            newLocation.pitch = 0f
+            newLocation.pitch = 0F
 
             val entity = card.entity.world.spawn(newLocation, ArmorStand::class.java).apply {
                 isSmall = attachment.small
@@ -56,10 +56,12 @@ object CardUtils {
                 if (attachment.local)
                     local(card.entity.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
                         yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
-                        pitch = 0f
+                        pitch = 0F
                     }
                 else
                     card.entity.location.apply {
+                        yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
+                        pitch = 0F
                         x += attachment.offsetX
                         y += attachment.offsetY
                         z += attachment.offsetZ
@@ -86,8 +88,8 @@ object CardUtils {
                         z += attachment.offsetZ
                     }
 
-            newLocation.yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
-            newLocation.pitch = 0f
+            newLocation.yaw = w.getYBodyRot(minion) + attachment.offsetYaw
+            newLocation.pitch = 0F
 
             val entity = minion.world.spawn(newLocation, ArmorStand::class.java).apply {
                 isSmall = attachment.small
@@ -100,11 +102,13 @@ object CardUtils {
             map[entity.uniqueId] = {
                 if (attachment.local)
                     local(minion.location, Vector(attachment.offsetX, attachment.offsetY, attachment.offsetZ)).apply {
-                        yaw = w.getYBodyRot(card.entity) + attachment.offsetYaw
-                        pitch = 0f
+                        yaw = w.getYBodyRot(minion) + attachment.offsetYaw
+                        pitch = 0F
                     }
                 else
                     minion.location.apply {
+                        yaw = w.getYBodyRot(minion) + attachment.offsetYaw
+                        pitch = 0F
                         x += attachment.offsetX
                         y += attachment.offsetY
                         z += attachment.offsetZ
