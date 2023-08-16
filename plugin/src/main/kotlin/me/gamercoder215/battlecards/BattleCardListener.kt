@@ -384,7 +384,10 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             if (!BattleConfig.config.cardAttackPlayers && event.target is Player)
                 event.isCancelled = true
 
-            if (card.p.uniqueId == event.target?.uniqueId || event.reason.name == "TEMPT")
+            if (card.p.uniqueId == event.target.uniqueId || event.reason.name == "TEMPT")
+                event.isCancelled = true
+
+            if (event.target.isMinion && event.target.cardByMinion == card)
                 event.isCancelled = true
 
             if (event.target.isCard) {
@@ -395,11 +398,28 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             }
         }
 
-        if (event.entity.isMinion) {
-            val minions = event.target.card?.minions?.map { it.uniqueId } ?: event.target.cardByMinion?.minions?.map { it.uniqueId }
+        if (event.entity.isMinion && event.entity.cardByMinion != null) {
+            val card = event.entity.cardByMinion!!
+            val minions = event.target.card?.minions?.map { it.uniqueId } ?: event.target.cardByMinion?.minions?.map { it.uniqueId } ?: listOf()
 
-            if (minions?.contains(event.entity.uniqueId) == true)
+            if (minions.contains(event.entity.uniqueId))
                 event.isCancelled = true
+
+            if (event.target.card == card)
+                event.isCancelled = true
+
+            if (!BattleConfig.config.cardAttackPlayers && event.target is Player)
+                event.isCancelled = true
+
+            if (card.p.uniqueId == event.target.uniqueId || event.reason.name == "TEMPT")
+                event.isCancelled = true
+
+            if (event.target.isCard) {
+                val tCard = event.target.card!!
+
+                if (tCard.p.uniqueId == card.p.uniqueId)
+                    event.isCancelled = true
+            }
         }
     }
 
