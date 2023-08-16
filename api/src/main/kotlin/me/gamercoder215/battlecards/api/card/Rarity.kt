@@ -7,17 +7,17 @@ import org.bukkit.ChatColor
  */
 enum class Rarity(
     color: ChatColor,
-    experienceModifier: Double = 1.0,
+    experienceModifier: Double,
     maxCardLevel: Int = Card.MAX_LEVEL
 ) {
     /**
      * Represents the Basic rarity
      */
-    BASIC(ChatColor.WHITE),
+    BASIC(ChatColor.WHITE, 1.05),
     /**
      * Represents the Common rarity
      */
-    COMMON(ChatColor.GREEN, 1.05),
+    COMMON(ChatColor.GREEN, 1.075),
     /**
      * Represents the Uncommon rarity
      */
