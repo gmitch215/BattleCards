@@ -13,23 +13,23 @@ enum class Rarity(
     /**
      * Represents the Basic rarity
      */
-    BASIC(ChatColor.WHITE, 1.05),
+    BASIC(ChatColor.WHITE),
     /**
      * Represents the Common rarity
      */
-    COMMON(ChatColor.GREEN, 1.1),
+    COMMON(ChatColor.GREEN, 1.05),
     /**
      * Represents the Uncommon rarity
      */
-    UNCOMMON(ChatColor.DARK_GREEN, 1.15, 175),
+    UNCOMMON(ChatColor.DARK_GREEN, 1.1, 175),
     /**
      * Represents the Rare rarity
      */
-    RARE(ChatColor.BLUE, 1.2, 150),
+    RARE(ChatColor.BLUE, 1.15, 150),
     /**
      * Represents the Epic rarity
      */
-    EPIC(ChatColor.DARK_PURPLE, 1.3, 125),
+    EPIC(ChatColor.DARK_PURPLE, 1.25, 125),
     /**
      * Represents the Legend rarity
      */
@@ -37,11 +37,11 @@ enum class Rarity(
     /**
      * Represents the Mythical rarity
      */
-    MYTHICAL(ChatColor.LIGHT_PURPLE, 1.6, 75),
+    MYTHICAL(ChatColor.LIGHT_PURPLE, 1.65, 75),
     /**
      * Represents the Ultimate rarity
      */
-    ULTIMATE(ChatColor.AQUA, 2.2, 50),
+    ULTIMATE(ChatColor.AQUA, 2.3, 50),
 
     ;
 

@@ -26,7 +26,7 @@ enum class CardQuest(
     CARD_HUNTER(Material.matchMaterial("FILLED_MAP") ?: Material.MAP, 50,
         { card, current -> (15.0 + (10 * current) + (5 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(50) },
         { card, needed -> card.statistics.cardKills / needed },
-        { card, level -> (100.0 * level) + (50.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.232) }
+        { card, level -> ((100.0 * level) + (50.0 * level.minus(1))) * (7.35).pow(card.rarity.ordinal) }
     ),
 
     /**
@@ -35,7 +35,7 @@ enum class CardQuest(
     ENTITY_HUNTER(Material.matchMaterial("SPAWNER") ?: Material.matchMaterial("MOB_SPAWNER")!!, 100,
         { card, current -> (30.0 + (20 * current) + (15 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(100) },
         { card, needed -> (card.statistics.entityKills + card.statistics.playerKills) / needed },
-        { card, level -> (75.0 * level) + (25.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.23) }
+        { card, level -> ((75.0 * level) + (25.0 * level.minus(1))) * (6.59).pow(card.rarity.ordinal) }
     ),
 
     /**
@@ -44,7 +44,7 @@ enum class CardQuest(
     DAMAGER(Material.DIAMOND_SWORD, 60,
         { card, current -> (250.0 + (100.0 * current) + (50.0 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(500) },
         { card, needed -> card.statistics.damageDealt / needed },
-        { card, level -> (100.0 * level) + (50.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.237) }
+        { card, level -> ((100.0 * level) + (50.0 * level.minus(1))) * (6.765).pow(card.rarity.ordinal) }
     ),
 
     /**
@@ -53,7 +53,7 @@ enum class CardQuest(
     TANK(Material.IRON_CHESTPLATE, 60,
         { card, current -> (350.0 + (125.0 * current) + (55.0 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(500) },
         { card, needed -> card.statistics.damageReceived / needed },
-        { card, level -> (150.0 * level) + (50.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.24) }
+        { card, level -> ((150.0 * level) + (50.0 * level.minus(1))) * (6.665).pow(card.rarity.ordinal) }
     ),
 
     /**
@@ -62,7 +62,7 @@ enum class CardQuest(
     REVIVER(Material.matchMaterial("TOTEM_OF_UNDYING") ?: Material.matchMaterial("TOTEM") ?: Material.DIAMOND, 30,
         { card, current -> (20.0 + (5 * current) + (5 * current)).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(5) },
         { card, needed -> card.statistics.deaths.toDouble() / needed },
-        { card, level -> (40.0 * level) + (20.0 * level.minus(1)).pow(card.rarity.experienceModifier * 1.26) }
+        { card, level -> ((40.0 * level) + (20.0 * level.minus(1))) * (6.95).pow(card.rarity.ordinal) }
     )
 
     ;
