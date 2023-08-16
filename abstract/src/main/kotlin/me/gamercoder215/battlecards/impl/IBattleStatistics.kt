@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.api.events.CardExperienceChangeEvent
 import me.gamercoder215.battlecards.api.events.CardQuestLevelUpEvent
 import me.gamercoder215.battlecards.util.call
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.reflect.full.findAnnotations
 
@@ -113,6 +114,8 @@ class IBattleStatistics(
     // Checkers
 
     fun checkQuestCompletions() {
+        if (cardLevel < floor(maxCardLevel / 2.0)) return
+
         for (quest in CardQuest.entries) {
             val level = (card.stats["quest.${quest.name.lowercase()}"] ?: 0).toInt()
             if (level >= quest.maxLevel) continue
@@ -120,7 +123,7 @@ class IBattleStatistics(
             val current = card.getQuestLevel(quest)
             if (current > level) {
                 var exp = 0.0
-                for (i in level until current) exp += quest.getExperienceReward(card, level)
+                for (i in (level + 1) .. current) exp += quest.getExperienceReward(card, level)
 
                 val event1 = CardQuestLevelUpEvent(card, quest, level, current, exp).apply { call() }
                 exp = event1.experienceAdded
