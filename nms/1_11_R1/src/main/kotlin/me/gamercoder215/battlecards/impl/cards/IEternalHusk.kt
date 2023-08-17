@@ -68,16 +68,17 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
 
     @CardAbility("card.eternal_husk.ability.deathly_healing", ChatColor.DARK_GRAY)
     @UserDamage
+    @UnlockedAt(10)
     private fun deathlyHealing(event: EntityDamageEvent) {
         val p: Player = this.p
         val causes = setOf(
             DamageCause.POISON,
-            if (level >= 5) DamageCause.WITHER else null
+            if (level >= 20) DamageCause.WITHER else null
         ).filterNotNull()
 
         if (event.cause in causes) {
             event.isCancelled = true
-            p.health += event.finalDamage.coerceAtMost(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).value - p.health)
+            p.health = (p.health + event.finalDamage).coerceAtMost(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).value)
         }
     }
 
@@ -117,8 +118,11 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
                     }
                 }
 
-                getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 100.0 + ((level - 5) * 5.0).coerceAtMost(100.0)
-                getAttribute(Attribute.GENERIC_ARMOR)!!.baseValue = 20.0 + ((level - 5) * 0.25).coerceAtMost(15.0)
+                val health = 150.0 + ((level - 5) * 5.0).coerceAtMost(150.0)
+                getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = health
+                this.health = health
+
+                getAttribute(Attribute.GENERIC_ARMOR)!!.baseValue = 20.0 + ((level - 5) * 0.75).coerceAtMost(55.0)
 
                 target = entity.target
             }
