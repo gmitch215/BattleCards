@@ -3,7 +3,7 @@ package me.gamercoder215.battlecards.api.card
 import org.bukkit.ChatColor
 
 /**
- * Represents a BattleCard's Rarity
+ * Represents a Rarity, applicable to a [BattleCard]
  */
 enum class Rarity(
     color: ChatColor,
