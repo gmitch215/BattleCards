@@ -1,6 +1,8 @@
 package me.gamercoder215.battlecards.wrapper
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.card.item.CardEquipments
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.cards.*
 import me.gamercoder215.battlecards.util.BattleParticle
@@ -120,7 +122,7 @@ interface Wrapper {
         @JvmStatic
         fun loadCards() {
             val current = getServerVersion()
-            val loaded: MutableList<Class<out IBattleCard<*>>> = mutableListOf(
+            val cards: MutableList<Class<out IBattleCard<*>>> = mutableListOf(
                 IBasicCard::class.java,
                 IDiamondGolem::class.java,
                 IWitherKing::class.java,
@@ -137,6 +139,9 @@ interface Wrapper {
                 IThunderRevenant::class.java,
             )
 
+            val equipment: MutableList<CardEquipment> = mutableListOf()
+            equipment.addAll(CardEquipments.entries)
+
             versions.subList(0, versions.indexOf(current) + 1).forEach {
                 try {
                     val constr = Class.forName("${IBattleCard::class.java.`package`.name}.CardLoader$it")
@@ -145,14 +150,16 @@ interface Wrapper {
                     constr.isAccessible = true
 
                     val loader = constr.newInstance()
-                    loaded.addAll(loader.loadedCards())
+                    cards.addAll(loader.loadedCards())
+                    equipment.addAll(loader.loadedEquipment())
 
                     if (loader is Listener)
                         Bukkit.getPluginManager().registerEvents(loader, BattleConfig.plugin)
                 } catch (ignored: ClassNotFoundException) {}
             }
 
-            loaded.forEach(BattleConfig.config::registerCard)
+            cards.forEach(BattleConfig.config::registerCard)
+            equipment.forEach(BattleConfig.config::registerEquipment)
         }
 
         @JvmStatic

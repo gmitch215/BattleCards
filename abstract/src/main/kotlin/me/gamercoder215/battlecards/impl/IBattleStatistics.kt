@@ -12,7 +12,7 @@ import kotlin.math.pow
 import kotlin.reflect.full.findAnnotations
 
 class IBattleStatistics(
-    override val card: ICard
+    override val card: ICard,
 ) : BattleStatistics {
 
     override var playerKills: Int
@@ -62,6 +62,18 @@ class IBattleStatistics(
         set(value) {
             if (value < 0 || value > maxCardExperience) throw IllegalArgumentException("Experience must be between 0 and $maxCardExperience")
             card.stats["experience"] = value
+        }
+
+    override val equipmentSlots: Int
+        get() {
+            if (cardLevel < 10) return 0
+
+            val interval = (15 - (card.rarity.ordinal * 2)).coerceAtLeast(5)
+
+            var count = 1
+            while (count < 5 && cardLevel >= (count - 2) * interval) count++
+
+            return count
         }
 
     // Logic & Attributes

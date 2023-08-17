@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.Rarity
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.EntityType
@@ -196,12 +197,25 @@ interface BattleConfig {
     val registeredCards: Set<Class<out BattleCard<*>>>
 
     /**
+     * Fetches an immutable set of all of the registered CardEquipments.
+     */
+    val registeredEquipment: Set<CardEquipment>
+
+    /**
      * Registers a BattleCard.
      * @param card BattleCard to register
      * @throws IllegalArgumentException if the BattleCard is already registered
      */
     @Throws(IllegalArgumentException::class)
     fun registerCard(card: Class<out BattleCard<*>>)
+
+    /**
+     * Registers a CardEquipment.
+     * @param equipment CardEquipment to register
+     * @throws IllegalArgumentException if the CardEquipment is already registered
+     */
+    @Throws(IllegalArgumentException::class)
+    fun registerEquipment(equipment: CardEquipment)
 
     /**
      * Fetches a localized message from the plugin's language file.

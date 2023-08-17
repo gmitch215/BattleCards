@@ -136,4 +136,9 @@ interface BattleStatistics {
     val deployTime: Int
         get() = 30 + ((270 * cardLevel.minus(1)) / maxCardLevel.minus(1))
 
+    /**
+     * Fetches the total amount of equipment slots for CardEquipment.
+     */
+    val equipmentSlots: Int
+
 }

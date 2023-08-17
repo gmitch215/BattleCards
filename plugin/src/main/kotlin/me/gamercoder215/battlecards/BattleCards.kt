@@ -8,6 +8,7 @@ import me.gamercoder215.battlecards.api.BattleConfig.Companion.print
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.Type
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
@@ -105,6 +106,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
         Wrapper.loadCards()
         logger.info("Registered ${registeredCards.size} Cards")
+        logger.info("Registered ${registeredEquipment.size} Card Equipment")
 
         loadMetadata()
         Items.RECIPES.forEach { Bukkit.addRecipe(it) }
@@ -217,12 +219,22 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     val cards: MutableSet<Class<out BattleCard<*>>> = mutableSetOf()
 
+    val equipment: MutableSet<CardEquipment> = mutableSetOf()
+
     override val registeredCards: Set<Class<out BattleCard<*>>>
         get() = ImmutableSet.copyOf(cards)
+
+    override val registeredEquipment: Set<CardEquipment>
+        get() = ImmutableSet.copyOf(equipment)
 
     override fun registerCard(card: Class<out BattleCard<*>>) {
         if (cards.contains(card)) throw IllegalArgumentException("Card ${card.simpleName} already registered")
         cards.add(card)
+    }
+
+    override fun registerEquipment(equipment: CardEquipment) {
+        if (this.equipment.contains(equipment)) throw IllegalArgumentException("Equipment ${equipment.name} already registered")
+        this.equipment.add(equipment)
     }
 
     override fun get(key: String): String {

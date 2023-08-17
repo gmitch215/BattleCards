@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.api.card
 
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
@@ -167,6 +168,13 @@ interface BattleCard<T : LivingEntity> {
      * @return true if rideable, false otherwise
      */
     val isRideable: Boolean
+
+    val equipment: Set<CardEquipment>
+        /**
+         * Fetches the Equipment attached to this BattleCard.
+         * @return BattleCard Equipment
+         */
+        get() = data.equipment
 
     // Static Methods
 

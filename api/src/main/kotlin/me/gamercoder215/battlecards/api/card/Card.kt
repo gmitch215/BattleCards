@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.api.card
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -231,6 +232,18 @@ interface Card : ConfigurationSerializable {
      * @see CardQuest.getProgressPercentage
      */
     fun getQuestCompletion(quest: CardQuest): Double = quest.getProgressPercentage(this)
+
+    /**
+     * Fetches an immutable copy of the [CardEquipment] for this [Card].
+     */
+    val equipment: Set<CardEquipment>
+
+    val equipmentSlots: Int
+        /**
+         * Fetches the amount of equipment slots this card has.
+         * @return Equipment Slots
+         */
+        get() = statistics.equipmentSlots
 
     // Serialization
 

@@ -1,10 +1,12 @@
 package me.gamercoder215.battlecards.impl
 
+import com.google.common.collect.ImmutableSet
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.Rarity
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.events.entity.CardSpawnEvent
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.call
@@ -38,6 +40,11 @@ class ICard(
         get() = CardGenerator.toItem(this)
 
     val stats: MutableMap<String, Number> = mutableMapOf()
+
+    val cardEquipment: MutableMap<Int, CardEquipment> = mutableMapOf()
+
+    override val equipment: Set<CardEquipment>
+        get() = ImmutableSet.copyOf(cardEquipment.values)
 
     override val creationDate: Date
         get() = Date(creation)
