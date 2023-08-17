@@ -471,6 +471,22 @@ public interface <span class="typeNameLabel"><a href=Card.html>Card</a></span>
                                             <td class="colLast"></td>
                                         </tr>
                                         
+                                        <tr id="i28" class="altColor">
+                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=item/CardEquipment.html>CardEquipment</a>&gt;</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=Card.html#getEquipment()>getEquipment</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches an immutable copy of the <a href=item/CardEquipment.html>CardEquipment</a> for this <a href=Card.html>Card</a>.</td>
+                                        </tr>
+                                        
+                                        <tr id="i29" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=Card.html#getEquipmentSlots()>getEquipmentSlots</a>() </code>
+                                            </th>
+                                            <td class="colLast">Fetches the amount of equipment slots this card has.</td>
+                                        </tr>
+                                        
                                         </tbody>
                                     </table>
                                 </div>
@@ -975,12 +991,42 @@ public interface <span class="typeNameLabel"><a href=Card.html>Card</a></span>
                                     <!--   -->
                                 </a>
                                 <ul class=
-                                              "blockListLast"
+                                              "blockList"
                                           >
                                     <li class="blockList">
                                         <h4>getIcon</h4>
                                         <pre class="methodSignature"> ItemStack <a href=Card.html#getIcon()>getIcon</a>()</pre>
                                         <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getEquipment()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getEquipment</h4>
+                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Set.html>Set</a>&lt;<a href=item/CardEquipment.html>CardEquipment</a>&gt; <a href=Card.html#getEquipment()>getEquipment</a>()</pre>
+                                        <div class="block"><p>Fetches an immutable copy of the <a href=item/CardEquipment.html>CardEquipment</a> for this <a href=Card.html>Card</a>.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getEquipmentSlots()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockListLast"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getEquipmentSlots</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Integer.html>Integer</a> <a href=Card.html#getEquipmentSlots()>getEquipmentSlots</a>()</pre>
+                                        <div class="block"><p>Fetches the amount of equipment slots this card has.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
