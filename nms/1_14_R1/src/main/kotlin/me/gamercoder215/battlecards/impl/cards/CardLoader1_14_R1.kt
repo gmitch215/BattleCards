@@ -11,6 +11,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.VillagerAcquireTradeEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
+import kotlin.math.min
 
 internal class CardLoader1_14_R1 : CardLoader, Listener {
 
@@ -23,17 +24,19 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
 
     private companion object {
         @JvmStatic
-        private val villagerTrades: Map<Villager.Profession, Set<() -> MerchantRecipe>> = mapOf(
-            Villager.Profession.CLERIC to setOf {
-                MerchantRecipe(Items.TINY_EXPERIENCE_BOOK, 15).apply {
-                    setExperienceReward(true)
-                    villagerExperience = 5
+        private val villagerTrades: Map<Villager.Profession, Set<Pair<Int, () -> MerchantRecipe>>> = mapOf(
+            Villager.Profession.CLERIC to setOf(
+                2 to {
+                    MerchantRecipe(Items.TINY_EXPERIENCE_BOOK, 15).apply {
+                        setExperienceReward(true)
+                        villagerExperience = 5
 
-                    ingredients = listOf(
-                        ItemStack(Material.EMERALD, r.nextInt(30, 41))
-                    )
+                        ingredients = listOf(
+                            ItemStack(Material.EMERALD, r.nextInt(30, 41))
+                        )
+                    }
                 }
-            }
+            )
         )
     }
 
@@ -42,8 +45,12 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
         val villager = e.entity as? Villager ?: return
         if (villager.profession !in villagerTrades.keys) return
 
-        if (r.nextDouble() < BattleConfig.config.cardTradesChance)
-            e.recipe = (villagerTrades[villager.profession] ?: return).random()()
+        if (r.nextDouble() < BattleConfig.config.cardTradesChance) {
+            val (minLevel, recipe) = (villagerTrades[villager.profession] ?: return).random()
+
+            if (villager.villagerLevel >= minLevel)
+                e.recipe = recipe()
+        }
     }
 
 }
