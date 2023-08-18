@@ -1,5 +1,7 @@
 package me.gamercoder215.battlecards.impl.cards
 
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.card.item.CardEquipments
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.random
 import me.gamercoder215.battlecards.wrapper.CardLoader
@@ -13,6 +15,8 @@ internal class CardLoader1_16_R1 : CardLoader, Listener {
     override fun loadedCards(): Collection<Class<out IBattleCard<*>>> = listOf(
         INetherPrince::class.java
     )
+
+    override fun loadedEquipment(): Collection<CardEquipment> = CardEquipments1_16_R1.entries
 
     @EventHandler
     fun onGenerate(event: LootGenerateEvent) {

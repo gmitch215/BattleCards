@@ -9,6 +9,8 @@ import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent.Abilit
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import java.security.SecureRandom
 
 /**
@@ -31,10 +33,52 @@ enum class CardEquipments(
     ),
 
     /**
-     * Represents an Oak Sapling cardEquipment.
+     * Represents an Oak Sapling CardEquipment.
      */
     ENCHANTED_SAPLING(Material.matchMaterial("OAK_SAPLING") ?: Material.matchMaterial("SAPLING")!!, AVERAGE,
-        mod(health = 1.03, damage = 0.98)
+        mod(health = 1.025, damage = 0.97)
+    ),
+
+    /**
+     * Represents a Brick CardEquipment.
+     */
+    RAW_TERRACOTTA(Material.BRICK, AVERAGE,
+        mod(damage = 1.035, defense = 0.9675)
+    ),
+
+    /**
+     * Represents a Stone Axe CardEquipment.
+     */
+    COBBLED_AXE(Material.STONE_AXE, AVERAGE,
+        mod(damage = 1.03, defense = 0.955)
+    ),
+
+    /**
+     * Represents a Stone Sword CardEquipment.
+     */
+    COBBLED_SWORD(Material.STONE_SWORD, AVERAGE,
+        mod(damage = 1.025, defense = 0.96)
+    ),
+
+    /**
+     * Represents a Leather Tunic CardEquipment.
+     */
+    SILK_TUNIC(Material.LEATHER_CHESTPLATE, AVERAGE,
+        mod(defense = 1.04, speed = 1.005, knockbackResistance = 0.945)
+    ),
+
+    /**
+     * Represents a Leather Pants CardEquipment.
+     */
+    SILK_PANTS(Material.LEATHER_LEGGINGS, AVERAGE,
+        mod(defense = 1.035, speed = 1.0025, knockbackResistance = 0.96)
+    ),
+
+    /**
+     * Represents a Stone CardEquipment.
+     */
+    ROCK(Material.STONE, AVERAGE,
+        mod(damage = 1.008, speed = 0.99)
     ),
 
     // Frequent
@@ -44,6 +88,36 @@ enum class CardEquipments(
      */
     DAMAGE_CRYSTAL(Material.NETHER_STAR, FREQUENT,
         mod(health = 0.96, damage = 1.035, defense = 0.985)
+    ),
+
+    /**
+     * Represents a Compass CardEquipment.
+     */
+    SPEED_COMPASS(Material.COMPASS, FREQUENT,
+        mod(speed = 1.075, health = 0.988)
+    ),
+
+    /**
+     * Represents a Cactus CardEquipment.
+     */
+    HARDENED_CACTUS(Material.CACTUS, FREQUENT,
+        mod(damage = 0.955, defense = 1.01), ability("pricking", AbilityType.DEFENSIVE, 0.75) { card, event ->
+            val target = event.damager as? LivingEntity ?: return@ability
+            target.damage(1.5, card.entity)
+        }),
+
+    /**
+     * Represents an Ender Eye CardEquipment.
+     */
+    EYE_OF_BEGINNING(Material.matchMaterial("ENDER_EYE") ?: Material.matchMaterial("EYE_OF_ENDER")!!, FREQUENT,
+        mod(damage = 1.025, defense = 0.97, knockbackResistance = 1.01)
+    ),
+
+    /**
+     * Represents a Feather CardEquipment.
+     */
+    GHOST_FEATHER(Material.FEATHER, FREQUENT,
+        mod(speed = 1.0575, knockbackResistance = 0.96)
     ),
 
     // Historical
@@ -59,9 +133,35 @@ enum class CardEquipments(
      * Represents a Blaze Rod CardEquipment.
      */
     FIRE_ROD(Material.BLAZE_ROD, HISTORICAL,
-        mod(), ability("fire_rod", AbilityType.OFFENSIVE, 1.0) { _, event ->
+        mod(damage = 1.008), ability("flame", AbilityType.OFFENSIVE, 1.0) { _, event ->
             val target = event.entity as? LivingEntity ?: return@ability
             target.fireTicks += 20 * 3
+        }),
+
+    /**
+     * Represents a Beacon CardEquipment.
+     */
+    BEACON_OF_SOULS(Material.BEACON, HISTORICAL,
+        mod(health = 1.04, knockbackResistance = 0.965)
+    ),
+
+    /**
+     * Represents a Furnace CardEquipment.
+     */
+    INFERNO_OVEN(Material.FURNACE, HISTORICAL,
+        mod(damage = 1.085, defense = 0.95, knockbackResistance = 0.95), ability("flame_thorns", AbilityType.DEFENSIVE, 0.8) { _, event ->
+            val target = event.damager as? LivingEntity ?: return@ability
+            target.fireTicks += 30
+        }),
+
+    /**
+     * Represents a Sand CardEquipment.
+     */
+    QUICKSAND(Material.SAND, HISTORICAL,
+        mod(speed = 0.86), ability("slowing", AbilityType.OFFENSIVE, 0.75) { _, event ->
+            val target = event.entity as? LivingEntity ?: return@ability
+            target.addPotionEffect(PotionEffect(PotionEffectType.SLOW, 20 * 2, 0))
+            event.damage += 1.5
         }),
 
     // Mythological
@@ -72,6 +172,16 @@ enum class CardEquipments(
     NETHER_PEARLS(Material.matchMaterial("NETHER_WART") ?: Material.matchMaterial("NETHER_WARTS")!!, MYTHOLOGICAL,
         mod(health = 0.86, damage = 1.17, defense = 0.935)
     ),
+
+    /**
+     * Represents a Nether Star CardEquipment.
+     */
+    LIGHTNING_CRYSTAL(Material.NETHER_STAR, MYTHOLOGICAL,
+        mod(), ability("lightning", AbilityType.OFFENSIVE, { card -> 0.5 + (card.level * 0.05)}) { _, event ->
+            val target = event.entity as? LivingEntity ?: return@ability
+            target.world.strikeLightning(target.location)
+            event.damage += 5.0
+        }),
 
     // Special
 

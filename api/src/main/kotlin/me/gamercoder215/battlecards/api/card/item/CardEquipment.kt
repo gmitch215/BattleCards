@@ -137,7 +137,7 @@ interface CardEquipment : Serializable {
 
         init {
             this.action = { card, event ->
-                if (r.nextDouble() < probability(card))
+                if (r.nextDouble() < probability(card).coerceAtMost(1.0))
                     action(card, event)
             }
         }
