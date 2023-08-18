@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
@@ -102,6 +103,21 @@ inline var IBattleCard<*>.attackType: CardAttackType
 
 inline val ItemStack.nbt
     get() = NBTWrapper.of(this)
+
+val CardEquipment.itemStack: ItemStack
+    get() = ItemStack(item).apply {
+        itemMeta = itemMeta.apply {
+            displayName = "${rarity.color}${name.replace('_', ' ').capitalizeFully()}"
+            lore = listOf(
+                rarity.toString(),
+                " ",
+                "${ChatColor.DARK_GRAY}${get("constants.card_equipment")}"
+            )
+        }
+    }.nbt { nbt ->
+        nbt.id = "card_equipment"
+        nbt["name"] = name
+    }
 
 fun Entity.isMinion(card: IBattleCard<*>): Boolean {
     if (this !is Creature) return false
@@ -369,3 +385,8 @@ fun String.replace(vararg replacements: Pair<String, String>): String {
 
 fun String.replace(replacements: Map<String, String>): String =
     replace(*replacements.toList().toTypedArray())
+
+fun String.capitalizeFully(): String =
+    split(" ").joinToString(" ") {
+        s -> s.lowercase(BattleConfig.config.locale).replaceFirstChar { it.uppercase(BattleConfig.config.locale) }
+    }
