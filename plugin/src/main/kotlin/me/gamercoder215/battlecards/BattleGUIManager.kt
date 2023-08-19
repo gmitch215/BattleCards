@@ -123,12 +123,12 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                 val items = when (e) {
                     is InventoryClickEvent -> {
-                        if (e.clickedInventory !is BattleInventory) return@put
+                        if (e.action != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.clickedInventory !is BattleInventory) return@put
 
-                        listOf(e.cursor)
+                        listOf(e.cursor, if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) e.currentItem else null)
                     }
                     is InventoryDragEvent -> {
-                        if (e.rawSlots.all { it > 17 }) return@put
+                        if (e.rawSlots.all { it > 17 }  ) return@put
 
                         e.newItems.values.toList()
                     }
@@ -147,9 +147,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         if (pair.second.nbt.hasTag("_cancel")) return@mapNotNull null
 
                         pair.first to (BattleConfig.config.registeredEquipment.firstOrNull {
-                            it.name == pair.second.nbt.getString(
-                                "name"
-                            )
+                            it.name == pair.second.nbt.getString("name")
                         } ?: return@mapNotNull null)
                     }.toMap()
 
