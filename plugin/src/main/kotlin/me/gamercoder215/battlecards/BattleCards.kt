@@ -106,7 +106,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
         Wrapper.loadCards()
         logger.info("Registered ${registeredCards.size} Cards")
-        logger.info("Registered ${registeredEquipment.size} Card Equipment")
+        logger.info("Registered ${registeredEquipment.size} Card Equipments")
 
         loadMetadata()
         Items.RECIPES.forEach { Bukkit.addRecipe(it) }
@@ -235,6 +235,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
     override fun registerEquipment(equipment: CardEquipment) {
         if (this.equipment.contains(equipment)) throw IllegalArgumentException("Equipment ${equipment.name} already registered")
         this.equipment.add(equipment)
+        Items.PUBLIC_ITEMS[equipment.name.lowercase()] = equipment.itemStack
     }
 
     override fun get(key: String): String {
