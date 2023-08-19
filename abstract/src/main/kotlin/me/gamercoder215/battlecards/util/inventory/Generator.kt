@@ -11,6 +11,7 @@ import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
+import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.math.ceil
@@ -294,10 +296,24 @@ object Generator {
 
         val onClose = BiConsumer { p: Player, inventory: BattleInventory ->
             val c = inventory["card", ICard::class.java] ?: return@BiConsumer
+
+            val sent = AtomicBoolean(false)
+
             val items = listOf(2, 3, 4, 5, 6).map {
                 it to inventory[it]
             }.map { pair ->
                 if (pair.second?.nbt?.hasTag("_cancel") == true) return@map pair.first to null
+
+                if (pair.second != null && pair.second!!.amount > 1) {
+                    val item = pair.second!!.clone().apply { amount -= 1 }
+
+                    if (p.inventory.firstEmpty() == -1) {
+                        p.world.dropItemNaturally(p.location, item)
+                        sent.set(true)
+                    }
+                    else
+                        p.inventory.addItem(item)
+                }
 
                 pair.first to (BattleConfig.config.registeredEquipment.firstOrNull { it.name == pair.second?.nbt?.getString("name") })
             }.toMap()
@@ -309,6 +325,9 @@ object Generator {
                 else c.cardEquipment[it.key] = eq
             }
             p.itemInHand = c.itemStack
+
+            if (sent.get())
+                p.sendMessage(getError("error.card.equipment.input_1"))
         }
 
         inv["card"] = card
@@ -342,7 +361,7 @@ object Generator {
     @JvmStatic
     fun generateEffectiveModifiers(equipment: Map<Int, CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
         itemMeta = itemMeta.apply {
-            displayName = "${ChatColor.RED}${get("constants.effective_modifiers")}"
+            displayName = "${ChatColor.BLUE}${get("constants.effective_modifiers")}"
 
             val lore = mutableListOf<String>()
             val modifiers = equipment.values.map { it.mods }.run {

@@ -118,7 +118,28 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         }
                     })
             }
-            .put("card_equipment") { _, inv ->
+            .put("card_equipment") { e, inv ->
+                val p = e.whoClicked as Player
+
+                val items = when (e) {
+                    is InventoryClickEvent -> {
+                        if (e.clickedInventory !is BattleInventory) return@put
+
+                        listOf(e.cursor)
+                    }
+                    is InventoryDragEvent -> {
+                        if (e.rawSlots.all { it > 17 }) return@put
+
+                        e.newItems.values.toList()
+                    }
+                    else -> listOf()
+                }.filterNotNull().filter { it.type != Material.AIR }
+
+                if (items.isNotEmpty() && items.any { it.nbt.id != "card_equipment" }) {
+                    p.playFailure()
+                    return@put e.setCancelled(true)
+                }
+
                 BattleUtil.sync({
                     val equipment = listOf(2, 3, 4, 5, 6).mapNotNull {
                         it to (inv[it] ?: return@mapNotNull null)
