@@ -138,7 +138,7 @@ val CardEquipment.itemStack: ItemStack
 
             if (ability != null) {
                 val ability = ability!!
-                lore.add(get("constants.card_equipment.ability.${ability.name}"))
+                lore.add("${ChatColor.WHITE}${get("constants.card_equipment.ability.${ability.name}")}")
                 lore.addAll(
                     ChatPaginator.wordWrap(color(get("constants.card_equipment.ability.${ability.name}.desc")), 30).map { s -> "${ChatColor.GRAY}$s" }
                 )
