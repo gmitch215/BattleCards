@@ -27,8 +27,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.enchantment.PrepareItemEnchantEvent
 import org.bukkit.event.entity.*
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause
+import org.bukkit.event.inventory.PrepareItemCraftEvent
 import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
@@ -524,7 +526,11 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     fun onPlace(event: BlockPlaceEvent) {
         val item = event.itemInHand
         val nbt = item.nbt
+
+        if (nbt.hasTag("nointeract")) return event.setCancelled(true)
+
         val id = item.id ?: return
+
         if (!item.isCardBlock) return
 
         val block = event.block
@@ -596,6 +602,32 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
             if (block["success"] as? Boolean == true) p.playSuccess()
         }
+    }
+
+    // No Interact
+
+    @EventHandler
+    fun onConsume(event: PlayerItemConsumeEvent) {
+        if (event.item.nbt.hasTag("nointeract"))
+            event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onPrepareCraft(event: PrepareItemCraftEvent) {
+        if (event.inventory.matrix.any { it.nbt.hasTag("nointeract") })
+            event.inventory.result = null
+    }
+
+    @EventHandler
+    fun onPrepareEnchant(event: PrepareItemEnchantEvent) {
+        if (event.item.nbt.hasTag("nointeract"))
+            event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onDamageItem(event: PlayerItemDamageEvent) {
+        if (event.item.nbt.hasTag("nointeract"))
+            event.isCancelled = true
     }
 
 }
