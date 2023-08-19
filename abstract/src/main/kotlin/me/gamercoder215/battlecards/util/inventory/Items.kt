@@ -3,10 +3,7 @@ package me.gamercoder215.battlecards.util.inventory
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import me.gamercoder215.battlecards.api.BattleConfig
-import me.gamercoder215.battlecards.util.BattleMaterial
-import me.gamercoder215.battlecards.util.card
-import me.gamercoder215.battlecards.util.isCard
-import me.gamercoder215.battlecards.util.nbt
+import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.builder
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
@@ -34,8 +31,19 @@ object Items {
     )
 
     @JvmStatic
-    val LOCKED: ItemStack =
-        builder(Material.BEDROCK) { displayName = "${ChatColor.DARK_PURPLE}${get("constants.locked")}" }
+    val LOCKED: ItemStack = builder(Material.BEDROCK,
+        { displayName = "${ChatColor.DARK_PURPLE}${get("constants.locked")}" },
+        { nbt -> nbt.addTag("_cancel") }
+    )
+
+    @JvmStatic
+    fun locked(unlockedAt: Int): ItemStack = LOCKED.clone().apply {
+        itemMeta = itemMeta.apply {
+            lore = listOf(
+                "${ChatColor.YELLOW}${CardUtils.format(get("constants.unlocks_at_level"), unlockedAt.formatInt())}"
+            )
+        }
+    }
 
     // Card Items
 
@@ -210,7 +218,7 @@ object Items {
     )
 
     @JvmStatic
-    val PUBLIC_ITEMS: Map<String, ItemStack> = mapOf(
+    val PUBLIC_ITEMS = mutableMapOf(
         "card_table" to CARD_TABLE,
         "tiny_experience_book" to TINY_EXPERIENCE_BOOK,
         "small_experience_book" to SMALL_EXPERIENCE_BOOK,
