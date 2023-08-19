@@ -66,7 +66,7 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
     }
 
     @CardAbility("card.bomberman.ability.exploding", ChatColor.RED)
-    @Offensive(0.8, CardOperation.ADD, 0.02)
+    @Offensive(0.45, CardOperation.ADD, 0.02, 0.75)
     private fun exploding(event: EntityDamageByEntityEvent) {
         if (event.cause == DamageCause.ENTITY_EXPLOSION || event.cause == DamageCause.BLOCK_EXPLOSION) return
 
@@ -89,6 +89,8 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
     @Passive(600, CardOperation.SUBTRACT, 10, min = 200)
     @UnlockedAt(15)
     private fun tntLings() {
+        if (entity.target == null) return
+
         val amount = r.nextInt(1, (1 + (level / 15)).coerceAtMost(6))
         for (i in 0..amount)
             minion(Zombie::class.java) {
