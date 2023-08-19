@@ -5,21 +5,25 @@ import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
+import me.gamercoder215.battlecards.util.CardUtils.color
 import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.*
 import org.bukkit.block.Block
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import org.bukkit.scheduler.BukkitTask
+import org.bukkit.util.ChatPaginator
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.math.cos
@@ -108,16 +112,63 @@ val CardEquipment.itemStack: ItemStack
     get() = ItemStack(item).apply {
         itemMeta = itemMeta.apply {
             displayName = "${rarity.color}${name.replace('_', ' ').capitalizeFully()}"
-            lore = listOf(
-                rarity.toString(),
-                " ",
-                "${ChatColor.DARK_GRAY}${get("constants.card_equipment")}"
-            )
+
+            val lore = mutableListOf(rarity.toString(), " ")
+            for ((attribute, mod) in mods) {
+                if (mod == 1.0) continue
+
+                val modS = mod.run { -(1 - this).times(100) }.run {
+                    if (this < 0) "${ChatColor.RED}${this.format()}%"
+                    else "${ChatColor.GREEN}+${this.format()}%"
+                }
+
+                val str = "constants.card_equipment.${when (attribute) {
+                    CardAttribute.MAX_HEALTH -> "health"
+                    CardAttribute.ATTACK_DAMAGE -> "damage"
+                    CardAttribute.DEFENSE -> "defense"
+                    CardAttribute.SPEED -> "speed"
+                    CardAttribute.KNOCKBACK_RESISTANCE -> "knockback_resistance"
+                    else -> throw AssertionError("Invalid CardAttribute")
+                }}"
+
+                lore.add(format(get(str), modS))
+            }
+
+            if (mods.isNotEmpty()) lore.add(" ")
+
+            if (ability != null) {
+                val ability = ability!!
+                lore.add(get("constants.card_equipment.ability.${ability.name}"))
+                lore.addAll(
+                    ChatPaginator.wordWrap(color(get("constants.card_equipment.ability.${ability.name}.desc")), 30).map { s -> "${ChatColor.GRAY}$s" }
+                )
+
+                lore.add(" ")
+            }
+
+            lore.add("${ChatColor.DARK_GRAY}${get("menu.card_equipment")}")
+            this.lore = lore
+
+            addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
+
+            addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)
         }
     }.nbt { nbt ->
         nbt.id = "card_equipment"
+        nbt.addTag("nointeract")
         nbt["name"] = name
     }
+
+val CardEquipment.mods: Map<CardAttribute, Double>
+    get() = mapOf(
+        CardAttribute.MAX_HEALTH to healthModifier,
+        CardAttribute.ATTACK_DAMAGE to damageModifier,
+        CardAttribute.DEFENSE to defenseModifier,
+        CardAttribute.SPEED to speedModifier,
+        CardAttribute.KNOCKBACK_RESISTANCE to knockbackResistanceModifier
+    )
+
+fun CardEquipment.getModifier(attribute: CardAttribute): Double = mods[attribute] ?: 1.0
 
 fun Entity.isMinion(card: IBattleCard<*>): Boolean {
     if (this !is Creature) return false
@@ -298,6 +349,11 @@ operator fun Vector.times(other: Number): Vector = multiply(other.toDouble())
 
 operator fun Inventory.get(index: Int): ItemStack? = getItem(index)
 operator fun Inventory.set(index: Int, item: ItemStack?) = setItem(index, item)
+operator fun Inventory.set(indexes: Iterable<Int>, item: ItemStack?) {
+    for (i in indexes) setItem(i, item)
+}
+operator fun Inventory.set(vararg index: Int, item: ItemStack?) = set(index.toList(), item)
+
 
 // Kotlin Util
 

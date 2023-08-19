@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards
 
 import com.google.common.collect.ImmutableMap
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
@@ -41,6 +42,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                 when (item.nbt.getString("type")) {
                     "quests" -> p.openInventory(Generator.generateCardQuests(card))
+                    "equipment" -> p.openInventory(Generator.generateCardEquipment(card))
                 }
             }
             .put("scroll:stored") { e, inv ->
@@ -115,6 +117,23 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                             inv["recipe"] = null
                         }
                     })
+            }
+            .put("card_equipment") { _, inv ->
+                BattleUtil.sync({
+                    val equipment = listOf(2, 3, 4, 5, 6).mapNotNull {
+                        it to (inv[it] ?: return@mapNotNull null)
+                    }.mapNotNull { pair ->
+                        if (pair.second.nbt.hasTag("_cancel")) return@mapNotNull null
+
+                        pair.first to (BattleConfig.config.registeredEquipment.firstOrNull {
+                            it.name == pair.second.nbt.getString(
+                                "name"
+                            )
+                        } ?: return@mapNotNull null)
+                    }.toMap()
+
+                    inv[8] = Generator.generateEffectiveModifiers(equipment)
+                })
             }
             .build()
     }

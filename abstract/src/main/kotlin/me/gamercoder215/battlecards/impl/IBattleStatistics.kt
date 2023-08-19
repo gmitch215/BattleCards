@@ -6,6 +6,7 @@ import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.events.CardExperienceChangeEvent
 import me.gamercoder215.battlecards.api.events.CardQuestLevelUpEvent
 import me.gamercoder215.battlecards.util.call
+import me.gamercoder215.battlecards.util.getModifier
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import kotlin.math.floor
 import kotlin.math.pow
@@ -71,14 +72,14 @@ class IBattleStatistics(
             val interval = (15 - (card.rarity.ordinal * 2)).coerceAtLeast(5)
 
             var count = 1
-            while (count < 5 && cardLevel >= (count - 2) * interval) count++
+            while (count < 5 && (cardLevel - 5) >= count * interval) count++
 
             return count
         }
 
     // Logic & Attributes
 
-    private fun find(attribute: CardAttribute): Double {
+    private fun findBase(attribute: CardAttribute): Double {
         val base: Double =
             if (card.type == BattleCardType.BASIC) {
                 val type = card.entityCardType ?: return 0.0
@@ -97,6 +98,15 @@ class IBattleStatistics(
 
         val finalMod = card.rarity.experienceModifier
         return (value * finalMod.pow(1 + finalMod)).coerceAtMost(mod.max.coerceAtMost(attribute.max))
+    }
+
+    private fun find(attribute: CardAttribute): Double {
+        var base = findBase(attribute)
+
+        // Card Equipment
+        base += base * card.equipment.sumOf { -(1 - it.getModifier(attribute)) }
+
+        return base
     }
 
     override val maxHealth: Double

@@ -1,7 +1,11 @@
 package me.gamercoder215.battlecards.util.inventory
 
+import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.impl.CardAttribute
+import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.BattleInventory
@@ -92,14 +96,21 @@ object Generator {
                     nbt.id = "card:info_item"
                     nbt["type"] = "quests"
                 }
-            else
-                Items.LOCKED.clone().apply {
+            else Items.locked(floor(card.maxCardLevel / 2.0).toInt())
+
+        inv[21] =
+            if (card.level >= 10)
+                ItemStack(Material.DIAMOND_SWORD).apply {
                     itemMeta = itemMeta.apply {
-                        lore = listOf(
-                            "${ChatColor.YELLOW}${format(get("constants.unlocks_at_level"), floor(card.maxCardLevel / 2.0).format())}"
-                        )
+                        displayName = "${ChatColor.AQUA}${get("menu.card_equipment")}"
+
+                        addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                     }
+                }.nbt { nbt ->
+                    nbt.id = "card:info_item"
+                    nbt["type"] = "equipment"
                 }
+            else Items.locked(10)
 
         while (inv.firstEmpty() != -1)
             inv[inv.firstEmpty()] = Items.GUI_BACKGROUND
@@ -112,11 +123,11 @@ object Generator {
         val inv = genGUI("card_table", 45, get("menu.card_table"))
 
         inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
-            val items = listOf(
+            val items = listOfNotNull(
                 inventory[10], inventory[11], inventory[12],
                 inventory[19], inventory[20], inventory[21],
                 inventory[28], inventory[29], inventory[30]
-            ).filterNotNull().toTypedArray()
+            ).toTypedArray()
 
             items.withIndex().forEach { (i, item) ->
                 if (p.inventory.firstEmpty() == -1)
@@ -271,6 +282,111 @@ object Generator {
         val end = if (this > other) this else other
 
         return (start..end).filter { (it % 9) - remainder == 0 }.run { if (reverse) reversed() else this }
+    }
+
+    @JvmStatic
+    fun generateCardEquipment(card: Card): BattleInventory {
+        val equipment = (card as ICard).cardEquipment
+        val slots = card.statistics.equipmentSlots
+
+        val inv = genGUI("card_equipment", 18, get("menu.card_equipment"))
+        inv[0, 1, 7] = Items.GUI_BACKGROUND
+
+        val onClose = BiConsumer { p: Player, inventory: BattleInventory ->
+            val c = inventory["card", ICard::class.java] ?: return@BiConsumer
+            val items = listOf(2, 3, 4, 5, 6).map {
+                it to inventory[it]
+            }.map { pair ->
+                if (pair.second?.nbt?.hasTag("_cancel") == true) return@map pair.first to null
+
+                pair.first to (BattleConfig.config.registeredEquipment.firstOrNull { it.name == pair.second?.nbt?.getString("name") })
+            }.toMap()
+
+            items.forEach {
+                val eq = it.value
+
+                if (eq == null) c.cardEquipment.remove(it.key)
+                else c.cardEquipment[it.key] = eq
+            }
+            p.itemInHand = c.itemStack
+        }
+
+        inv["card"] = card
+        inv["back"] = Consumer { p: Player ->
+            onClose.accept(p, inv)
+            p.openInventory(generateCardInfo(card))
+        }
+        inv["on_close"] = onClose
+
+        for (i in 1..5) {
+            val slot = i + 1
+            val item = equipment[slot]?.itemStack
+
+            if (i <= slots)
+                inv[slot] = item
+            else {
+                val req = 5 + (15 - (card.rarity.ordinal * 2)).coerceAtLeast(5).times(i - 1)
+
+                inv[slot] = Items.locked(req)
+            }
+        }
+
+        inv[8] = generateEffectiveModifiers(equipment)
+
+        inv[9..17] = Items.GUI_BACKGROUND
+        inv[13] = Items.back()
+
+        return inv
+    }
+
+    @JvmStatic
+    fun generateEffectiveModifiers(equipment: Map<Int, CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
+        itemMeta = itemMeta.apply {
+            displayName = "${ChatColor.RED}${get("constants.effective_modifiers")}"
+
+            val lore = mutableListOf<String>()
+            val modifiers = equipment.values.map { it.mods }.run {
+                val map = mutableMapOf<CardAttribute, Double>()
+
+                for (mods in this)
+                    for ((attribute, value) in mods)
+                        map[attribute] = -(1.minus(map[attribute] ?: 0.0)) + value
+
+                map
+            }.apply { CardAttribute.entries.forEach { putIfAbsent(it, 0.0) } }
+
+            if (!modifiers.all { it.value == 0.0 })
+                lore.add(" ")
+            else
+                lore.add("${ChatColor.WHITE}${get("constants.none")}")
+
+            for ((attribute, mod) in modifiers) {
+                if (mod == 0.0) continue
+
+                val modS = mod.times(100).run {
+                    if (this < 0) "${ChatColor.RED}${this.format()}%"
+                    else "${ChatColor.GREEN}+${this.format()}%"
+                }
+
+                val str = "constants.card_equipment.${
+                    when (attribute) {
+                        CardAttribute.MAX_HEALTH -> "health"
+                        CardAttribute.ATTACK_DAMAGE -> "damage"
+                        CardAttribute.DEFENSE -> "defense"
+                        CardAttribute.SPEED -> "speed"
+                        CardAttribute.KNOCKBACK_RESISTANCE -> "knockback_resistance"
+                        else -> throw AssertionError("Invalid CardAttribute")
+                    }
+                }"
+
+                lore.add(format(get(str), modS))
+            }
+
+            this.lore = lore
+            addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+        }
+    }.nbt { nbt ->
+        nbt.addTag("_cancel")
     }
 
 }
