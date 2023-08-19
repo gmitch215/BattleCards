@@ -102,6 +102,12 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     fun onInteract(event: PlayerInteractEvent) {
         val p = event.player
         val item = (event.item ?: return).clone().apply { amount = 1 }
+
+        if ((event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) && item.nbt.hasTag("nointeract")) {
+            event.isCancelled = true
+            return
+        }
+
         val card = item.card ?: return
 
         when (event.action) {
@@ -123,8 +129,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     return
                 }
 
-                if (p.spawnedCards.size >= BattleConfig.config.maxCardsSpawned) {
-                    p.sendMessage(format(getError("error.card.max_spawned"), BattleConfig.config.maxCardsSpawned.formatInt()))
+                if (p.spawnedCards.size >= plugin.maxCardsSpawned) {
+                    p.sendMessage(format(getError("error.card.max_spawned"), plugin.maxCardsSpawned.formatInt()))
                     p.playFailure()
                     return
                 }
@@ -277,6 +283,10 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     }
                 }
 
+            card.equipment.mapNotNull { it.ability }.filter { it.type == CardUseAbilityEvent.AbilityType.DEFENSIVE }.forEach {
+                it.action(card, event)
+            }
+
             card.data.statistics.damageReceived += event.finalDamage
             card.statistics.checkQuestCompletions()
         }
@@ -302,6 +312,11 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             event.isCancelled = true
             return
         }
+        
+        if (damager.isMinion && entity is Player && (!plugin.cardAttackPlayers || damager.cardByMinion?.p == entity)) {
+            event.isCancelled = true
+            return
+        }
 
         if (damager.isCard) run {
             val card = damager.card ?: return@run
@@ -322,6 +337,10 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     if (!use.isCancelled)
                         m.invoke(card, event)
                 }
+            }
+
+            card.equipment.mapNotNull { it.ability }.filter { it.type == CardUseAbilityEvent.AbilityType.OFFENSIVE }.forEach {
+                it.action(card, event)
             }
 
             card.statistics.damageDealt += event.finalDamage
@@ -377,13 +396,13 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     fun onTarget(event: EntityTargetEvent) {
         if (event.target == null) return
 
-        if (!BattleConfig.config.targetCards && !event.entity.isCard && event.target.isCard)
+        if (!plugin.targetCards && !event.entity.isCard && event.target.isCard)
             event.isCancelled = true
 
         if (event.entity.isCard) {
             val card = event.entity.card!!
 
-            if (!BattleConfig.config.cardAttackPlayers && event.target is Player)
+            if (!plugin.cardAttackPlayers && event.target is Player)
                 event.isCancelled = true
 
             if (card.p.uniqueId == event.target.uniqueId || event.reason.name == "TEMPT")
@@ -410,7 +429,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             if (event.target.card == card)
                 event.isCancelled = true
 
-            if (!BattleConfig.config.cardAttackPlayers && event.target is Player)
+            if (!plugin.cardAttackPlayers && event.target is Player)
                 event.isCancelled = true
 
             if (card.p.uniqueId == event.target.uniqueId || event.reason.name == "TEMPT")
@@ -497,11 +516,11 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         when (cause) {
             DamageCause.FIRE, DamageCause.FIRE_TICK, DamageCause.LAVA ->
-                event.isCancelled = !BattleConfig.config.isCardDestroyedFire
+                event.isCancelled = !plugin.isCardDestroyedFire
             DamageCause.THORNS, DamageCause.CONTACT ->
-                event.isCancelled = !BattleConfig.config.isCardDestroyedThorns
+                event.isCancelled = !plugin.isCardDestroyedThorns
             DamageCause.ENTITY_EXPLOSION, DamageCause.BLOCK_EXPLOSION ->
-                event.isCancelled = !BattleConfig.config.isCardDestroyedExplosion
+                event.isCancelled = !plugin.isCardDestroyedExplosion
 
             else -> return
         }
@@ -509,7 +528,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     @EventHandler
     fun onDespawn(event: ItemDespawnEvent) {
-        if (event.entity.isCard && !BattleConfig.config.isCardsDespawn)
+        if (event.entity.isCard && !plugin.isCardsDespawn)
             event.isCancelled = true
     }
 
@@ -527,7 +546,10 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         val item = event.itemInHand
         val nbt = item.nbt
 
-        if (nbt.hasTag("nointeract")) return event.setCancelled(true)
+        if (nbt.hasTag("nointeract")) {
+            event.setBuild(false)
+            return event.setCancelled(true)
+        }
 
         val id = item.id ?: return
 
