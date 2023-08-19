@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.impl.cards
 
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.wrapper.CardLoader
 
 internal class CardLoader1_11_R1 : CardLoader {
@@ -14,5 +15,7 @@ internal class CardLoader1_11_R1 : CardLoader {
         IEmeraldHusk::class.java,
         IEternalHusk::class.java
     )
+
+    override fun loadedEquipment(): Collection<CardEquipment> = CardEquipments1_11_R1.entries
 
 }

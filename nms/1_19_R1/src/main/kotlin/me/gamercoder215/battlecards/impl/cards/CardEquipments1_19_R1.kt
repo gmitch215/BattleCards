@@ -2,40 +2,22 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
-import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.*
+import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.MYTHOLOGICAL
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
-import me.gamercoder215.battlecards.impl.cards.CardEquipments1_13_R1.Util.mod
+import me.gamercoder215.battlecards.impl.cards.CardEquipments1_19_R1.Util.mod
 import org.bukkit.Material
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
-internal enum class CardEquipments1_13_R1(
+internal enum class CardEquipments1_19_R1(
     override val item: Material,
     override val rarity: CardEquipment.Rarity,
     modifiers: Array<Double>,
     override val ability: CardEquipment.Ability? = null
 ) : CardEquipment {
 
-    // Average
-
-    SAND_SHELL(Material.NAUTILUS_SHELL, AVERAGE,
-        mod(damage = 1.01, speed = 0.995)
-    ),
-
-    // Frequent
-
-    SHINING_MELON(Material.GLISTERING_MELON_SLICE, FREQUENT,
-        mod(health = 1.04)
-    ),
-
-    ORGANIC_ELYTRA(Material.PHANTOM_MEMBRANE, FREQUENT,
-        mod(health = 1.025, defense = 0.95, speed = 1.055)
-    ),
-
-    // Special
-
-    DRAGON_BLOOD(Material.DRAGON_BREATH, SPECIAL,
-        mod(damage = 2.65, defense = 0.45, knockbackResistance = 1.25)
-    ),
+    ECHOING_CRYSTAL(Material.ECHO_SHARD, MYTHOLOGICAL,
+        mod(speed = 0.83, damage = 1.165)
+    )
 
     ;
 

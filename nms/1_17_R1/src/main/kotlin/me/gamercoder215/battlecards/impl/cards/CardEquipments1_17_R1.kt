@@ -33,6 +33,10 @@ internal enum class CardEquipments1_17_R1(
             target.freezeTicks += 45
         }),
 
+    CANDLE_OF_LIFE(Material.CANDLE, HISTORICAL,
+        mod(health = 1.07, knockbackResistance = 0.925)
+    ),
+
     ;
 
     override val healthModifier: Double

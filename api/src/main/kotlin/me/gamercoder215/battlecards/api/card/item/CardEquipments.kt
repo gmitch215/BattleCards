@@ -4,14 +4,12 @@ import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.*
 import me.gamercoder215.battlecards.api.card.item.CardEquipments.Util.ability
 import me.gamercoder215.battlecards.api.card.item.CardEquipments.Util.mod
-import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent.AbilityType
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import java.security.SecureRandom
 
 /**
  * Represents Card Equipment built-in to BattleCards
@@ -87,21 +85,21 @@ enum class CardEquipments(
      * Represents a Nether Star CardEquipment.
      */
     DAMAGE_CRYSTAL(Material.NETHER_STAR, FREQUENT,
-        mod(health = 0.96, damage = 1.035, defense = 0.985)
+        mod(health = 0.96, damage = 1.07, defense = 0.985)
     ),
 
     /**
      * Represents a Compass CardEquipment.
      */
     SPEED_COMPASS(Material.COMPASS, FREQUENT,
-        mod(speed = 1.075, health = 0.988)
+        mod(speed = 1.08, health = 0.978)
     ),
 
     /**
      * Represents a Cactus CardEquipment.
      */
     HARDENED_CACTUS(Material.CACTUS, FREQUENT,
-        mod(damage = 0.955, defense = 1.01), ability("pricking", AbilityType.DEFENSIVE, 0.75) { card, event ->
+        mod(damage = 0.955, defense = 1.015), ability("pricking", AbilityType.DEFENSIVE, 0.75) { card, event ->
             val target = event.damager as? LivingEntity ?: return@ability
             target.damage(1.5, card.entity)
         }),
@@ -117,7 +115,14 @@ enum class CardEquipments(
      * Represents a Feather CardEquipment.
      */
     GHOST_FEATHER(Material.FEATHER, FREQUENT,
-        mod(speed = 1.0575, knockbackResistance = 0.96)
+        mod(speed = 1.0575, knockbackResistance = 0.945)
+    ),
+
+    /**
+     * Represents a Milk Bucket CardEquipment.
+     */
+    MILK_OF_YOUTH(Material.MILK_BUCKET, FREQUENT,
+        mod(speed = 1.06, defense = 0.935)
     ),
 
     // Historical
