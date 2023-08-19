@@ -299,20 +299,21 @@ object Generator {
 
             val sent = AtomicBoolean(false)
 
+            val dispose = mutableListOf<ItemStack>()
+
             val items = listOf(2, 3, 4, 5, 6).map {
                 it to inventory[it]
             }.map { pair ->
                 if (pair.second?.nbt?.hasTag("_cancel") == true) return@map pair.first to null
 
-                if (pair.second != null && pair.second!!.amount > 1) {
-                    val item = pair.second!!.clone().apply { amount -= 1 }
+                if (pair.second != null) {
+                    val item = pair.second!!
 
-                    if (p.inventory.firstEmpty() == -1) {
-                        p.world.dropItemNaturally(p.location, item)
-                        sent.set(true)
-                    }
-                    else
-                        p.inventory.addItem(item)
+                    if (item.amount > 1)
+                        dispose.add(item.clone().apply { amount -= 1 })
+
+                    if (item.nbt.id != "card_equipment")
+                        dispose.add(item.clone())
                 }
 
                 pair.first to (BattleConfig.config.registeredEquipment.firstOrNull { it.name == pair.second?.nbt?.getString("name") })
@@ -325,6 +326,15 @@ object Generator {
                 else c.cardEquipment[it.key] = eq
             }
             p.itemInHand = c.itemStack
+
+            dispose.forEach { item ->
+                if (p.inventory.firstEmpty() == -1) {
+                    p.world.dropItemNaturally(p.location, item)
+                    sent.set(true)
+                }
+                else
+                    p.inventory.addItem(item)
+            }
 
             if (sent.get())
                 p.sendMessage(getError("error.card.equipment.input_1"))
