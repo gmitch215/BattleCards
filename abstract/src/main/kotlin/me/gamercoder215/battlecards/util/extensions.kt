@@ -22,6 +22,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitTask
 import org.bukkit.util.ChatPaginator
 import org.bukkit.util.Vector
@@ -146,6 +147,13 @@ val CardEquipment.itemStack: ItemStack
                 lore.add(" ")
             }
 
+            if (effects.isNotEmpty()) {
+                for (effect in effects)
+                    lore.add("${effect.type.color}${effect.type.name.replace('_', ' ').capitalizeFully()} ${effect.amplifier.toRoman()}")
+
+                lore.add(" ")
+            }
+
             lore.add("${ChatColor.DARK_GRAY}${get("menu.card_equipment")}")
             this.lore = lore
 
@@ -245,6 +253,12 @@ inline val Chunk.blocks: Set<Block>
                     blocks.add(getBlock(x, y, z))
 
         return blocks
+    }
+
+val PotionEffectType.color: ChatColor
+    get() = when (this.name.lowercase()) {
+        "slowness", "slow", "slow_digging", "weakness", "unluck", "bad_omen", "mining_fatigue", "nausea", "blindness", "hunger", "poison", "wither", "levitation" -> ChatColor.RED
+        else -> ChatColor.GREEN
     }
 
 fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
