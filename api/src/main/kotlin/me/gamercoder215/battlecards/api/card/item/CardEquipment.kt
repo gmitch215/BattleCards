@@ -60,7 +60,7 @@ interface CardEquipment : Serializable {
     val ability: Ability?
 
     /**
-     * Fetches the effects of this CardEquipment.
+     * Fetches the effects of this CardEquipment. These efefcts are only active when the Card is spawned.
      */
     val effects: Set<Potion>
         get() = emptySet()
