@@ -2,17 +2,20 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.*
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.cards.CardEquipments1_13_R1.Util.mod
 import org.bukkit.Material
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.potion.PotionEffectType
 
 internal enum class CardEquipments1_13_R1(
     override val item: Material,
     override val rarity: CardEquipment.Rarity,
     modifiers: Array<Double>,
-    override val ability: CardEquipment.Ability? = null
+    override val ability: CardEquipment.Ability? = null,
+    override val effects: Set<Potion> = emptySet()
 ) : CardEquipment {
 
     // Average
@@ -34,7 +37,10 @@ internal enum class CardEquipments1_13_R1(
     // Special
 
     DRAGON_BLOOD(Material.DRAGON_BREATH, SPECIAL,
-        mod(damage = 2.65, defense = 0.45, knockbackResistance = 1.25)
+        mod(damage = 2.65, defense = 0.45, knockbackResistance = 1.25),
+        effects = setOf(
+            Potion(PotionEffectType.DAMAGE_RESISTANCE, 1, Potion.Status.BOTH)
+        )
     ),
 
     ;
