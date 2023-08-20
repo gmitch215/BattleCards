@@ -37,6 +37,26 @@ open class CardUseAbilityEvent(card: BattleCard<*>, type: AbilityType) : EntityC
         DEFENSIVE,
 
         /**
+         * Abilities activated when the card takes any kind of damage.
+         */
+        DAMAGE,
+
+        /**
+         * Abilities activated when the card's owner attacks its target on a specific chance.
+         */
+        USER_OFFENSIVE,
+
+        /**
+         * Abilities activated when the card's owner is damaged on a specific chance.
+         */
+        USER_DEFENSIVE,
+
+        /**
+         * Abilities activated when the card's owner takes any kind of damage.
+         */
+        USER_DAMAGE,
+
+        /**
          * Abilities used at specific intervals.
          */
         PASSIVE

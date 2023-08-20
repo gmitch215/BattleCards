@@ -104,7 +104,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         val item = (event.item ?: return).clone().apply { amount = 1 }
 
         if ((event.action == Action.RIGHT_CLICK_AIR || event.action == Action.RIGHT_CLICK_BLOCK) && item.nbt.hasTag("nointeract")) {
-            event.isCancelled = true
+            event.setUseItemInHand(Event.Result.DENY)
             return
         }
 
@@ -214,8 +214,11 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 val annotation = m.getDeclaredAnnotation(Damage::class.java)
                 m.isAccessible = true
 
-                if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
-                    m.invoke(card, event)
+                if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m))) {
+                    val use = CardUseAbilityEvent(card, CardUseAbilityEvent.AbilityType.DAMAGE).apply { call() }
+                    if (!use.isCancelled)
+                        m.invoke(card, event)
+                }
             }
 
             card.statistics.checkQuestCompletions()
@@ -230,8 +233,11 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                         val annotation = m.getAnnotation(UserDamage::class.java)
                         m.isAccessible = true
 
-                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
-                            m.invoke(card, event)
+                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m))) {
+                            val use = CardUseAbilityEvent(card, CardUseAbilityEvent.AbilityType.USER_DAMAGE).apply { call() }
+                            if (!use.isCancelled)
+                                m.invoke(card, event)
+                        }
                     }
 
                 card.statistics.checkQuestCompletions()
@@ -300,9 +306,18 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                         val annotation = m.getAnnotation(UserDefensive::class.java)
                         m.isAccessible = true
 
-                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m)))
-                            m.invoke(card, event)
+                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m))) {
+                            val use = CardUseAbilityEvent(card, CardUseAbilityEvent.AbilityType.USER_DEFENSIVE).apply { call() }
+                            if (!use.isCancelled)
+                                m.invoke(card, event)
+                        }
                     }
+
+                card.equipment.mapNotNull { it.ability }.filter { it.type == CardUseAbilityEvent.AbilityType.USER_DEFENSIVE }.forEach {
+                    it.action(card, event)
+                }
+
+                card.statistics.checkQuestCompletions()
             }
         }
 
@@ -369,9 +384,16 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                         val annotation = m.getAnnotation(UserOffensive::class.java)
                         m.isAccessible = true
 
-                        if (r.nextDouble() <= annotation.getChance(card.level))
-                            m.invoke(card, event)
+                        if (r.nextDouble() <= annotation.getChance(card.level, unlockedAt(m))) {
+                            val use = CardUseAbilityEvent(card, CardUseAbilityEvent.AbilityType.USER_OFFENSIVE).apply { call() }
+                            if (!use.isCancelled)
+                                m.invoke(card, event)
+                        }
                     }
+
+                card.equipment.mapNotNull { it.ability }.filter { it.type == CardUseAbilityEvent.AbilityType.USER_OFFENSIVE }.forEach {
+                    it.action(card, event)
+                }
 
                 card.statistics.checkQuestCompletions()
             }
