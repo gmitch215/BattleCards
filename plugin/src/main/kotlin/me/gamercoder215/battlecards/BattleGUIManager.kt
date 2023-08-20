@@ -4,12 +4,15 @@ import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
+import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.wrapper.BattleInventory
+import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -120,6 +123,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
             }
             .put("card_equipment") { e, inv ->
                 val p = e.whoClicked as Player
+                val card = inv["card", ICard::class.java] ?: return@put
 
                 val items = when (e) {
                     is InventoryClickEvent -> {
@@ -135,9 +139,17 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     else -> listOf()
                 }.filterNotNull().filter { it.type != Material.AIR }
 
-                if (items.isNotEmpty() && items.any { it.nbt.id != "card_equipment" }) {
-                    p.playFailure()
-                    return@put e.setCancelled(true)
+                if (items.isNotEmpty()) {
+                    if (items.any { it.nbt.id != "card_equipment" }) {
+                        p.playFailure()
+                        return@put e.setCancelled(true)
+                    }
+
+                    if (card.equipment.any { it.rarity == CardEquipment.Rarity.SPECIAL } && items.any { item -> BattleConfig.config.registeredEquipment.firstOrNull { it.name == item.nbt.getString("name") }?.rarity == CardEquipment.Rarity.SPECIAL }) {
+                        p.sendMessage(getError("error.card.equipment.one_special"))
+                        p.playFailure()
+                        return@put e.setCancelled(true)
+                    }
                 }
 
                 BattleUtil.sync({
