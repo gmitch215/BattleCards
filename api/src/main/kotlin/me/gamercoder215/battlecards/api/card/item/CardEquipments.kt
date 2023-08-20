@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.api.card.item
 
 import me.gamercoder215.battlecards.api.card.BattleCard
+import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.*
 import me.gamercoder215.battlecards.api.card.item.CardEquipments.Util.ability
 import me.gamercoder215.battlecards.api.card.item.CardEquipments.Util.mod
@@ -18,7 +19,8 @@ enum class CardEquipments(
     material: Material,
     rarity: CardEquipment.Rarity,
     modifiers: Array<Double>,
-    ability: CardEquipment.Ability? = null
+    ability: CardEquipment.Ability? = null,
+    vararg effects: Potion
 ) : CardEquipment {
 
     // Average
@@ -125,6 +127,16 @@ enum class CardEquipments(
         mod(speed = 1.06, defense = 0.935)
     ),
 
+    /**
+     * Represents a Rabbit's Foot CardEquipment.
+     */
+    RABBIT_FOOT(Material.RABBIT_FOOT, FREQUENT,
+        mod(speed = 1.04, knockbackResistance = 0.965),
+        effects = arrayOf(
+            Potion(PotionEffectType.JUMP, 4, Potion.Status.USER_ONLY)
+        )
+    ),
+
     // Historical
 
     /**
@@ -194,8 +206,22 @@ enum class CardEquipments(
      * Represents a Bedrock CardEquipment.
      */
     BEDROCK_SHIELD(Material.BEDROCK, SPECIAL,
-        mod(health = 0.5, damage = 0.4, defense = 3.5)
+        mod(health = 0.5, damage = 0.4, defense = 3.5),
+        effects = arrayOf(
+            Potion(PotionEffectType.SLOW, 2),
+            Potion(PotionEffectType.DAMAGE_RESISTANCE, 2, Potion.Status.BOTH)
+        )
     ),
+
+    /**
+     * Represents a Crafting Table CardEquipment.
+     */
+    CRAFTED_IN_HEAVEN(Material.matchMaterial("CRAFTING_TABLE") ?: Material.matchMaterial("WORKBENCH")!!, SPECIAL,
+        mod(defense = 0.25, speed = 2.25),
+        effects = arrayOf(
+            Potion(PotionEffectType.SPEED, 4, Potion.Status.USER_ONLY)
+        )
+    )
 
     ;
 
@@ -239,12 +265,18 @@ enum class CardEquipments(
      */
     override val ability: CardEquipment.Ability?
 
+    /**
+     * Fetches the effects of this CardEquipment.
+     */
+    override val effects: Set<Potion>
+
     init {
         require(modifiers.size == 5) { "Modifiers must be of size 5" }
 
         this.item = material
         this.rarity = rarity
         this.ability = ability
+        this.effects = effects.toSet()
 
         this.healthModifier = modifiers[0]
         this.damageModifier = modifiers[1]
