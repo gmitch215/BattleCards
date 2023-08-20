@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.potion.PotionEffectType
 import java.io.Serializable
 import java.security.SecureRandom
 
@@ -59,6 +60,12 @@ interface CardEquipment : Serializable {
     val ability: Ability?
 
     /**
+     * Fetches the effects of this CardEquipment.
+     */
+    val effects: Set<Potion>
+        get() = emptySet()
+
+    /**
      * Rarity for a [CardEquipment] Item
      */
     enum class Rarity(
@@ -102,6 +109,51 @@ interface CardEquipment : Serializable {
         }
 
         override fun toString(): String = "$color${ChatColor.BOLD}$name"
+
+    }
+
+    /**
+     * Represents a [CardEquipment] Potion Effect
+     * @param type The type of this Potion Effect
+     * @param amplifier The level of this Potion Effect
+     * @param user Whether this Potion Effect applies to the card user while active
+     */
+    data class Potion(
+        /**
+         * Represents the Potion Effect Type
+         */
+        val type: PotionEffectType,
+        /**
+         * Represents the Potion Effect Amplifier
+         */
+        val amplifier: Int,
+        /**
+         * Whether the Potion Effect applies to the card user while active
+         */
+        val status: Status = Status.CARD_ONLY
+    ) {
+
+        /**
+         * Represents the Potion Effect Status
+         */
+        enum class Status {
+
+            /**
+             * Effect only applies to the Card
+             */
+            CARD_ONLY,
+
+            /**
+             * Effect only applies to the Card User
+             */
+            USER_ONLY,
+
+            /**
+             * Effect applies to both the Card and its User
+             */
+            BOTH
+
+        }
 
     }
 

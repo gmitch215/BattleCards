@@ -2,6 +2,8 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.util.*
@@ -13,6 +15,7 @@ import org.bukkit.Location
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
+import org.bukkit.potion.PotionEffect
 import org.bukkit.scheduler.BukkitRunnable
 import java.lang.reflect.Method
 import java.security.SecureRandom
@@ -197,6 +200,24 @@ abstract class IBattleCard<T : Creature>(
                 }
             }.runTaskTimer(BattleConfig.plugin, interval, interval)
         }
+
+        // Card Equipment Effects
+        for (equipment in this.equipment) {
+            val effects = equipment.effects
+            if (effects.isEmpty()) continue
+
+            for (effect in effects) {
+                when (effect.status) {
+                    Potion.Status.CARD_ONLY -> entity.addPotionEffect(PotionEffect(effect.type, Int.MAX_VALUE, effect.amplifier, true, false))
+                    Potion.Status.USER_ONLY -> p.addPotionEffect(PotionEffect(effect.type, Int.MAX_VALUE, effect.amplifier, true, false))
+                    Potion.Status.BOTH -> {
+                        entity.addPotionEffect(PotionEffect(effect.type, Int.MAX_VALUE, effect.amplifier, true, false))
+                        p.addPotionEffect(PotionEffect(effect.type, Int.MAX_VALUE, effect.amplifier, true, false))
+                    }
+                }
+            }
+        }
+
         spawned[entity.uniqueId] = this
     }
 
@@ -218,6 +239,27 @@ abstract class IBattleCard<T : Creature>(
             }
         }
         minions.clear()
+
+        // Card Equipment Effects
+        for (equipment in this.equipment) {
+            val effects = equipment.effects
+            if (effects.isEmpty()) continue
+
+            for (effect in effects) {
+                when (effect.status) {
+                    Potion.Status.CARD_ONLY -> if (entity.activePotionEffects.any { it.type == effect.type && it.isAmbient }) entity.removePotionEffect(effect.type)
+                    Potion.Status.USER_ONLY -> if (p.activePotionEffects.any { it.type == effect.type && it.isAmbient }) p.removePotionEffect(effect.type)
+                    Potion.Status.BOTH -> {
+                        if (entity.activePotionEffects.any { it.type == effect.type && it.isAmbient })
+                            entity.removePotionEffect(effect.type)
+
+                        if (p.activePotionEffects.any { it.type == effect.type && it.isAmbient })
+                            p.removePotionEffect(effect.type)
+                    }
+                }
+            }
+        }
+
         currentItem = data.itemStack
 
         if (p.inventory.firstEmpty() == -1) {
