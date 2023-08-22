@@ -2,9 +2,10 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.FREQUENT
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.MYTHOLOGICAL
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
-import me.gamercoder215.battlecards.impl.cards.CardEquipments1_16_R1.Util.mod
+import me.gamercoder215.battlecards.util.BattleUtil.mod
 import org.bukkit.Material
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
@@ -14,6 +15,12 @@ internal enum class CardEquipments1_16_R1(
     modifiers: Array<Double>,
     override val ability: CardEquipment.Ability? = null
 ) : CardEquipment {
+
+    // Frequent
+
+    MAGNETIC_PILLAR(Material.LODESTONE, FREQUENT,
+        mod(damage = 1.06, defense = 1.02, knockbackResistance = 0.93)
+    ),
 
     // Mythological
 
@@ -37,32 +44,6 @@ internal enum class CardEquipments1_16_R1(
         this.defenseModifier = modifiers[2]
         this.speedModifier = modifiers[3]
         this.knockbackResistanceModifier = modifiers[4]
-    }
-
-    private object Util {
-
-        fun mod(
-            health: Double = 1.0,
-            damage: Double = 1.0,
-            defense: Double = 1.0,
-            speed: Double = 1.0,
-            knockbackResistance: Double = 1.0,
-        ): Array<Double> = arrayOf(health, damage, defense, speed, knockbackResistance)
-
-        fun ability(
-            name: String,
-            type: CardUseAbilityEvent.AbilityType,
-            probability: (BattleCard<*>) -> Double,
-            action: (BattleCard<*>, EntityDamageByEntityEvent) -> Unit
-        ): CardEquipment.Ability = CardEquipment.Ability(name, type, probability, action)
-
-        fun ability(
-            name: String,
-            type: CardUseAbilityEvent.AbilityType,
-            probability: Double,
-            action: (BattleCard<*>, EntityDamageByEntityEvent) -> Unit
-        ): CardEquipment.Ability = CardEquipment.Ability(name, type, { probability }, action)
-
     }
 
 }

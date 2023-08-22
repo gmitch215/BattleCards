@@ -1,11 +1,15 @@
 package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCard
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -193,5 +197,28 @@ object BattleUtil {
     fun sync(runnable: () -> Unit, delay: Long = 0L): BukkitTask = object : BukkitRunnable() { override fun run() = runnable() }.runTaskLater(BattleConfig.plugin, delay)
 
     fun async(runnable: () -> Unit, delay: Long = 0L): BukkitTask = object : BukkitRunnable() { override fun run() = runnable() }.runTaskLaterAsynchronously(BattleConfig.plugin, delay)
+
+    fun mod(
+        health: Double = 1.0,
+        damage: Double = 1.0,
+        defense: Double = 1.0,
+        speed: Double = 1.0,
+        knockbackResistance: Double = 1.0,
+    ): Array<Double> = arrayOf(health, damage, defense, speed, knockbackResistance)
+
+    fun ability(
+        name: String,
+        type: CardUseAbilityEvent.AbilityType,
+        probability: (BattleCard<*>) -> Double,
+        action: (BattleCard<*>, EntityDamageByEntityEvent) -> Unit
+    ): CardEquipment.Ability = CardEquipment.Ability(name, type, probability, action)
+
+    fun ability(
+        name: String,
+        type: CardUseAbilityEvent.AbilityType,
+        probability: Double,
+        action: (BattleCard<*>, EntityDamageByEntityEvent) -> Unit
+    ): CardEquipment.Ability = CardEquipment.Ability(name, type, { probability }, action)
+
 
 }

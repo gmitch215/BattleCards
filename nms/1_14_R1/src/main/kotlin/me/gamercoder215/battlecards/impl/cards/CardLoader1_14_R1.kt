@@ -24,6 +24,8 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
         IRaider::class.java
     )
 
+    override fun loadedEquipment(): Collection<CardEquipment> = CardEquipments1_14_R1.entries
+
     private companion object {
         @JvmStatic
         private val equipmentToPrice = mutableMapOf(

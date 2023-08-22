@@ -2,52 +2,41 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
-import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
-import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.*
+import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.HISTORICAL
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.util.BattleUtil.mod
 import org.bukkit.Material
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.potion.PotionEffectType
 
-internal enum class CardEquipments1_13_R1(
+internal enum class CardEquipments1_14_R1(
     override val item: Material,
     override val rarity: CardEquipment.Rarity,
     modifiers: Array<Double>,
     override val ability: CardEquipment.Ability? = null,
-    override val effects: Set<Potion> = emptySet()
+    override val effects: Set<CardEquipment.Potion> = emptySet()
 ) : CardEquipment {
-
-    // Average
-
-    SAND_SHELL(Material.NAUTILUS_SHELL, AVERAGE,
-        mod(damage = 1.01, speed = 0.995)
-    ),
-
-    FERN_BLADE(Material.FERN, AVERAGE,
-        mod(damage = 1.03, defense = 0.98)
-    ),
-
-    // Frequent
-
-    SHINING_MELON(Material.GLISTERING_MELON_SLICE, FREQUENT,
-        mod(health = 1.04)
-    ),
-
-    ORGANIC_ELYTRA(Material.PHANTOM_MEMBRANE, FREQUENT,
-        mod(health = 1.025, defense = 0.95, speed = 1.055)
-    ),
 
     // Historical
 
-    // Special
-
-    DRAGON_BLOOD(Material.DRAGON_BREATH, SPECIAL,
-        mod(damage = 2.65, defense = 0.45, knockbackResistance = 1.25),
-        effects = setOf(
-            Potion(PotionEffectType.DAMAGE_RESISTANCE, 1, Potion.Status.BOTH)
-        )
+    DYE_OF_HASTE(Material.YELLOW_DYE, HISTORICAL,
+        mod(speed = 1.03)
     ),
+
+    DYE_OF_STRENGTH(Material.RED_DYE, HISTORICAL,
+        mod(damage = 1.04)
+    ),
+
+    DYE_OF_DEFENSE(Material.GREEN_DYE, HISTORICAL,
+        mod(defense = 1.05)
+    ),
+
+    DYE_OF_HEALTH(Material.PINK_DYE, HISTORICAL,
+        mod(health = 1.035)
+    ),
+
+    DYE_OF_SHIELD(Material.BLACK_DYE, HISTORICAL,
+        mod(knockbackResistance = 1.045)
+    )
 
     ;
 

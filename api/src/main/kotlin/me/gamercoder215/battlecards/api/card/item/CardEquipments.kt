@@ -8,6 +8,7 @@ import me.gamercoder215.battlecards.api.card.item.CardEquipments.Util.mod
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent.AbilityType
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Projectile
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -137,6 +138,16 @@ enum class CardEquipments(
         )
     ),
 
+    /**
+     * Represents a Soul Sand CardEquipment.
+     */
+    SOULS_OF_BREATHING(Material.SOUL_SAND, FREQUENT,
+        mod(speed = 0.97),
+        effects = arrayOf(
+            Potion(PotionEffectType.WATER_BREATHING, 0, Potion.Status.BOTH)
+        )
+    ),
+
     // Historical
 
     /**
@@ -181,6 +192,16 @@ enum class CardEquipments(
             event.damage += 1.5
         }),
 
+    /**
+     * Represents a Chainmail Chestplate CardEquipment.
+     */
+    CHAINMAIL(Material.CHAINMAIL_CHESTPLATE, HISTORICAL,
+        mod(defense = 1.02, speed = 0.915), ability("chainmail", AbilityType.DEFENSIVE, 1.0) { _, event ->
+            if (event.damager !is Projectile) return@ability
+
+            event.damage *= 0.65
+        }),
+
     // Mythological
 
     /**
@@ -199,6 +220,25 @@ enum class CardEquipments(
             target.world.strikeLightning(target.location)
             event.damage += 5.0
         }),
+
+    /**
+     * Represents a Slime Ball CardEquipment.
+     */
+    CONDENSED_SLIME(Material.SLIME_BALL, MYTHOLOGICAL,
+        mod(speed = 0.835), ability("deflect", AbilityType.DEFENSIVE, 0.4) { card, event ->
+            val damager = event.damager as? Projectile ?: return@ability
+
+            damager.setBounce(true)
+            damager.velocity = damager.velocity.multiply(-0.8)
+            damager.shooter = card.entity
+        }),
+
+    /**
+     * Represents a Dead Bush CardEquipment.
+     */
+    DEATH_BUSH(Material.DEAD_BUSH, MYTHOLOGICAL,
+        mod(damage = 1.2, defense = 0.78, speed = 0.96)
+    ),
 
     // Special
 
