@@ -116,7 +116,7 @@ interface CardEquipment : Serializable {
      * Represents a [CardEquipment] Potion Effect
      * @param type The type of this Potion Effect
      * @param amplifier The level of this Potion Effect
-     * @param user Whether this Potion Effect applies to the card user while active
+     * @param status The Status of this Potion Effect
      */
     data class Potion(
         /**
