@@ -149,7 +149,7 @@ val CardEquipment.itemStack: ItemStack
 
             if (effects.isNotEmpty()) {
                 for (effect in effects)
-                    lore.add("${effect.type.color}${effect.type.name.replace('_', ' ').capitalizeFully()} ${effect.amplifier.toRoman()}")
+                    lore.add("${effect.type.color}${effect.type.name.replace('_', ' ').capitalizeFully()} ${effect.amplifier.toRoman()} (${get("constants.card_equipment.potion_status.${effect.status.name.lowercase()}")})")
 
                 lore.add(" ")
             }
