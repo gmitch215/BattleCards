@@ -194,7 +194,12 @@ enum class BattleCardType {
     /**
      * Represents a Husk BattleCard.
      */
-    ETERNAL_HUSK(1, "Husk", Rarity.MYTHICAL, Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("ENDER_PORTAL_FRAME") ?: Material.BEDROCK)
+    ETERNAL_HUSK(1, "Husk", Rarity.MYTHICAL, Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("ENDER_PORTAL_FRAME") ?: Material.BEDROCK),
+
+    /**
+     * Represents a Shulker BattleCard.
+     */
+    PURPLE_PARASITE(1, "Shulker", Rarity.LEGEND, Material.matchMaterial("SHULKER_SHELL"))
     ;
 
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null) : this(
