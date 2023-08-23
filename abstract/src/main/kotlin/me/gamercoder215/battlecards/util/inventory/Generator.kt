@@ -66,7 +66,26 @@ object Generator {
             }
         }
 
-        // TODO Finish Plugin Information
+        inv[12] = Items.head("github") {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.DARK_GRAY}GitHub"
+            }
+        }.nbt { nbt ->
+            nbt.id = "plugin_info:link"
+            nbt["link"] = "https://github.com/GamerCoder215/BattleCards"
+        }
+
+        inv[14] = Items.head("discord") {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.BLUE}Discord"
+            }
+        }.nbt {  nbt ->
+            nbt.id = "plugin_info:link"
+            nbt["link"] = "https://discord.gg/WVFNWEvuqX"
+        }
+
+        while (inv.firstEmpty() != -1)
+            inv[inv.firstEmpty()] = Items.GUI_BACKGROUND
 
         return inv
     }
@@ -88,18 +107,6 @@ object Generator {
         } else
             inv[13] = info
 
-        inv[22] =
-            if (card.level >= floor(card.maxCardLevel / 2.0))
-                ItemStack(Material.CHEST).apply {
-                    itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.GOLD}${get("menu.card_quests")}"
-                    }
-                }.nbt { nbt ->
-                    nbt.id = "card:info_item"
-                    nbt["type"] = "quests"
-                }
-            else Items.locked(floor(card.maxCardLevel / 2.0).toInt())
-
         inv[21] =
             if (card.level >= 10)
                 ItemStack(Material.DIAMOND_SWORD).apply {
@@ -113,6 +120,20 @@ object Generator {
                     nbt["type"] = "equipment"
                 }
             else Items.locked(10)
+
+        inv[22] =
+            if (card.level >= floor(card.maxCardLevel / 2.0))
+                ItemStack(Material.CHEST).apply {
+                    itemMeta = itemMeta.apply {
+                        displayName = "${ChatColor.GOLD}${get("menu.card_quests")}"
+                    }
+                }.nbt { nbt ->
+                    nbt.id = "card:info_item"
+                    nbt["type"] = "quests"
+                }
+            else Items.locked(floor(card.maxCardLevel / 2.0).toInt())
+
+        inv[23] = Items.COMING_SOON
 
         while (inv.firstEmpty() != -1)
             inv[inv.firstEmpty()] = Items.GUI_BACKGROUND

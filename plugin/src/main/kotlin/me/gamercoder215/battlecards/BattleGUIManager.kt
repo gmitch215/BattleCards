@@ -13,6 +13,10 @@ import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.TextComponent
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -71,6 +75,21 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 val card = inv["card", Card::class.java] ?: return@put
 
                 p.openInventory(Generator.generateCardQuests(card, quest))
+            }
+            .put("plugin_info:link") { e, _ ->
+                val p = e.whoClicked as Player
+                val link = e.currentItem.nbt.getString("link")
+
+                val text = TextComponent("${ChatColor.YELLOW}Link: $link").apply {
+                    clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, link)
+                    hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("${ChatColor.AQUA}$link")))
+                }
+
+                try {
+                    p.spigot().sendMessage(text)
+                } catch (ignored: UnsupportedOperationException) {
+                    p.sendMessage(text.toLegacyText())
+                }
             }
             .build()
 
