@@ -67,7 +67,7 @@ subprojects {
         project.ext["kotlin_version"] = kotlin!!.version
         compileOnly(kotlin("reflect"))
 
-        testImplementation("org.mockito:mockito-core:5.4.0")
+        testImplementation("org.mockito:mockito-core:5.5.0")
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
         testImplementation("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT")
     }
