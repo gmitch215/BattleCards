@@ -37,6 +37,12 @@ object Items {
     )
 
     @JvmStatic
+    val COMING_SOON: ItemStack = builder(Material.BEDROCK,
+        { displayName = "${ChatColor.YELLOW}${get("constants.coming_soon")}" },
+        { nbt -> nbt.addTag("_cancel") }
+    )
+
+    @JvmStatic
     fun locked(unlockedAt: Int): ItemStack = LOCKED.clone().apply {
         itemMeta = itemMeta.apply {
             lore = listOf(
