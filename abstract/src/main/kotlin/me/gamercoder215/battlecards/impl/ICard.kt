@@ -86,7 +86,8 @@ class ICard(
             "last_used" to last,
             "last_used_player" to lastUsedPlayer?.uniqueId.toString(),
             "stats" to stats,
-            "stored_entity_type" to storedEntityType?.name
+            "stored_entity_type" to storedEntityType?.name,
+            "equipment" to cardEquipment.map { it.key to it.value.name }.toMap()
         )
     }
 
@@ -149,6 +150,7 @@ class ICard(
             val lastPlayerS = map["last_used_player"] as String
             val lastPlayer: OfflinePlayer? = lastPlayerS.let { if (it == "null") null else Bukkit.getOfflinePlayer(UUID.fromString(it)) }
             val storedEntityTypeS = map["stored_entity_type"] as String?
+            val equipment = map["equipment"] as Map<Int, String>
 
             val card = ICard(clazz, type, creation, last, lastPlayer)
             card.stats.putAll(map["stats"] as MutableMap<String, Number>)
@@ -159,6 +161,7 @@ class ICard(
                     null
                 }
             }
+            card.cardEquipment.putAll(equipment.map { entry -> entry.key to BattleConfig.config.registeredEquipment.first { it.name == entry.value } }.toMap())
 
             return card
         }
