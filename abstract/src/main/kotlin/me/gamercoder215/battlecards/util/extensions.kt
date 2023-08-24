@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard

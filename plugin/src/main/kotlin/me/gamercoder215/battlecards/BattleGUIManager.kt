@@ -122,7 +122,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                     inv["recipe"] = null
                 } else
-                    BattleUtil.sync({
+                    sync {
                         val matrix = matrix()
                         run predicates@{
                             for (r in Items.CARD_TABLE_RECIPES)
@@ -138,7 +138,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                             inv[24] = null
                             inv["recipe"] = null
                         }
-                    })
+                    }
             }
             .put("card_equipment") { e, inv ->
                 val p = e.whoClicked as Player
@@ -171,7 +171,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     }
                 }
 
-                BattleUtil.sync({
+                sync {
                     val equipment = listOf(2, 3, 4, 5, 6).mapNotNull {
                         it to (inv[it] ?: return@mapNotNull null)
                     }.mapNotNull { pair ->
@@ -183,7 +183,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     }.toMap()
 
                     inv[8] = Generator.generateEffectiveModifiers(equipment)
-                })
+                }
             }
             .build()
     }

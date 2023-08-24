@@ -68,7 +68,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
                 object : BukkitRunnable() {
                     override fun run() {
                         saveMetadata()
-                        BattleUtil.sync({ loadBlockMetadata() })
+                        sync { loadBlockMetadata() }
                     }
                 }.runTaskTimerAsynchronously(this, 600, 600)
             )

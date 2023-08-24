@@ -194,10 +194,6 @@ class BattleBlockData(block: Block) : Serializable {
 
 object BattleUtil {
 
-    fun sync(runnable: () -> Unit, delay: Long = 0L): BukkitTask = object : BukkitRunnable() { override fun run() = runnable() }.runTaskLater(BattleConfig.plugin, delay)
-
-    fun async(runnable: () -> Unit, delay: Long = 0L): BukkitTask = object : BukkitRunnable() { override fun run() = runnable() }.runTaskLaterAsynchronously(BattleConfig.plugin, delay)
-
     fun mod(
         health: Double = 1.0,
         damage: Double = 1.0,
