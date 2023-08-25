@@ -588,7 +588,16 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         if (nbt.getString("attach").isNotEmpty()) {
             val attachments = mutableListOf<UUID>()
 
-            val attach = Material.matchMaterial(nbt.getString("attach"))
+            var attach: Material? = null
+
+            for (str in nbt.getString("attach").split(":"))
+                if (Material.matchMaterial(str) != null)
+                    attach = Material.matchMaterial(str)!!
+                else
+                    continue
+
+            if (attach == null) throw AssertionError("Attachment material is null: '${nbt.getString("attach")}'")
+
             val small = nbt.getBoolean("attach.small")
 
             val modX = nbt.getDouble("attach.mod.x")
