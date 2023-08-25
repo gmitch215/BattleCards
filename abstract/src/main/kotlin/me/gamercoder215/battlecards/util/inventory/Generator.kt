@@ -439,4 +439,9 @@ object Generator {
         nbt.addTag("_cancel")
     }
 
+    @JvmStatic
+    fun generateCardCombiner(): BattleInventory {
+        TODO("Not yet implemented")
+    }
+
 }

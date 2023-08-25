@@ -66,6 +66,17 @@ object Items {
     )
 
     @JvmStatic
+    val CARD_COMBINER = builder(BattleMaterial.CAULDRON,
+        { displayName = "${ChatColor.RESET}Card Combiner" },
+        { nbt -> nbt["card_block"] = true; nbt.id = "card_combiner"
+            nbt["container"] = true
+
+            nbt["attach"] = "ender_portal_frame:end_portal_frame"
+            nbt["attach.small"] = true
+            nbt["attach.mod.y"] = -0.8
+        })
+
+    @JvmStatic
     val TINY_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
         { displayName = "${ChatColor.WHITE}Tiny Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 100.0 }
@@ -226,6 +237,7 @@ object Items {
     @JvmStatic
     val PUBLIC_ITEMS = mutableMapOf(
         "card_table" to CARD_TABLE,
+        "card_combiner" to CARD_COMBINER,
         "tiny_experience_book" to TINY_EXPERIENCE_BOOK,
         "small_experience_book" to SMALL_EXPERIENCE_BOOK,
         "medium_experience_book" to MEDIUM_EXPERIENCE_BOOK,

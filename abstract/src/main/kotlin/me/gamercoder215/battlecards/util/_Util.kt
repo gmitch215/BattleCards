@@ -162,6 +162,11 @@ enum class BattleMaterial(
         { ItemStack(Material.matchMaterial("lime_stained_glass_pane")) }
     ),
 
+    CAULDRON(
+        { ItemStack(Material.matchMaterial("cauldron_item")) },
+        { ItemStack(Material.matchMaterial("cauldron")) }
+    ),
+
     ;
 
     fun findStack(): ItemStack = if (Wrapper.legacy) onLegacy() else onModern()
