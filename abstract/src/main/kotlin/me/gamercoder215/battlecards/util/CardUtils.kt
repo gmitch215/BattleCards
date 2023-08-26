@@ -2,6 +2,7 @@ package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.Card
+import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.impl.BlockAttachment
 import me.gamercoder215.battlecards.impl.MinionBlockAttachment
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
@@ -197,6 +198,17 @@ object CardUtils {
         }
 
         return builder.toString()
+    }
+
+    @JvmStatic
+    fun calculateCardChances(cards: Iterable<ItemStack>): Map<Rarity, Double> {
+        val power = cards.map { it.card!! }.sumOf { it.level }
+        if (power < 25) return emptyMap()
+
+        val map = mutableMapOf<Rarity, Double>()
+
+        // TODO Perform Calculations
+        return map
     }
 
 

@@ -441,7 +441,35 @@ object Generator {
 
     @JvmStatic
     fun generateCardCombiner(): BattleInventory {
-        TODO("Not yet implemented")
+        val inv = genGUI("card_combiner", 54, get("menu.card_combiner"))
+
+        inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
+            val items = listOf(
+                inventory[28..34], inventory[37..43], inventory[13]
+            ).map {
+                when (it) {
+                    is ItemStack -> listOf(it)
+                    is Iterable<*> -> it.filterIsInstance<ItemStack>()
+                    else -> emptyList()
+                }
+            }.flatten()
+
+            for (item in items)
+                if (p.inventory.firstEmpty() == -1)
+                    p.world.dropItemNaturally(p.location, item)
+                else
+                    p.inventory.addItem(item)
+        }
+
+        inv[10..25] = Items.GUI_BACKGROUND
+        inv[13] = null
+        inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+            }
+        }
+
+        return inv
     }
 
 }

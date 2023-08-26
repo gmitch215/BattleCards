@@ -98,6 +98,15 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
             .put("card_table") { e, inv ->
                 val p = e.whoClicked as Player
 
+                if (e is InventoryClickEvent)
+                    if (when (e.action) {
+                        InventoryAction.MOVE_TO_OTHER_INVENTORY -> inv.firstEmpty()
+                        else -> e.rawSlot
+                    } == 24) return@put e.setCancelled(true)
+
+                if (e is InventoryDragEvent && 24 in e.rawSlots)
+                    return@put e.setCancelled(true)
+
                 fun matrix(): Array<ItemStack> = cardTableSlots.filter { it != 24 }.run {
                     val matrix = arrayOfNulls<ItemStack>(9)
 
@@ -184,6 +193,22 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                     inv[8] = Generator.generateEffectiveModifiers(equipment)
                 }
+            }
+            .put("card_combiner") { e, inv ->
+                val p = e.whoClicked as Player
+
+                if (e is InventoryClickEvent)
+                    if (when (e.action) {
+                            InventoryAction.MOVE_TO_OTHER_INVENTORY -> inv.firstEmpty()
+                            else -> e.rawSlot
+                        } == 13) return@put e.setCancelled(true)
+
+                if (e is InventoryDragEvent && 13 in e.rawSlots)
+                    return@put e.setCancelled(true)
+
+                fun matrix() = listOf(
+                    inv[28..34], inv[37..43]
+                ).flatten()
             }
             .build()
     }
