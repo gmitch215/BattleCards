@@ -199,7 +199,12 @@ enum class BattleCardType {
     /**
      * Represents a Shulker BattleCard.
      */
-    PURPLE_PARASITE(1, "Shulker", Rarity.LEGEND, Material.matchMaterial("SHULKER_SHELL"))
+    PURPLE_PARASITE(1, "Shulker", Rarity.LEGEND, Material.matchMaterial("SHULKER_SHELL")),
+
+    /**
+     * Represents a Drowned BattleCard.
+     */
+    AQUATIC_ASSASSIN(1, "Drowned", Rarity.EPIC, Material.matchMaterial("CONDUIT"), Material.matchMaterial("TRIDENT"))
     ;
 
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(
