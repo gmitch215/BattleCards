@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.util.inventory
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.builder
 import me.gamercoder215.battlecards.wrapper.Wrapper
@@ -106,6 +107,12 @@ object Items {
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2000000.0 }
     )
 
+    @JvmStatic
+    fun cardShard(rarity: Rarity = Rarity.entries.random()): ItemStack = builder(Material.RABBIT_HIDE,
+        { displayName = "${rarity.color}${rarity.name} Card Shard"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+        { nbt -> nbt.id = "card_shard"; nbt["rarity"] = rarity.name }
+    )
+
     // Static Util
 
     @JvmStatic
@@ -159,7 +166,8 @@ object Items {
         }
     }
 
-    private fun createShapedRecipe(key: String, result: ItemStack): ShapedRecipe {
+    @JvmStatic
+    fun createShapedRecipe(key: String, result: ItemStack): ShapedRecipe {
         return try {
             val namespacedKey = Class.forName("org.bukkit.NamespacedKey").run {
                 val constr = getDeclaredConstructor(Plugin::class.java, String::class.java)
@@ -243,7 +251,9 @@ object Items {
         "medium_experience_book" to MEDIUM_EXPERIENCE_BOOK,
         "large_experience_book" to LARGE_EXPERIENCE_BOOK,
         "huge_experience_book" to HUGE_EXPERIENCE_BOOK
-    )
+    ).apply {
+        putAll(Rarity.entries.map { "${it.name.lowercase()}_card_shard" to cardShard(it) })
+    }
 
     @JvmStatic
     private val GENERATED_ITEMS: Map<String, Double> = mapOf(

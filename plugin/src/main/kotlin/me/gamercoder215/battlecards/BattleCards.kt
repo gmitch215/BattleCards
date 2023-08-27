@@ -15,6 +15,7 @@ import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.impl.cards.IBattleCardListener
 import me.gamercoder215.battlecards.placeholderapi.BattlePlaceholders
 import me.gamercoder215.battlecards.util.*
+import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
@@ -23,6 +24,7 @@ import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -229,7 +231,16 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     override fun registerCard(card: Class<out BattleCard<*>>) {
         if (cards.contains(card)) throw IllegalArgumentException("Card ${card.simpleName} already registered")
+        val type = card.getAnnotation(Type::class.java).type
+        if (!isAvailable(type) || type.craftingMaterial == Material.AIR) throw IllegalStateException("$type is not available on this Minecraft Version")
+
         cards.add(card)
+        Bukkit.addRecipe(Items.createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
+            shape("SSS", "SMS", "SSS")
+
+            setIngredient('S', Items.cardShard(type.rarity).data)
+            setIngredient('M', type.craftingMaterial)
+        })
     }
 
     override fun registerEquipment(equipment: CardEquipment) {

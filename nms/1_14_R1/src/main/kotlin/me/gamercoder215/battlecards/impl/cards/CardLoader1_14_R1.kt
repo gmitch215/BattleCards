@@ -1,8 +1,10 @@
 package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.*
+import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.itemStack
 import me.gamercoder215.battlecards.wrapper.CardLoader
@@ -51,7 +53,22 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
         }
 
         @JvmStatic
-        private val villagerTrades: Map<Villager.Profession, Set<Pair<Int, () -> MerchantRecipe>>> = mapOf(
+        private fun recipe(card: BattleCardType): MerchantRecipe? {
+            if (card.entityClass == null) return null
+
+            val shards = (5..8).random()
+            return MerchantRecipe(CardGenerator.toItem(card.createCardData()), 3).apply {
+                setExperienceReward(true)
+                villagerExperience = 15
+
+                ingredients = listOf(
+                    Items.cardShard(card.rarity).apply { amount = shards }
+                )
+            }
+        }
+
+        @JvmStatic
+        private val villagerTrades: Map<Villager.Profession, Set<Pair<Int, () -> MerchantRecipe?>>> = mapOf(
             Villager.Profession.CLERIC to setOf(
                 2 to {
                     MerchantRecipe(Items.TINY_EXPERIENCE_BOOK, 10).apply {
@@ -79,7 +96,7 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                             ItemStack(Material.EMERALD, r.nextInt(52, 65))
                         )
                     }
-                }
+                },
             ),
             Villager.Profession.ARMORER to setOf(
                 2 to {
@@ -88,6 +105,13 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                 3 to {
                     recipe(BattleConfig.config.registeredEquipment.filter { it.defenseModifier in 1.0..1.3 && it.rarity in equipmentToPrice.keys }.random())
                 },
+                4 to {
+                    recipe(listOf(
+                        BattleCardType.STONE_ARCHER,
+                        BattleCardType.GOLD_SKELETON,
+                        BattleCardType.DIAMOND_GOLEM,
+                    ).random())
+                }
             ),
             Villager.Profession.WEAPONSMITH to setOf(
                 2 to {
@@ -95,6 +119,14 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                 },
                 4 to {
                     recipe(BattleConfig.config.registeredEquipment.filter { it.damageModifier in 1.0..1.4 && it.ability != null && it.rarity in equipmentToPrice.keys }.random())
+                },
+                4 to {
+                    recipe(listOf(
+                        BattleCardType.SKELETON_SOLDIER,
+                        BattleCardType.STONE_ARCHER,
+                        BattleCardType.LAPIS_DROWNED,
+                        BattleCardType.KNIGHT
+                    ).random())
                 }
             ),
             Villager.Profession.TOOLSMITH to setOf(
@@ -103,8 +135,20 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                 },
                 3 to {
                     recipe(BattleConfig.config.registeredEquipment.filter { (it.speedModifier in 1.0..1.3 || it.knockbackResistanceModifier in 1.0..1.5) && it.rarity in equipmentToPrice.keys }.random())
+                },
+                4 to {
+                    recipe(listOf(
+                        BattleCardType.KNIGHT,
+                        BattleCardType.MERCENARY,
+                        BattleCardType.MINER
+                    ).random())
                 }
             ),
+            Villager.Profession.BUTCHER to setOf(
+                4 to {
+                    recipe(BattleCardType.PITBULL)
+                }
+            )
         )
     }
 

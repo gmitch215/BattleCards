@@ -14,7 +14,7 @@ enum class BattleCardType {
     /**
      * Represents a Basic BattleCard.
      */
-    BASIC(1, null, Rarity.BASIC, null),
+    BASIC(1, null, Rarity.BASIC, null, Material.AIR),
 
     /**
      * Represents an Iron Golem BattleCard.
@@ -24,7 +24,7 @@ enum class BattleCardType {
     /**
      * Represents a Wither BattleCard.
      */
-    WITHER_KING(1, Wither::class, Rarity.ULTIMATE, Material.matchMaterial("WITHER_ROSE") ?: Material.matchMaterial("WITHER_SKELETON_SKULL")),
+    WITHER_KING(1, Wither::class, Rarity.ULTIMATE, Material.matchMaterial("WITHER_ROSE") ?: Material.matchMaterial("WITHER_SKELETON_SKULL"), Material.NETHER_STAR),
 
     /**
      * Represents a Husk BattleCard.
@@ -44,17 +44,17 @@ enum class BattleCardType {
     /**
      * Represents an Enderman BattleCard.
      */
-    WITHERMAN(1, Enderman::class, Rarity.LEGEND, Material.ENDER_PEARL),
+    WITHERMAN(1, Enderman::class, Rarity.LEGEND, Material.ENDER_PEARL, Material.SOUL_SAND),
 
     /**
      * Represents a Drowned BattleCard.
      */
-    LAPIS_DROWNED(1, "Drowned", Rarity.UNCOMMON, Material.matchMaterial("LAPIS_LAZULI")),
+    LAPIS_DROWNED(1, "Drowned", Rarity.UNCOMMON, Material.matchMaterial("LAPIS_LAZULI"), Material.LAPIS_BLOCK),
 
     /**
      * Represents a Wither Skeleton BattleCard.
      */
-    GOLD_SKELETON(1, "WitherSkeleton", Rarity.UNCOMMON, Material.matchMaterial("GOLDEN_CHESTPLATE") ?: Material.matchMaterial("GOLD_CHESTPLATE")),
+    GOLD_SKELETON(1, "WitherSkeleton", Rarity.UNCOMMON, Material.matchMaterial("GOLDEN_CHESTPLATE") ?: Material.matchMaterial("GOLD_CHESTPLATE"), Material.GOLD_BLOCK),
 
     /**
      * Represents a Zombie BattleCard.
@@ -74,7 +74,7 @@ enum class BattleCardType {
     /**
      * Represents an Enderman BattleCard.
      */
-    EYE_OF_ENDERMAN(1, Enderman::class, Rarity.LEGEND, Material.matchMaterial("ENDER_CRYSTAL") ?: Material.ENDER_PEARL),
+    EYE_OF_ENDERMAN(1, Enderman::class, Rarity.LEGEND, Material.matchMaterial("ENDER_CRYSTAL") ?: Material.ENDER_PEARL, Material.matchMaterial("ENDER_EYE") ?: Material.matchMaterial("EYE_OF_ENDER")!!),
 
     /**
      * Represents a Polar Bear BattleCard.
@@ -84,7 +84,7 @@ enum class BattleCardType {
     /**
      * Represents a Blaze BattleCard.
      */
-    INFERNO_BLAZE(1, Blaze::class, Rarity.MYTHICAL, Material.matchMaterial("FIRE_CHARGE") ?: Material.matchMaterial("FIREBALL") ?: Material.BLAZE_ROD),
+    INFERNO_BLAZE(1, Blaze::class, Rarity.MYTHICAL, Material.matchMaterial("FIRE_CHARGE") ?: Material.matchMaterial("FIREBALL") ?: Material.BLAZE_ROD, Material.LAVA_BUCKET),
 
     /**
      * Represents a Stray BattleCard.
@@ -94,7 +94,7 @@ enum class BattleCardType {
     /**
      * Represents a Pigin Brute BattleCard.
      */
-    NETHERITE_PIGLIN(1, "PiglinBrute", Rarity.EPIC, Material.matchMaterial("NETHERITE_SWORD")),
+    NETHERITE_PIGLIN(1, "PiglinBrute", Rarity.EPIC, Material.matchMaterial("NETHERITE_SWORD"), Material.matchMaterial("NETHERITE_INGOT")),
 
     /**
      * Represents a Spider BattleCard.
@@ -129,7 +129,7 @@ enum class BattleCardType {
     /**
      * Represents a Vindicator BattleCard.
      */
-    KNIGHT(1, "Vindicator", Rarity.UNCOMMON, Material.matchMaterial("SHIELD") ?: Material.IRON_AXE),
+    KNIGHT(1, "Vindicator", Rarity.UNCOMMON, Material.matchMaterial("SHIELD") ?: Material.IRON_AXE, Material.DIAMOND_AXE),
 
     /**
      * Represents a Illusioner BattleCard.
@@ -144,7 +144,7 @@ enum class BattleCardType {
     /**
      * Represents a Zombie BattleCard.
      */
-    SUSPICIOUS_ZOMBIE(1, Zombie::class, Rarity.EPIC, Material.matchMaterial("SUSPICIOUS_STEW") ?: Material.BLAZE_ROD),
+    SUSPICIOUS_ZOMBIE(1, Zombie::class, Rarity.EPIC, Material.matchMaterial("SUSPICIOUS_STEW") ?: Material.BLAZE_ROD, Material.GLASS_BOTTLE),
 
     /**`
      * Represents a Stray BattleCard.
@@ -169,32 +169,32 @@ enum class BattleCardType {
     /**
      * Represents a Silverfish BattleCard.
      */
-    SILVERFISH_HIVE(1, Silverfish::class, Rarity.UNCOMMON),
+    SILVERFISH_HIVE(1, Silverfish::class, Rarity.UNCOMMON, Material.matchMaterial("ANDESITE") ?: Material.STONE, Material.STONE_PICKAXE),
 
     /**
      * Represents a Zombie BattleCard.
      */
-    THUNDER_REVENANT(1, Zombie::class, Rarity.MYTHICAL, Material.matchMaterial("LIGHTNING_ROD") ?: Material.BLAZE_ROD),
+    THUNDER_REVENANT(1, Zombie::class, Rarity.MYTHICAL, Material.matchMaterial("LIGHTNING_ROD") ?: Material.BLAZE_ROD, Material.GLOWSTONE),
 
     /**
      * Represents a Husk BattleCard.
      */
-    EMERALD_HUSK(1, "Husk", Rarity.UNCOMMON, Material.EMERALD),
+    EMERALD_HUSK(1, "Husk", Rarity.UNCOMMON, Material.EMERALD, Material.EMERALD_BLOCK),
 
     /**
      * Represents a Husk BattleCard.
      */
-    WARRIOR_HUSK(1, "Husk", Rarity.COMMON, Material.DIAMOND_AXE),
+    WARRIOR_HUSK(1, "Husk", Rarity.COMMON, Material.DIAMOND_AXE, Material.DIAMOND_CHESTPLATE),
 
     /**
      * Represents a Skeleton BattleCard.
      */
-    NECROMANCER(1, Skeleton::class, Rarity.EPIC, Material.ROTTEN_FLESH),
+    NECROMANCER(1, Skeleton::class, Rarity.EPIC, Material.ROTTEN_FLESH, Material.LEATHER_CHESTPLATE),
 
     /**
      * Represents a Husk BattleCard.
      */
-    ETERNAL_HUSK(1, "Husk", Rarity.MYTHICAL, Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("ENDER_PORTAL_FRAME") ?: Material.BEDROCK),
+    ETERNAL_HUSK(1, "Husk", Rarity.MYTHICAL, Material.matchMaterial("END_PORTAL_FRAME") ?: Material.matchMaterial("ENDER_PORTAL_FRAME") ?: Material.BEDROCK, Material.matchMaterial("TOTEM_OF_UNDYING") ?: Material.matchMaterial("TOTEM")),
 
     /**
      * Represents a Shulker BattleCard.
@@ -202,7 +202,7 @@ enum class BattleCardType {
     PURPLE_PARASITE(1, "Shulker", Rarity.LEGEND, Material.matchMaterial("SHULKER_SHELL"))
     ;
 
-    constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null) : this(
+    constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(
         generation,
         try {
             Class.forName("org.bukkit.entity.${entityClass}") as Class<out LivingEntity>
@@ -210,16 +210,18 @@ enum class BattleCardType {
             null
         },
         rarity,
-        material
+        material,
+        crafting
     )
 
-    constructor(generation: Int, entityClass: KClass<out LivingEntity>, rarity: Rarity, material: Material? = null) : this(generation, entityClass.java, rarity, material)
+    constructor(generation: Int, entityClass: KClass<out LivingEntity>, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(generation, entityClass.java, rarity, material, crafting)
 
-    constructor(generation: Int, entityClass: Class<out LivingEntity>?, rarity: Rarity, icon: Material? = null) {
+    constructor(generation: Int, entityClass: Class<out LivingEntity>?, rarity: Rarity, material: Material? = null, crafting: Material? = material) {
         this.generation = generation
         this.entityClass = entityClass
         this.rarity = rarity
-        this.icon = icon
+        this.icon = material
+        this.craftingMaterial = crafting ?: Material.AIR
     }
 
     /**
@@ -252,6 +254,12 @@ enum class BattleCardType {
      * @return Entity Class found, or null if not found
      */
     val entityClass: Class<out LivingEntity>?
+
+    /**
+     * Fetches the Crafting Material used to craft this BattleCardType.
+     * @return Crafting Material, or [Material.AIR] if not craftable
+     */
+    val craftingMaterial: Material
 
     /**
      * Creates an empty card data object.
