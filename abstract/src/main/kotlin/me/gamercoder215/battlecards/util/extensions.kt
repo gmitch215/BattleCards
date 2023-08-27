@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import org.bukkit.potion.PotionEffectType
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
 import org.bukkit.util.ChatPaginator
 import org.bukkit.util.Vector
@@ -319,8 +320,25 @@ fun Passive.getChance(level: Int, unlockedAt: Int = 0): Long {
     return interval.coerceIn(min, max)
 }
 
-fun sync(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTask(BattleConfig.plugin, block)
-fun async(block: () -> Unit): BukkitTask = Bukkit.getScheduler().runTaskAsynchronously(BattleConfig.plugin, block)
+fun sync(block: BukkitRunnable.() -> Unit): BukkitTask =
+    object : BukkitRunnable() {
+        override fun run() = block(this)
+    }.runTask(BattleConfig.plugin)
+
+fun sync(block: BukkitRunnable.() -> Unit, delay: Long): BukkitTask =
+    object : BukkitRunnable() {
+        override fun run() = block(this)
+    }.runTaskLater(BattleConfig.plugin, delay)
+
+fun async(block: BukkitRunnable.() -> Unit): BukkitTask =
+    object : BukkitRunnable() {
+        override fun run() = block(this)
+    }.runTaskAsynchronously(BattleConfig.plugin)
+
+fun async(block: BukkitRunnable.() -> Unit, delay: Long): BukkitTask =
+    object : BukkitRunnable() {
+        override fun run() = block(this)
+    }.runTaskLaterAsynchronously(BattleConfig.plugin, delay)
 
 // Bukkit Extensions from Newer Version & Utils
 

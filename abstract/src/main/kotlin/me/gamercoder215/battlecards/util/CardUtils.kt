@@ -6,6 +6,7 @@ import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.impl.BlockAttachment
 import me.gamercoder215.battlecards.impl.MinionBlockAttachment
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.inventory.Items.randomCumulative
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -16,6 +17,7 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.Vector
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 object CardUtils {
 
@@ -202,12 +204,48 @@ object CardUtils {
 
     @JvmStatic
     fun calculateCardChances(cards: Iterable<ItemStack>): Map<Rarity, Double> {
-        val power = cards.map { it.card!! }.sumOf { it.level }
+        val power = cards.map { it.card!! }.sumOf { it.level * it.rarity.ordinal.times(2).plus(1) }
         if (power < 25) return emptyMap()
 
         val map = mutableMapOf<Rarity, Double>()
+        val p = power - 25
 
-        // TODO Perform Calculations
+        when {
+            p <= 100 -> {
+                map[Rarity.COMMON] = 1.0 - (p / 100.0)
+                map[Rarity.UNCOMMON] = 1.0 / abs(p - 50).coerceAtLeast(1)
+                map[Rarity.RARE] = p / 100.0
+            }
+            p <= 250 -> {
+                map[Rarity.UNCOMMON] = 1.0 - ((p - 100) / 150.0)
+                map[Rarity.RARE] = 1.0 / abs(p - 150).coerceAtLeast(1)
+                map[Rarity.EPIC] = (p - 100) / 150.0
+            }
+            p <= 550 -> {
+                map[Rarity.RARE] = 1.0 - ((p - 250) / 300.0)
+                map[Rarity.EPIC] = 1.0 / abs(p - 350).coerceAtLeast(1)
+                map[Rarity.LEGEND] = (p - 250) / 300.0
+            }
+            p <= 800 -> {
+                map[Rarity.EPIC] = 1.0 - ((p - 550) / 250.0)
+                map[Rarity.LEGEND] = 1.0 / abs(p - 650).coerceAtLeast(1)
+                map[Rarity.MYTHICAL] = (p - 550) / 250.0
+            }
+            else -> {
+                map[Rarity.LEGEND] = 1.0 - ((p - 800) / 200.0)
+                map[Rarity.MYTHICAL] = 1.0 / abs(p - 900).coerceAtLeast(1)
+                map[Rarity.ULTIMATE] = (p - 800) / 200.0
+            }
+        }
+
+        val sum = map.values.sum()
+
+        for (rarity in Rarity.entries) {
+            map.putIfAbsent(rarity, 0.0)
+
+            map[rarity] = map[rarity]!! / sum
+        }
+
         return map
     }
 

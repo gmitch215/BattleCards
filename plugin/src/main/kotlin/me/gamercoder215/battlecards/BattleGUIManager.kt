@@ -2,16 +2,22 @@ package me.gamercoder215.battlecards
 
 import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.*
+import me.gamercoder215.battlecards.util.CardUtils.format
+import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
+import me.gamercoder215.battlecards.util.inventory.Items.randomCumulative
 import me.gamercoder215.battlecards.wrapper.BattleInventory
+import me.gamercoder215.battlecards.wrapper.Wrapper
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
@@ -195,20 +201,86 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 }
             }
             .put("card_combiner") { e, inv ->
-                val p = e.whoClicked as Player
-
-                if (e is InventoryClickEvent)
+                if (e is InventoryClickEvent) {
                     if (when (e.action) {
                             InventoryAction.MOVE_TO_OTHER_INVENTORY -> inv.firstEmpty()
                             else -> e.rawSlot
-                        } == 13) return@put e.setCancelled(true)
+                        } == 13
+                    ) return@put e.setCancelled(true)
 
-                if (e is InventoryDragEvent && 13 in e.rawSlots)
+                    if (listOfNotNull(e.cursor, if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) e.currentItem else null).any { !it.isCard })
+                        return@put e.setCancelled(true)
+                }
+
+                if (e is InventoryDragEvent && (13 in e.rawSlots || e.newItems.values.any { !it.isCard }))
                     return@put e.setCancelled(true)
 
                 fun matrix() = listOf(
                     inv[28..34], inv[37..43]
-                ).flatten()
+                ).flatten().filterNotNull().filter { it.type != Material.AIR }
+
+                if (matrix().isEmpty()) {
+                    inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
+                        itemMeta = itemMeta.apply {
+                            displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                        }
+                    }
+                    inv[23] = GUI_BACKGROUND
+                }
+                else {
+                    inv[22] = ItemStack(Material.PAPER).apply {
+                        itemMeta = itemMeta.apply {
+                            displayName = "${ChatColor.YELLOW}${get("constants.card_chances")}"
+
+                            val matrix = matrix()
+                            val chances = CardUtils.calculateCardChances(matrix)
+                            lore = listOf(" ", "${ChatColor.GOLD}${format(get("constants.card_power"), matrix.map { it.card!! }.sumOf { it.level }.format())}") + chances.map {
+                                "${it.key.color}${format(get("constants.chance"), it.value.format())} ${it.key}"
+                            }
+                        }
+                    }
+
+                    inv[23] = ItemStack(Material.BEACON).apply {
+                        itemMeta = itemMeta.apply {
+                            displayName = "${ChatColor.AQUA}${get("constants.confirm")}"
+                        }
+                    }.nbt { nbt -> nbt.id = "card_combiner:start" }
+                }
+            }
+            .put("card_combiner:start") { e, inv ->
+                val p = e.whoClicked as Player
+
+                inv["stopped"] = false
+                inv[22] = ItemStack(Material.BARRIER).apply {
+                    itemMeta = itemMeta.apply {
+                        displayName = "${ChatColor.RED}${get("constants.cancel")}"
+                    }
+                }.nbt { nbt -> nbt.id = "card_combiner:stop" }
+
+                fun stopped() = inv["stopped", Boolean::class.java, false]
+                fun matrix() = listOf(
+                    inv[28..34], inv[37..43]
+                ).flatten().filterNotNull().filter { it.type != Material.AIR }
+
+                sync( { if (stopped()) return@sync cancel(); p.playFailure() }, 20)
+                sync( { if (stopped()) return@sync cancel(); BattleSound.BLOCK_NOTE_BLOCK_PLING.play(p.location, 1F, 1F) }, 40)
+                sync( { if (stopped()) return@sync cancel(); p.playSuccess() }, 60)
+                sync({
+                    if (stopped()) return@sync cancel()
+
+                    val matrix = matrix()
+                    inv[28..34] = null
+                    inv[37..43] = null
+
+                    val chosen = CardUtils.calculateCardChances(matrix).randomCumulative()
+                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random().createCardData()
+
+                    inv[13] = CardGenerator.generateCardInfo(card)
+                    BattleSound.ENTITY_PLAYER_LEVELUP.play(p.location, 1F, 0F)
+                }, 100)
+            }
+            .put("card_combiner:stop") { _, inv ->
+                inv["stopped"] = true
             }
             .build()
     }
