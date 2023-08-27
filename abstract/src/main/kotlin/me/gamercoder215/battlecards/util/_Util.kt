@@ -33,7 +33,9 @@ enum class BattleSound(
 
     ENTITY_WITHER_AMBIENT("WITHER_IDLE"),
 
-    ITEM_BOOK_TURN_PAGE
+    ITEM_BOOK_TURN_PAGE,
+
+    ENTITY_PLAYER_LEVELUP("LEVEL_UP"),
 
     ;
 
