@@ -25,6 +25,8 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -238,9 +240,29 @@ class BattleCards : JavaPlugin(), BattleConfig {
         Bukkit.addRecipe(Items.createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
             shape("SSS", "SMS", "SSS")
 
-            setIngredient('S', Items.cardShard(type.rarity).data)
             setIngredient('M', type.craftingMaterial)
+
+            val shard = Items.cardShard(type.rarity)
+            if (!exactChoice(this, 'S', shard))
+                setIngredient('S', shard.data)
         })
+    }
+
+    private fun exactChoice(recipe: ShapedRecipe, char: Char, item: ItemStack): Boolean {
+        return try {
+            val exactChoice = Class.forName("org.bukkit.inventory.RecipeChoice\$ExactChoice")
+            val constr = exactChoice.getDeclaredConstructor(ItemStack::class.java)
+            constr.isAccessible = true
+
+            val choice = constr.newInstance(item)
+
+            val setIngredient = ShapedRecipe::class.java.getMethod("setIngredient", Char::class.java, exactChoice)
+            setIngredient.invoke(recipe, char, choice)
+
+            true
+        } catch (ignored: ReflectiveOperationException) {
+            false
+        }
     }
 
     override fun registerEquipment(equipment: CardEquipment) {
