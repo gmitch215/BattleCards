@@ -11,9 +11,9 @@ import org.bukkit.inventory.ItemStack
 
 @Type(BattleCardType.PRINCE_HUSK)
 @Attributes(150.0, 6.3, 25.5, 0.25, 0.32)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 25.0)
-@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.7)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 5.0)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 7.08)
+@AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 3.7)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 6.2)
 
 @CardAbility("card.prince_husk.ability.fire_immune", ChatColor.GOLD)
 class IPrinceHusk(data: ICard) : IBattleCard<Husk>(data) {
