@@ -204,7 +204,17 @@ enum class BattleCardType {
     /**
      * Represents a Drowned BattleCard.
      */
-    AQUATIC_ASSASSIN(1, "Drowned", Rarity.EPIC, Material.matchMaterial("CONDUIT"), Material.matchMaterial("TRIDENT"))
+    AQUATIC_ASSASSIN(1, "Drowned", Rarity.EPIC, Material.matchMaterial("CONDUIT"), Material.matchMaterial("TRIDENT")),
+
+    /**
+     * Represents a Skeleton BattleCard.
+     */
+    GOAT_GLADIATOR(1, Skeleton::class, Rarity.RARE, Material.matchMaterial("GOAT_HORN")),
+
+    /**
+     * Represents a Piglin Brute BattleCard.
+     */
+    MAGMA_JOCKEY(1, "PiglinBrute", Rarity.RARE, Material.MAGMA_CREAM)
     ;
 
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(
