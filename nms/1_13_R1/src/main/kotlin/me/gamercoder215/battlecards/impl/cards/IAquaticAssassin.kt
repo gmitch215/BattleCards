@@ -95,6 +95,8 @@ class IAquaticAssassin(data: ICard) : IBattleCard<Drowned>(data) {
     @UnlockedAt(40)
     private fun airbending(event: EntityDamageByEntityEvent) {
         val entity = event.entity as? LivingEntity ?: return
+        if (entity.location.block.type != Material.WATER) return
+
         entity.remainingAir -= 20 * 3
     }
 
