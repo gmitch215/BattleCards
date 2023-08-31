@@ -5,6 +5,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.gamercoder215.battlecards.BattleCards
 import me.gamercoder215.battlecards.util.cards
 import me.gamercoder215.battlecards.util.formatInt
+import me.gamercoder215.battlecards.util.spawnedCards
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
@@ -23,6 +24,14 @@ internal class BattlePlaceholders(private val plugin: BattleCards) : Placeholder
                 if (p !is Player) return@put 0
                 p.inventory.cards.size.formatInt()
             }
+            .put("spawned_card_count") { p ->
+                if (p !is Player) return@put 0
+                p.spawnedCards.size.formatInt()
+            }
+            .put("total_card_level") { p ->
+                if (p !is Player) return@put 0
+                p.inventory.cards.values.sumOf { it.level }.formatInt()
+            }
             .build()
     }
 
@@ -32,9 +41,6 @@ internal class BattlePlaceholders(private val plugin: BattleCards) : Placeholder
 
     // Implementation
 
-    override fun getPlaceholders(): List<String> {
-        return PLACEHOLDERS.keys.asList()
-    }
-
+    override fun getPlaceholders(): List<String> = PLACEHOLDERS.keys.asList()
     override fun onRequest(p: OfflinePlayer, arg: String): String = PLACEHOLDERS[arg]?.let { it(p) }.toString()
 }
