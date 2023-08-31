@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.util.CardAttackType
 import me.gamercoder215.battlecards.util.attackType
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.MagmaCube
@@ -15,7 +16,6 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.ProjectileLaunchEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.util.Vector
 
 @Type(BattleCardType.MAGMA_JOCKEY)
 @Attributes(175.0, 6.0, 5.0, 0.22, 65.0)
@@ -61,6 +61,15 @@ class IMagmaJockey(data: ICard) : IBattleCard<PiglinBrute>(data) {
         }
 
         magma = entity.world.spawn(entity.location, MagmaCube::class.java).apply {
+            size = 4 + (level / 15).coerceAtMost(3)
+
+            val hp = statistics.maxHealth * 0.7
+
+            getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = hp
+            health = hp
+
+            getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)!!.baseValue = statistics.attackDamage / 3
+            getAttribute(Attribute.GENERIC_ATTACK_KNOCKBACK)!!.baseValue = 2.0 + (level * 0.03)
 
             addPassenger(entity)
             minions.add(this)
@@ -86,7 +95,8 @@ class IMagmaJockey(data: ICard) : IBattleCard<PiglinBrute>(data) {
 
                 if (target.location.distanceSquared(proj.location) > 9.0) return
 
-                // TODO Homing Arrows
+                val direction = proj.location.toVector().subtract(target.location.toVector()).normalize()
+                proj.velocity = direction.multiply(1.25)
             }
         }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
     }
