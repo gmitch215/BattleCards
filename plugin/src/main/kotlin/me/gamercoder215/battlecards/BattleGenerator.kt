@@ -29,15 +29,15 @@ internal class BattleGenerator(private val plugin: BattleCards) : Listener {
             rerolls += p.itemInHand.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS)
 
         rerolls = rerolls.coerceAtMost(10)
-        val item = Items.EFFECTIVE_GENERATED_ITEMS.random(rerolls) ?: return
+        val item = Items.EFFECTIVE_GENERATED_ITEMS().random(rerolls) ?: return
         event.drops.add(item)
     }
 
     private companion object {
 
         @JvmStatic
-        private val rarityChances = Rarity.entries.associateWith {
-            (1.0 / 10.0.pow(it.ordinal.plus(1)))
+        private val rarityChances = Rarity.entries.filter { it != Rarity.BASIC }.associateWith {
+            (2.0 / 10.0.pow(it.ordinal))
         }
 
     }

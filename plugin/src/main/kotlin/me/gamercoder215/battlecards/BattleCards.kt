@@ -17,6 +17,9 @@ import me.gamercoder215.battlecards.placeholderapi.BattlePlaceholders
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Items
+import me.gamercoder215.battlecards.util.inventory.Items.cardShard
+import me.gamercoder215.battlecards.util.inventory.Items.createShapedRecipe
+import me.gamercoder215.battlecards.util.inventory.Items.exactChoice
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -237,32 +240,15 @@ class BattleCards : JavaPlugin(), BattleConfig {
         if (!isAvailable(type) || type.craftingMaterial == Material.AIR) throw IllegalStateException("$type is not available on this Minecraft Version")
 
         cards.add(card)
-        Bukkit.addRecipe(Items.createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
+        Bukkit.addRecipe(createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
             shape("SSS", "SMS", "SSS")
 
             setIngredient('M', type.craftingMaterial)
 
-            val shard = Items.cardShard(type.rarity)
+            val shard = cardShard(type.rarity)
             if (!exactChoice(this, 'S', shard))
                 setIngredient('S', shard.data)
         })
-    }
-
-    private fun exactChoice(recipe: ShapedRecipe, char: Char, item: ItemStack): Boolean {
-        return try {
-            val exactChoice = Class.forName("org.bukkit.inventory.RecipeChoice\$ExactChoice")
-            val constr = exactChoice.getDeclaredConstructor(ItemStack::class.java)
-            constr.isAccessible = true
-
-            val choice = constr.newInstance(item)
-
-            val setIngredient = ShapedRecipe::class.java.getMethod("setIngredient", Char::class.java, exactChoice)
-            setIngredient.invoke(recipe, char, choice)
-
-            true
-        } catch (ignored: ReflectiveOperationException) {
-            false
-        }
     }
 
     override fun registerEquipment(equipment: CardEquipment) {

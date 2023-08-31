@@ -30,7 +30,7 @@ internal class CardLoader1_16_R1 : CardLoader, Listener {
         val limit = (luck / 0.5F).toInt().coerceAtMost(3)
 
         for (i in 0 until limit) {
-            val item = Items.EFFECTIVE_GENERATED_ITEMS.random(luck.toInt().coerceAtMost(10)) ?: continue
+            val item = Items.EFFECTIVE_GENERATED_ITEMS().random(luck.toInt().coerceAtMost(10)) ?: continue
             event.loot.add(item)
         }
     }

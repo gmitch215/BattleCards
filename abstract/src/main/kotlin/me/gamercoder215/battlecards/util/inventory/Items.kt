@@ -108,10 +108,14 @@ object Items {
     )
 
     @JvmStatic
-    fun cardShard(rarity: Rarity = Rarity.entries.random()): ItemStack = builder(Material.RABBIT_HIDE,
-        { displayName = "${rarity.color}${rarity.name} Card Shard"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
-        { nbt -> nbt.id = "card_shard"; nbt["rarity"] = rarity.name }
-    )
+    fun cardShard(rarity: Rarity): ItemStack {
+        if (rarity == Rarity.BASIC) throw UnsupportedOperationException("Cannot Use Basic Rarity")
+
+        return builder(Material.RABBIT_HIDE,
+            { displayName = "${rarity.color}${rarity.name} Card Shard"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+            { nbt -> nbt.id = "card_shard"; nbt["rarity"] = rarity.name }
+        )
+    }
 
     // Static Util
 
@@ -184,14 +188,47 @@ object Items {
     // Recipes & Public Items
 
     @JvmStatic
-    val RECIPES: List<Recipe> = listOf(
+    val RECIPES: List<Recipe> = mutableListOf(
         createShapedRecipe("card_table", CARD_TABLE).apply {
             shape(" W ", "WPW", " W ")
 
             setIngredient('W', BattleMaterial.CRAFTING_TABLE.find())
             setIngredient('P', Material.PAPER)
+        },
+    ).apply {
+        // Card Shard Recipes
+
+        for (rarity in Rarity.entries) {
+            if (rarity.ordinal <= 1) continue
+
+            val previous = Rarity.entries[rarity.ordinal - 1]
+
+            add(createShapedRecipe("${rarity.name.lowercase()}_card_shard", cardShard(rarity)).apply {
+                shape("SSS", "SSS", "SSS")
+
+                val shard = cardShard(previous)
+                if (!exactChoice(this, 'S', shard))
+                    setIngredient('S', shard.data)
+            })
         }
-    )
+    }
+
+    fun exactChoice(recipe: ShapedRecipe, char: Char, item: ItemStack): Boolean {
+        return try {
+            val exactChoice = Class.forName("org.bukkit.inventory.RecipeChoice\$ExactChoice")
+            val constr = exactChoice.getDeclaredConstructor(ItemStack::class.java)
+            constr.isAccessible = true
+
+            val choice = constr.newInstance(item)
+
+            val setIngredient = ShapedRecipe::class.java.getMethod("setIngredient", Char::class.java, exactChoice)
+            setIngredient.invoke(recipe, char, choice)
+
+            true
+        } catch (ignored: ReflectiveOperationException) {
+            false
+        }
+    }
 
     @JvmStatic
     val CARD_TABLE_RECIPES: List<CardWorkbenchRecipe> = listOf(
@@ -252,7 +289,7 @@ object Items {
         "large_experience_book" to LARGE_EXPERIENCE_BOOK,
         "huge_experience_book" to HUGE_EXPERIENCE_BOOK
     ).apply {
-        putAll(Rarity.entries.map { "${it.name.lowercase()}_card_shard" to cardShard(it) })
+        putAll(Rarity.entries.filter { it != Rarity.BASIC }.map { "${it.name.lowercase()}_card_shard" to cardShard(it) })
     }
 
     @JvmStatic
@@ -261,14 +298,21 @@ object Items {
         "small_experience_book" to 0.001,
         "medium_experience_book" to 0.0002,
         "large_experience_book" to 0.00001,
-        "huge_experience_book" to 0.0000005
+        "huge_experience_book" to 0.0000005,
+        "common_card_shard" to 0.5,
+        "uncommon_card_shard" to 0.1,
+        "rare_card_shard" to 0.05,
+        "epic_card_shard" to 0.0075,
+        "legendary_card_shard" to 0.001,
+        "mythical_card_shard" to 0.00005,
+        "ultimate_card_shard" to 0.0000025
     )
 
     @JvmStatic
-    val EFFECTIVE_GENERATED_ITEMS = GENERATED_ITEMS.mapNotNull {
+    val EFFECTIVE_GENERATED_ITEMS = { GENERATED_ITEMS.mapNotNull {
         val item = PUBLIC_ITEMS[it.key] ?: return@mapNotNull null
         item to (it.value / GENERATED_ITEMS.values.sum())
-    }.toMap()
+    }.toMap() }
 
     fun <T> Map<T, Double>.randomCumulative(reroll: Int = 0): T {
         val distribution = DoubleArray(size)
