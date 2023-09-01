@@ -112,7 +112,7 @@ object Items {
         if (rarity == Rarity.BASIC) throw UnsupportedOperationException("Cannot Use Basic Rarity")
 
         return builder(Material.RABBIT_HIDE,
-            { displayName = "${rarity.color}${rarity.name} Card Shard"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
+            { displayName = "${rarity.color}${ChatColor.BOLD}${rarity.name} ${rarity.color}Card Shard"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
             { nbt -> nbt.id = "card_shard"; nbt["rarity"] = rarity.name }
         )
     }
@@ -206,27 +206,29 @@ object Items {
             add(createShapedRecipe("${rarity.name.lowercase()}_card_shard", cardShard(rarity)).apply {
                 shape("SSS", "SSS", "SSS")
 
-                val shard = cardShard(previous)
-                if (!exactChoice(this, 'S', shard))
-                    setIngredient('S', shard.data)
+                val prevShard = cardShard(previous)
+                exactChoice(this, 'S', prevShard)
+
+                try {
+                    javaClass.getMethod("setGroup", String::class.java).invoke(this, "battlecards:card_shards")
+                } catch (ignored: NoSuchMethodException) {}
             })
         }
     }
 
-    fun exactChoice(recipe: ShapedRecipe, char: Char, item: ItemStack): Boolean {
-        return try {
+    fun exactChoice(recipe: ShapedRecipe, char: Char, item: ItemStack) {
+        try {
             val exactChoice = Class.forName("org.bukkit.inventory.RecipeChoice\$ExactChoice")
             val constr = exactChoice.getDeclaredConstructor(ItemStack::class.java)
             constr.isAccessible = true
 
             val choice = constr.newInstance(item)
 
-            val setIngredient = ShapedRecipe::class.java.getMethod("setIngredient", Char::class.java, exactChoice)
+            val recipeChoice = Class.forName("org.bukkit.inventory.RecipeChoice")
+            val setIngredient = ShapedRecipe::class.java.getMethod("setIngredient", Char::class.java, recipeChoice)
             setIngredient.invoke(recipe, char, choice)
-
-            true
         } catch (ignored: ReflectiveOperationException) {
-            false
+            recipe.setIngredient(char, item.data)
         }
     }
 
