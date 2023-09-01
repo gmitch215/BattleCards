@@ -16,6 +16,7 @@ import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -667,7 +668,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
     @EventHandler
     fun onPrepareCraft(event: PrepareItemCraftEvent) {
-        if (event.inventory.matrix.any { it.nbt.hasTag("nointeract") })
+        if (event.inventory.matrix.filterNotNull().any { it.nbt.hasTag("nointeract") })
             event.inventory.result = null
     }
 
@@ -681,6 +682,16 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     fun onDamageItem(event: PlayerItemDamageEvent) {
         if (event.item.nbt.hasTag("nointeract"))
             event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onPickup(event: PlayerPickupItemEvent) {
+        val item = event.item.itemStack
+
+        event.player.discoverRecipes(Bukkit.getRecipesFor(item))
+
+        if (item.isCard)
+            event.player.discoverRecipes(BattleCards.cardRecipes[item.card!!.type])
     }
 
 }
