@@ -28,7 +28,6 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
@@ -224,6 +223,12 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     // BattleConfig Implementation
 
+    companion object {
+
+        @JvmStatic
+        val cardRecipes: MutableMap<BattleCardType, ShapedRecipe> = mutableMapOf()
+    }
+
     val cards: MutableSet<Class<out BattleCard<*>>> = mutableSetOf()
 
     val equipment: MutableSet<CardEquipment> = mutableSetOf()
@@ -237,18 +242,26 @@ class BattleCards : JavaPlugin(), BattleConfig {
     override fun registerCard(card: Class<out BattleCard<*>>) {
         if (cards.contains(card)) throw IllegalArgumentException("Card ${card.simpleName} already registered")
         val type = card.getAnnotation(Type::class.java).type
-        if (!isAvailable(type) || type.craftingMaterial == Material.AIR) throw IllegalStateException("$type is not available on this Minecraft Version")
+
+        if (type != BattleCardType.BASIC && type.craftingMaterial == Material.AIR) throw IllegalStateException("$type is not available on this Minecraft Version")
 
         cards.add(card)
-        Bukkit.addRecipe(createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
-            shape("SSS", "SMS", "SSS")
 
-            setIngredient('M', type.craftingMaterial)
+        if (type != BattleCardType.BASIC)
+            Bukkit.addRecipe(createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
+                shape("SSS", "SMS", "SSS")
 
-            val shard = cardShard(type.rarity)
-            if (!exactChoice(this, 'S', shard))
-                setIngredient('S', shard.data)
-        })
+                setIngredient('M', type.craftingMaterial)
+
+                val shard = cardShard(type.rarity)
+                exactChoice(this, 'S', shard)
+
+                try {
+                    javaClass.getMethod("setGroup", String::class.java).invoke(this, "battlecards:cards")
+                } catch (ignored: NoSuchMethodException) {}
+
+                cardRecipes[type] = this
+            })
     }
 
     override fun registerEquipment(equipment: CardEquipment) {
@@ -277,7 +290,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
     }
 
     override fun isAvailable(type: BattleCardType): Boolean =
-        registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } != null
+        registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } != null || type == BattleCardType.BASIC
 
     override fun createCardData(type: BattleCardType): Card {
         val clazz = registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } ?: throw IllegalStateException("$type is not available on this Minecraft Version")
