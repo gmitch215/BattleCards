@@ -7,6 +7,9 @@ import me.gamercoder215.battlecards.api.card.item.CardEquipment.Rarity.*
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.itemStack
+import me.gamercoder215.battlecards.util.nbt
+import me.gamercoder215.battlecards.util.set
+import me.gamercoder215.battlecards.util.sync
 import me.gamercoder215.battlecards.wrapper.CardLoader
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.Material
@@ -14,6 +17,8 @@ import org.bukkit.entity.Villager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.VillagerAcquireTradeEvent
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.inventory.GrindstoneInventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.MerchantRecipe
 
@@ -163,6 +168,16 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
             if (villager.recipes.any { it.result.isSimilar(r.result) }) return
 
             e.recipe = r
+        }
+    }
+
+    @EventHandler
+    fun grindstone(event: InventoryClickEvent) {
+        val inv = event.view.topInventory as? GrindstoneInventory ?: return
+
+        sync {
+            if (inv.filterNotNull().any { it.nbt.hasTag("nointeract") })
+                inv[2] = null
         }
     }
 

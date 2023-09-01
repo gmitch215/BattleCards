@@ -1,13 +1,14 @@
 package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
-import me.gamercoder215.battlecards.api.card.item.CardEquipments
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.random
+import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.CardLoader
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.inventory.PrepareSmithingEvent
 import org.bukkit.event.world.LootGenerateEvent
 
 internal class CardLoader1_16_R1 : CardLoader, Listener {
@@ -33,6 +34,14 @@ internal class CardLoader1_16_R1 : CardLoader, Listener {
             val item = Items.EFFECTIVE_GENERATED_ITEMS().random(luck.toInt().coerceAtMost(10)) ?: continue
             event.loot.add(item)
         }
+    }
+
+    @EventHandler
+    fun smithing(event: PrepareSmithingEvent) {
+        val inv = event.inventory
+
+        if (inv.filterNotNull().any { it.nbt.hasTag("nointeract") })
+            event.result = null
     }
 
 }

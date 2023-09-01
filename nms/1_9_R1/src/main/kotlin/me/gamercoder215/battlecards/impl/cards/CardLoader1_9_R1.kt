@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.util.isCard
+import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.CardLoader
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.Material
@@ -9,6 +10,7 @@ import org.bukkit.entity.Creature
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.inventory.PrepareAnvilEvent
 
 internal class CardLoader1_9_R1 : CardLoader, Listener {
 
@@ -26,6 +28,14 @@ internal class CardLoader1_9_R1 : CardLoader, Listener {
                 event.isCancelled = true
                 entity.world.playSound(entity.location, Sound.ITEM_SHIELD_BLOCK, 2F, 1F)
             }
+    }
+
+    @EventHandler
+    fun anvil(event: PrepareAnvilEvent) {
+        val inv = event.inventory
+
+        if (inv.filterNotNull().any { it.nbt.hasTag("nointeract") })
+            event.result = null
     }
 
 }
