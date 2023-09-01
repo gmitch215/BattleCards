@@ -7,7 +7,6 @@ import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
-import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
@@ -16,7 +15,6 @@ import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.util.inventory.Items.randomCumulative
 import me.gamercoder215.battlecards.wrapper.BattleInventory
-import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import net.md_5.bungee.api.chat.ClickEvent
@@ -157,13 +155,12 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
             }
             .put("card_equipment") { e, inv ->
                 val p = e.whoClicked as Player
-                val card = inv["card", ICard::class.java] ?: return@put
 
                 val items = when (e) {
                     is InventoryClickEvent -> {
                         if (e.action != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.clickedInventory !is BattleInventory) return@put
 
-                        listOf(e.cursor, if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) e.currentItem else null)
+                        listOf(if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) e.currentItem else e.cursor)
                     }
                     is InventoryDragEvent -> {
                         if (e.rawSlots.all { it > 17 }  ) return@put
@@ -179,7 +176,13 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         return@put e.setCancelled(true)
                     }
 
-                    if (card.equipment.any { it.rarity == CardEquipment.Rarity.SPECIAL } && items.any { item -> BattleConfig.config.registeredEquipment.firstOrNull { it.name == item.nbt.getString("name") }?.rarity == CardEquipment.Rarity.SPECIAL }) {
+                    val itemEquipment = items.mapNotNull { item -> BattleConfig.config.registeredEquipment.firstOrNull { it.name == item.nbt.getString("name") } }
+                    val equipment = listOf(2, 3, 4, 5, 6).mapNotNull { inv[it] }.mapNotNull { item -> BattleConfig.config.registeredEquipment.firstOrNull { it.name == item.nbt.getString("name") } }
+
+                    if (
+                        (if (e is InventoryClickEvent && e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) e.clickedInventory !is BattleInventory else true) &&
+                        (equipment.filter { it.rarity == CardEquipment.Rarity.SPECIAL }.size + itemEquipment.filter { it.rarity == CardEquipment.Rarity.SPECIAL }.size) > 1)
+                    {
                         p.sendMessage(getError("error.card.equipment.one_special"))
                         p.playFailure()
                         return@put e.setCancelled(true)
