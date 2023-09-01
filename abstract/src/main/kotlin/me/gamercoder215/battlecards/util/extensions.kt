@@ -1,7 +1,6 @@
 package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
-import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
@@ -19,10 +18,7 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
-import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.PlayerInventory
+import org.bukkit.inventory.*
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -151,7 +147,7 @@ val CardEquipment.itemStack: ItemStack
 
             if (effects.isNotEmpty()) {
                 for (effect in effects)
-                    lore.add("${effect.type.color}${effect.type.name.replace('_', ' ').capitalizeFully()} ${effect.amplifier.toRoman()} (${get("constants.card_equipment.potion_status.${effect.status.name.lowercase()}")})")
+                    lore.add("${effect.type.prefix}${effect.type.name.replace('_', ' ').capitalizeFully()} ${effect.amplifier.plus(1).toRoman()} (${get("constants.card_equipment.potion_status.${effect.status.name.lowercase()}")})")
 
                 lore.add(" ")
             }
@@ -191,6 +187,42 @@ fun Player.playSuccess() {
 
 fun Player.playFailure() {
     playSound(location, BattleSound.BLOCK_NOTE_BLOCK_PLING.find(), 1F, 0F)
+}
+
+val Recipe.key: String?
+    get() {
+        return try {
+            val keyed = Class.forName("org.bukkit.Keyed")
+            val key = keyed.getMethod("getKey").invoke(this)
+
+            return key.toString()
+        } catch (ignored: ReflectiveOperationException) {
+            null
+        }
+    }
+
+fun Player.discoverRecipes(vararg recipes: Recipe?) = discoverRecipes(recipes.toList())
+
+fun Player.discoverRecipes(recipes: Iterable<Recipe?>?) {
+    if (recipes == null) return
+    if (recipes.toList().isEmpty()) return
+
+    for (recipe in recipes) {
+        val key = recipe?.key ?: continue
+
+        val namespace = key.split(":")[0]
+        val value = key.split(":")[1]
+
+        try {
+            val namespacedKey = Class.forName("org.bukkit.NamespacedKey")
+            val recipeKey = namespacedKey.getConstructor(String::class.java, String::class.java).newInstance(namespace, value)
+            val discoverRecipe = javaClass.getMethod("discoverRecipe")
+
+            discoverRecipe.invoke(this, recipeKey)
+        } catch (ignored: ReflectiveOperationException) {
+            break
+        }
+    }
 }
 
 operator fun Entity.set(key: String, value: Any) {
@@ -257,10 +289,30 @@ inline val Chunk.blocks: Set<Block>
         return blocks
     }
 
-val PotionEffectType.color: ChatColor
+val PotionEffectType.prefix: String
     get() = when (this.name.lowercase()) {
-        "slowness", "slow", "slow_digging", "weakness", "unluck", "bad_omen", "mining_fatigue", "nausea", "blindness", "hunger", "poison", "wither", "levitation" -> ChatColor.RED
+        "absorption", "fire_resistance" -> ChatColor.GOLD
+        "health_boost", "regeneration" -> ChatColor.RED
+        "bad_omen" -> ChatColor.GRAY
+        "blindness", "invisibility", "slow", "weakness" -> ChatColor.DARK_GRAY
+        "conduit_power" -> ChatColor.DARK_AQUA
+        "confusion", "fast_digging", "glowing", "unluck" -> ChatColor.YELLOW
+        "damage_resistance" -> ChatColor.BLUE
+        "darkness", "wither" -> ChatColor.BLACK
+        "dolphins_grace" -> "a5d1d3"
+        "harm", "increase_damage" -> ChatColor.DARK_RED
+        "hunger" -> "8b4513"
+        "levitation", "slow_digging" -> ChatColor.WHITE
+        "luck", "poison" -> ChatColor.DARK_GREEN
+        "night_vision" -> ChatColor.DARK_BLUE
+        "speed", "water_breathing" -> ChatColor.AQUA
         else -> ChatColor.GREEN
+    }.run {
+        when (this) {
+            is ChatColor -> this.toString()
+            is String -> ChatColor.translateAlternateColorCodes('&', "&x&${this[0]}&${this[1]}&${this[2]}&${this[3]}&${this[4]}&${this[5]}")
+            else -> throw UnsupportedOperationException()
+        }
     }
 
 fun Defensive.getChance(level: Int, unlockedAt: Int = 0): Double {
@@ -433,6 +485,8 @@ private val ROMAN_NUMERALS = TreeMap<Long, String>().apply {
 
 fun Number.toRoman(): String {
     val number = toLong()
+    if (number <= 0) throw UnsupportedOperationException("Invalid Number $number")
+
     val l: Long = ROMAN_NUMERALS.floorKey(number)
     return if (number == l) ROMAN_NUMERALS[number]!! else ROMAN_NUMERALS[l] + (number - l).toRoman()
 }
