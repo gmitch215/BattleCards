@@ -4,6 +4,7 @@ import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.*
@@ -19,6 +20,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.potion.PotionEffectType
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -430,6 +432,26 @@ object Generator {
                 }"
 
                 lore.add(format(get(str), modS))
+            }
+
+            val effects = equipment.values.map { it.effects }.flatten().run {
+                val effects = mutableSetOf<Potion>()
+
+                for (type in PotionEffectType.values()) {
+                    val potions = filter { potion -> potion.status != Potion.Status.USER_ONLY && potion.type == type }
+                    if (potions.isEmpty()) continue
+
+                    effects.add(potions.maxByOrNull { it.amplifier } ?: continue)
+                }
+
+                effects
+            }
+
+            if (effects.isNotEmpty()) {
+                lore.add(" ")
+
+                for (effect in effects)
+                    lore.add("${effect.type.prefix}${effect.type.name.replace('_', ' ').capitalizeFully()} ${effect.amplifier.plus(1).toRoman()} (${get("constants.card_equipment.potion_status.${effect.status.name.lowercase()}")})")
             }
 
             this.lore = lore
