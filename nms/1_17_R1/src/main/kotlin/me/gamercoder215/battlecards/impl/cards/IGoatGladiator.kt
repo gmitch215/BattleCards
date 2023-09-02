@@ -63,7 +63,7 @@ class IGoatGladiator(data: ICard) : IBattleCard<Skeleton>(data) {
                 itemMeta = itemMeta!!.apply {
                     isUnbreakable = true
 
-                    addEnchant(Enchantment.ARROW_DAMAGE, 3 + (level / 6).coerceAtMost(17), true)
+                    addEnchant(Enchantment.ARROW_DAMAGE, 3 + (level / 5).coerceAtMost(27), true)
 
                     if (level >= 15)
                         addEnchant(Enchantment.ARROW_KNOCKBACK, 1 + (level.minus(15) / 7).coerceAtMost(3), true)
@@ -76,8 +76,8 @@ class IGoatGladiator(data: ICard) : IBattleCard<Skeleton>(data) {
 
         goat = entity.world.spawn(entity.location, Goat::class.java).apply {
             val hp = statistics.maxHealth * 0.75
-            health = hp
             getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = hp
+            health = hp
 
             getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)!!.baseValue = statistics.attackDamage
             getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)!!.baseValue = statistics.speed * 1.1
