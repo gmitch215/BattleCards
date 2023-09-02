@@ -51,10 +51,6 @@ interface Wrapper {
 
     fun removePacketInjector(p: Player)
 
-    fun getEntityNBT(entity: Entity, key: String): Any?
-
-    fun setEntityNBT(entity: Entity, key: String, value: Any)
-
     fun addFollowGoal(entity: LivingEntity, ownerCard: IBattleCard<*>)
 
     companion object {

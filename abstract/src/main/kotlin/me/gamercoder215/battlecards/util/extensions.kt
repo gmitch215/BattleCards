@@ -42,10 +42,10 @@ val Entity.isCard: Boolean
 inline val Item.isCard: Boolean
     get() = itemStack.isCard
 
-inline val Entity.isMinion: Boolean
+val Entity.isMinion: Boolean
     get() {
         if (this !is LivingEntity) return false
-        return IBattleCard.byMinion(this) != null
+        return cardByMinion != null
     }
 
 val Entity.card: IBattleCard<*>?
@@ -53,10 +53,9 @@ val Entity.card: IBattleCard<*>?
         return IBattleCard.byEntity(this as? Creature ?: return null)
     }
 
-inline val Entity.cardByMinion: IBattleCard<*>?
+val Entity.cardByMinion: IBattleCard<*>?
     get() {
-        if (!isMinion) return null
-        return IBattleCard.byMinion(this as LivingEntity)
+        return IBattleCard.byMinion(this as? LivingEntity ?: return null)
     }
 
 val ItemStack.card: ICard?
@@ -222,14 +221,6 @@ fun Player.discoverRecipes(recipes: Iterable<Recipe?>?) {
             break
         }
     }
-}
-
-operator fun Entity.set(key: String, value: Any) {
-    w.setEntityNBT(this, key, value)
-}
-
-operator fun Entity.get(key: String): Any? {
-    return w.getEntityNBT(this, key)
 }
 
 inline val Player.cardInHand: ICard?
