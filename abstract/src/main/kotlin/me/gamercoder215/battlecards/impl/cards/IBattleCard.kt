@@ -2,7 +2,6 @@ package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
-import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.*
@@ -38,7 +37,7 @@ abstract class IBattleCard<T : Creature>(
         @JvmStatic
         fun byMinion(minion: LivingEntity): IBattleCard<*>? {
             spawned.forEach { (_, card) ->
-                if (card.minions.contains(minion))
+                if (card.minions.any { it.uniqueId == minion.uniqueId })
                     return card
             }
 
@@ -83,7 +82,10 @@ abstract class IBattleCard<T : Creature>(
         entity.canPickupItems = false
 
         if (entity is Ageable)
-            (entity as Ageable).ageLock = true
+            (entity as Ageable).apply {
+                ageLock = true
+                setAdult()
+            }
 
         w.loadProperties(entity, this)
         entity.health = entity.maxHealth
