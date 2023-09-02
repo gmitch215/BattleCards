@@ -16,7 +16,8 @@ import org.bukkit.event.world.LootGenerateEvent
 internal class CardLoader1_16_R1 : CardLoader, Listener {
 
     override fun loadedCards(): Collection<Class<out IBattleCard<*>>> = listOf(
-        INetherPrince::class.java
+        INetherPrince::class.java,
+        IMagmaJockey::class.java
     )
 
     override fun loadedEquipment(): Collection<CardEquipment> = CardEquipments1_16_R1.entries
