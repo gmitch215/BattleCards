@@ -13,10 +13,7 @@ import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Creature
-import org.bukkit.entity.Entity
-import org.bukkit.entity.Item
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 import org.bukkit.event.Event
 import org.bukkit.inventory.*
 import org.bukkit.potion.PotionEffectType
@@ -36,7 +33,7 @@ fun ItemStack.nbt(nbt: (NBTWrapper) -> Unit): ItemStack {
     return w.item
 }
 
-inline val Entity.isCard: Boolean
+val Entity.isCard: Boolean
     get() {
         if (this !is Creature) return false
         return card != null
@@ -47,20 +44,22 @@ inline val Item.isCard: Boolean
 
 inline val Entity.isMinion: Boolean
     get() {
-        if (this !is Creature) return false
+        if (this !is LivingEntity) return false
         return IBattleCard.byMinion(this) != null
     }
 
-inline val Entity.card: IBattleCard<*>?
-    get() = IBattleCard.byEntity(this as Creature)
+val Entity.card: IBattleCard<*>?
+    get() {
+        return IBattleCard.byEntity(this as? Creature ?: return null)
+    }
 
 inline val Entity.cardByMinion: IBattleCard<*>?
     get() {
         if (!isMinion) return null
-        return IBattleCard.byMinion(this as Creature)
+        return IBattleCard.byMinion(this as LivingEntity)
     }
 
-inline val ItemStack.card: ICard?
+val ItemStack.card: ICard?
     get() {
         val bytes = nbt.getByteArray("card")
         if (bytes.isEmpty()) return null
@@ -68,7 +67,7 @@ inline val ItemStack.card: ICard?
         return ICard.fromByteArray(bytes)
     }
 
-inline val ItemStack.isCard: Boolean
+val ItemStack.isCard: Boolean
     get() = nbt.getByteArray("card").isNotEmpty()
 
 inline val ItemStack.id: String?
