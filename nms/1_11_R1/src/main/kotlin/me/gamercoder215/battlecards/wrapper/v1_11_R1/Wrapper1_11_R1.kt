@@ -25,49 +25,6 @@ import org.bukkit.util.Vector
 @Suppress("unchecked_cast")
 internal class Wrapper1_11_R1 : Wrapper {
 
-    override fun setEntityNBT(entity: Entity, key: String, value: Any) {
-        val nms = (entity as CraftEntity).handle
-        val nbt = NBTTagCompound()
-        nms.e(nbt)
-
-        val root = nbt.getCompound(NBTWrapper.ROOT)
-        when (value) {
-            is String, is Class<*> -> root.setString(key, value.toString())
-            is Int -> root.setInt(key, value)
-            is Double -> root.setDouble(key, value)
-            is Float -> root.setFloat(key, value)
-            is Boolean -> root.setBoolean(key, value)
-            is Long -> root.setLong(key, value)
-            is Short -> root.setShort(key, value)
-            is ByteArray -> root.setByteArray(key, value)
-            else -> throw IllegalArgumentException("Unsupported NBT type: ${value.javaClass}")
-        }
-        nbt[NBTWrapper.ROOT] = root
-
-        nms.f(nbt)
-    }
-
-    override fun getEntityNBT(entity: Entity, key: String): Any? {
-        val nms = (entity as CraftEntity).handle
-        val nbt = NBTTagCompound()
-        nms.e(nbt)
-
-        val root = nbt.getCompound(NBTWrapper.ROOT)
-        val tag = root.get(key) ?: return null
-
-        return when (tag) {
-            is NBTTagString -> tag.c_()
-            is NBTTagInt -> tag.e()
-            is NBTTagDouble -> tag.asDouble()
-            is NBTTagFloat -> tag.i()
-            is NBTTagByte -> tag.g() == 1.toByte()
-            is NBTTagLong -> tag.d()
-            is NBTTagShort -> tag.f()
-            is NBTTagByteArray -> tag.c()
-            else -> throw IllegalArgumentException("Unsupported NBT type: ${tag.javaClass}")
-        }
-    }
-
     override fun getCommandVersion(): Int = 1
 
     override fun sendActionbar(player: Player, message: String) {

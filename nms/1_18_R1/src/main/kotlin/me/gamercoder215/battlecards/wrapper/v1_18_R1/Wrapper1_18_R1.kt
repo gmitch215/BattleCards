@@ -47,48 +47,6 @@ import org.bukkit.util.Vector
 @Suppress("unchecked_cast", "KotlinConstantConditions")
 internal class Wrapper1_18_R1 : Wrapper {
 
-    override fun setEntityNBT(entity: Entity, key: String, value: Any) {
-        val nms = (entity as CraftEntity).handle
-        val nbt = CompoundTag()
-        nms.save(nbt)
-
-        val root = nbt.getCompound(NBTWrapper.ROOT)
-        when (value) {
-            is String, is Class<*> -> root.putString(key, value.toString())
-            is Int -> root.putInt(key, value)
-            is Double -> root.putDouble(key, value)
-            is Float -> root.putFloat(key, value)
-            is Boolean -> root.putBoolean(key, value)
-            is Long -> root.putLong(key, value)
-            is Short -> root.putShort(key, value)
-            is ByteArray -> root.putByteArray(key, value)
-            else -> throw IllegalArgumentException("Unsupported NBT type: ${value.javaClass}")
-        }
-        nbt.put(NBTWrapper.ROOT, root)
-
-        nms.load(nbt)
-    }
-
-    override fun getEntityNBT(entity: Entity, key: String): Any? {
-        val nms = (entity as CraftEntity).handle
-        val nbt = CompoundTag()
-        nms.save(nbt)
-
-        val root = nbt.getCompound(NBTWrapper.ROOT)
-        val tag = root.get(key) ?: return null
-
-        return when (tag) {
-            is StringTag -> tag.asString
-            is IntTag -> tag.asInt
-            is DoubleTag -> tag.asDouble
-            is FloatTag -> tag.asFloat
-            is ByteTag -> tag.asByte == 1.toByte()
-            is LongTag -> tag.asLong
-            is ShortTag -> tag.asShort
-            is ByteArrayTag -> tag.asByteArray
-            else -> throw IllegalArgumentException("Unsupported NBT type: ${tag.javaClass}")
-        }
-    }
 
     private fun <T> registry(r: Registry<T>): MappedRegistry<T> {
         return (Bukkit.getServer() as CraftServer).server.registryAccess().registryOrThrow(r.key()) as MappedRegistry<T>

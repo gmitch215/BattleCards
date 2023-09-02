@@ -1,6 +1,5 @@
 package me.gamercoder215.battlecards.util
 
-import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
@@ -11,8 +10,6 @@ import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.scheduler.BukkitTask
 import java.io.Serializable
 
 // Enums
@@ -191,7 +188,7 @@ class BattleBlockData(block: Block) : Serializable {
 
     private val location: Location = block.location
 
-    internal val attributes: MutableMap<String, Any> = mutableMapOf()
+    val attributes: MutableMap<String, Any> = mutableMapOf()
 
     override fun toString(): String = "BattleBlockData(location=$location, attributes=$attributes)"
 

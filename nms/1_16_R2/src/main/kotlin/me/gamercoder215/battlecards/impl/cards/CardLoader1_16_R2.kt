@@ -11,7 +11,6 @@ internal class CardLoader1_16_R2 : CardLoader, Listener {
     override fun loadedCards(): Collection<Class<out IBattleCard<*>>> = listOf(
         INetheritePiglin::class.java,
         IGoldenWizard::class.java,
-        IMagmaJockey::class.java
     )
 
     @EventHandler
