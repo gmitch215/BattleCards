@@ -9,6 +9,7 @@ import me.gamercoder215.battlecards.util.CardUtils.color
 import me.gamercoder215.battlecards.util.CardUtils.createLine
 import me.gamercoder215.battlecards.util.CardUtils.dateFormat
 import me.gamercoder215.battlecards.util.CardUtils.format
+import me.gamercoder215.battlecards.util.CardUtils.power
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -190,6 +191,8 @@ object CardGenerator {
                     "${ChatColor.DARK_GREEN}${format(get("constants.card.statistics.max_card_experience"), "${ChatColor.YELLOW}${statistics.maxCardExperience.withSuffix()}")}",
                     "${ChatColor.GREEN}${format(get("constants.card.statistics.card_level"), "${ChatColor.YELLOW}${statistics.cardLevel.format()}")}",
                     "${ChatColor.DARK_GREEN}${format(get("constants.card.statistics.max_card_level"), "${ChatColor.YELLOW}${statistics.maxCardLevel.format()}")}",
+                    " ",
+                    "${ChatColor.GOLD}${format(get("constants.card_power"), "${ChatColor.YELLOW}${card.power.format()}")}"
                 ))
 
                 lore = cardL
