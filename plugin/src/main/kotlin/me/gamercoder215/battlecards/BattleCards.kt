@@ -29,6 +29,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.inventory.ShapedRecipe
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -194,7 +195,16 @@ class BattleCards : JavaPlugin(), BattleConfig {
 //        val metadata = File(dataFolder, "metadata").apply { if (!exists()) mkdir() }
 
         // Block Metadata
-        CardUtils.BLOCK_DATA.putAll(loadBlockMetadata())
+        CardUtils.BLOCK_DATA.putAll(loadBlockMetadata().onEach { (location, data) ->
+            if (data.attributes.containsKey("attachments")) {
+                val attachments = data.attributes["attachments"] as? List<UUID> ?: listOf()
+
+                attachments.mapNotNull { id -> location.world.entities.firstOrNull { it.uniqueId == id } }
+                    .forEach {
+                        it.setMetadata("battlecards:block_attachment", FixedMetadataValue(this@BattleCards, true))
+                    }
+            }
+        })
     }
 
     fun saveMetadata() {
