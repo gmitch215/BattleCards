@@ -95,6 +95,50 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     p.sendMessage(text.toLegacyText())
                 }
             }
+            .put("card_combiner:start") { e, inv ->
+                val p = e.whoClicked as Player
+
+                fun stopped() = inv["stopped", Boolean::class.java, false]
+                fun matrix() = listOf(
+                    inv[28..34], inv[37..43]
+                ).flatten().filterNotNull().filter { it.type != Material.AIR }
+
+                if (matrix().isEmpty()) return@put p.playFailure();
+
+                inv["stopped"] = false
+                inv[22] = BattleMaterial.RED_WOOL.findStack().apply {
+                    itemMeta = itemMeta.apply {
+                        displayName = "${ChatColor.RED}${get("constants.cancel")}"
+                    }
+                }.nbt { nbt -> nbt.id = "card_combiner:stop"; nbt.addTag("_cancel") }
+
+                sync( { if (stopped()) return@sync cancel(); p.playFailure(); inv[23]?.amount = 3 }, 20)
+                sync( { if (stopped()) return@sync cancel(); BattleSound.BLOCK_NOTE_BLOCK_PLING.play(p.location, 1F, 1F); inv[23]?.amount = 2 }, 40)
+                sync( { if (stopped()) return@sync cancel(); p.playSuccess(); inv[23]?.amount = 1 }, 60)
+                sync({
+                    if (stopped()) return@sync cancel()
+
+                    val matrix = matrix()
+                    inv[28..34] = null
+                    inv[37..43] = null
+
+                    val chosen = CardUtils.calculateCardChances(matrix).randomCumulative()
+                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random().createCardData()
+
+                    inv[13] = CardGenerator.toItem(card)
+                    BattleSound.ENTITY_PLAYER_LEVELUP.play(p.location, 1F, 0F)
+
+                    inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
+                        itemMeta = itemMeta.apply {
+                            displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                        }
+                    }.nbt { nbt -> nbt.addTag("_cancel") }
+                    inv[23] = GUI_BACKGROUND
+                }, 90)
+            }
+            .put("card_combiner:stop") { _, inv ->
+                inv["stopped"] = true
+            }
             .build()
 
         @JvmStatic
@@ -211,7 +255,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         } == 13
                     ) return@put e.setCancelled(true)
 
-                    if (listOfNotNull(e.cursor, if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) e.currentItem else null).any { !it.isCard })
+                    if (if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) !e.currentItem.isCard else !e.cursor.isCard && e.clickedInventory is BattleInventory)
                         return@put e.setCancelled(true)
                 }
 
@@ -222,68 +266,53 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     inv[28..34], inv[37..43]
                 ).flatten().filterNotNull().filter { it.type != Material.AIR }
 
-                if (matrix().isEmpty()) {
-                    inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
-                        itemMeta = itemMeta.apply {
-                            displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
-                        }
-                    }
-                    inv[23] = GUI_BACKGROUND
-                }
-                else {
-                    inv[22] = ItemStack(Material.PAPER).apply {
-                        itemMeta = itemMeta.apply {
-                            displayName = "${ChatColor.YELLOW}${get("constants.card_chances")}"
-
-                            val matrix = matrix()
-                            val chances = CardUtils.calculateCardChances(matrix)
-                            lore = listOf(" ", "${ChatColor.GOLD}${format(get("constants.card_power"), matrix.map { it.card!! }.sumOf { it.level }.format())}") + chances.map {
-                                "${it.key.color}${format(get("constants.chance"), it.value.format())} ${it.key}"
+                sync {
+                    if (matrix().isEmpty()) {
+                        inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
+                            itemMeta = itemMeta.apply {
+                                displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
                             }
-                        }
-                    }
+                        }.nbt { nbt -> nbt.addTag("_cancel") }
+                        inv[23] = GUI_BACKGROUND
+                    } else {
+                        val matrix = matrix()
+                        val power = CardUtils.getCardPower(matrix)
 
-                    inv[23] = ItemStack(Material.BEACON).apply {
-                        itemMeta = itemMeta.apply {
-                            displayName = "${ChatColor.AQUA}${get("constants.confirm")}"
+                        if (power < 50) {
+                            inv[22] = ItemStack(Material.BARRIER).apply {
+                                itemMeta = itemMeta.apply {
+                                    displayName = "${ChatColor.RED}${get("menu.card_combiner.not_enough_power")}"
+                                    lore = listOf(
+                                        "${ChatColor.DARK_RED}${format(get("constants.card_power"), power.format())}",
+                                    )
+                                }
+                            }.nbt { nbt -> nbt.addTag("_cancel") }
+
+                            inv[23] = GUI_BACKGROUND
+                            return@sync
                         }
-                    }.nbt { nbt -> nbt.id = "card_combiner:start" }
+
+                        inv[22] = ItemStack(Material.PAPER).apply {
+                            itemMeta = itemMeta.apply {
+                                displayName = "${ChatColor.YELLOW}${get("constants.card_chances")}"
+                                val chances = CardUtils.calculateCardChances(matrix).filterValues { it != 0.0 }
+                                lore = listOf(
+                                    " ",
+                                    "${ChatColor.GOLD}${format(get("constants.card_power"), power.format())}",
+                                    " "
+                                ) + chances.map {
+                                    it.key to "${it.key.color}${format(get("constants.chance"), "${it.value.times(100).format()}%")} ${it.key}"
+                                }.sortedBy { it.first.ordinal }.map { it.second }
+                            }
+                        }.nbt { nbt -> nbt.addTag("_cancel") }
+
+                        inv[23] = ItemStack(Material.BEACON).apply {
+                            itemMeta = itemMeta.apply {
+                                displayName = "${ChatColor.AQUA}${get("constants.confirm")}"
+                            }
+                        }.nbt { nbt -> nbt.id = "card_combiner:start"; nbt.addTag("_cancel") }
+                    }
                 }
-            }
-            .put("card_combiner:start") { e, inv ->
-                val p = e.whoClicked as Player
-
-                inv["stopped"] = false
-                inv[22] = ItemStack(Material.BARRIER).apply {
-                    itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.RED}${get("constants.cancel")}"
-                    }
-                }.nbt { nbt -> nbt.id = "card_combiner:stop" }
-
-                fun stopped() = inv["stopped", Boolean::class.java, false]
-                fun matrix() = listOf(
-                    inv[28..34], inv[37..43]
-                ).flatten().filterNotNull().filter { it.type != Material.AIR }
-
-                sync( { if (stopped()) return@sync cancel(); p.playFailure() }, 20)
-                sync( { if (stopped()) return@sync cancel(); BattleSound.BLOCK_NOTE_BLOCK_PLING.play(p.location, 1F, 1F) }, 40)
-                sync( { if (stopped()) return@sync cancel(); p.playSuccess() }, 60)
-                sync({
-                    if (stopped()) return@sync cancel()
-
-                    val matrix = matrix()
-                    inv[28..34] = null
-                    inv[37..43] = null
-
-                    val chosen = CardUtils.calculateCardChances(matrix).randomCumulative()
-                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random().createCardData()
-
-                    inv[13] = CardGenerator.generateCardInfo(card)
-                    BattleSound.ENTITY_PLAYER_LEVELUP.play(p.location, 1F, 0F)
-                }, 100)
-            }
-            .put("card_combiner:stop") { _, inv ->
-                inv["stopped"] = true
             }
             .build()
     }

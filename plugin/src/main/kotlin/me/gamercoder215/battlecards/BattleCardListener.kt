@@ -34,6 +34,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause
 import org.bukkit.event.inventory.PrepareItemCraftEvent
 import org.bukkit.event.player.*
 import org.bukkit.inventory.ItemStack
+import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.scheduler.BukkitRunnable
 import java.lang.reflect.Method
 import java.util.*
@@ -465,20 +466,14 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     @EventHandler
     fun onHitAttachment(event: EntityDamageEvent) {
         val entity = event.entity
-        if (entity.hasMetadata("battlecards:block_attachment") || entity["battlecards:block_attachment"] == true)
+        if (entity.hasMetadata("battlecards:block_attachment"))
             event.isCancelled = true
     }
 
     @EventHandler
     fun onInteractAttachment(event: PlayerArmorStandManipulateEvent) {
         val entity = event.rightClicked
-        if (entity.hasMetadata("battlecards:block_attachment") || entity["battlecards:block_attachment"] == true)
-            event.isCancelled = true
-    }
-
-    @EventHandler
-    fun onSplit(event: SlimeSplitEvent) {
-        if (event.entity.isMinion || event.entity.isCard)
+        if (entity.hasMetadata("battlecards:block_attachment"))
             event.isCancelled = true
     }
 
@@ -606,7 +601,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 setGravity(false)
                 setBasePlate(false)
                 helmet = ItemStack(attach)
-                this["battlecards:block_attachment"] = true
+                setMetadata("battlecards:block_attachment", FixedMetadataValue(BattleConfig.plugin, true))
             }.uniqueId)
 
             block["attachments"] = attachments

@@ -73,9 +73,10 @@ object Items {
             nbt["container"] = true
 
             nbt["attach"] = "ender_portal_frame:end_portal_frame"
-            nbt["attach.small"] = true
-            nbt["attach.mod.y"] = -0.8
-        })
+            nbt["attach.small"] = false
+            nbt["attach.mod.y"] = -1.5
+        }
+    )
 
     @JvmStatic
     val TINY_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
@@ -195,6 +196,12 @@ object Items {
             setIngredient('W', BattleMaterial.CRAFTING_TABLE.find())
             setIngredient('P', Material.PAPER)
         },
+        createShapedRecipe("card_combiner", CARD_COMBINER).apply {
+            shape("CCC", "CPC", "CCC")
+
+            setIngredient('C', BattleMaterial.CAULDRON.find())
+            setIngredient('P', Material.PAPER)
+        }
     ).apply {
         // Card Shard Recipes
 

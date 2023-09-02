@@ -466,21 +466,21 @@ object Generator {
         val inv = genGUI("card_combiner", 54, get("menu.card_combiner"))
 
         inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
-            val items = listOf(
+            listOf(
                 inventory[28..34], inventory[37..43], inventory[13]
             ).map {
                 when (it) {
-                    is ItemStack -> listOf(it)
-                    is Iterable<*> -> it.filterIsInstance<ItemStack>()
+                    is Iterable<*> -> it.filterIsInstance<ItemStack?>().filterNotNull()
+                    is ItemStack? -> listOf(it)
                     else -> emptyList()
                 }
-            }.flatten()
-
-            for (item in items)
-                if (p.inventory.firstEmpty() == -1)
-                    p.world.dropItemNaturally(p.location, item)
-                else
-                    p.inventory.addItem(item)
+            }.forEach { items ->
+                for (item in items.filterNotNull())
+                    if (p.inventory.firstEmpty() == -1)
+                        p.world.dropItemNaturally(p.location, item)
+                    else
+                        p.inventory.addItem(item)
+            }
         }
 
         inv[10..25] = Items.GUI_BACKGROUND
@@ -489,7 +489,7 @@ object Generator {
             itemMeta = itemMeta.apply {
                 displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
             }
-        }
+        }.nbt { nbt -> nbt.addTag("_cancel") }
 
         return inv
     }
