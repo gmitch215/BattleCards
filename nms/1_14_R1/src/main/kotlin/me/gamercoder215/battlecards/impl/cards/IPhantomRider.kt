@@ -77,6 +77,8 @@ class IPhantomRider(data: ICard) : IBattleCard<Stray>(data) {
 
     @Passive(1)
     private fun phantomAI() {
+        if (!this::phantom.isInitialized) return
+
         if (phantom.target == p)
             phantom.target = null
 

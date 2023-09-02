@@ -91,6 +91,8 @@ class IGoatGladiator(data: ICard) : IBattleCard<Skeleton>(data) {
 
     @Passive(10)
     private fun goatAi() {
+        if (!this::goat.isInitialized) return
+
         if (goat.target == null && entity.target != null)
             goat.target = entity.target
     }
