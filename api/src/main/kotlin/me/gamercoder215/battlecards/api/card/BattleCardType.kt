@@ -212,9 +212,9 @@ enum class BattleCardType {
     GOAT_GLADIATOR(1, Skeleton::class, Rarity.RARE, Material.matchMaterial("GOAT_HORN")),
 
     /**
-     * Represents a Piglin Brute BattleCard.
+     * Represents a Piglin BattleCard.
      */
-    MAGMA_JOCKEY(1, "PiglinBrute", Rarity.RARE, Material.MAGMA_CREAM)
+    MAGMA_JOCKEY(1, "Piglin", Rarity.RARE, Material.MAGMA_CREAM)
     ;
 
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(

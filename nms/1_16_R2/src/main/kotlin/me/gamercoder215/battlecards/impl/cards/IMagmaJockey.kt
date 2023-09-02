@@ -11,7 +11,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.MagmaCube
-import org.bukkit.entity.PiglinBrute
+import org.bukkit.entity.Piglin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.ProjectileLaunchEvent
 import org.bukkit.inventory.ItemStack
@@ -22,7 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 5.3)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.6)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.475)
-class IMagmaJockey(data: ICard) : IBattleCard<PiglinBrute>(data) {
+class IMagmaJockey(data: ICard) : IBattleCard<Piglin>(data) {
 
     private lateinit var magma: MagmaCube
 
@@ -61,7 +61,7 @@ class IMagmaJockey(data: ICard) : IBattleCard<PiglinBrute>(data) {
         }
 
         magma = entity.world.spawn(entity.location, MagmaCube::class.java).apply {
-            size = 4 + (level / 15).coerceAtMost(3)
+            size = 3 + (level / 15).coerceAtMost(3)
 
             val hp = statistics.maxHealth * 0.7
 
@@ -78,6 +78,7 @@ class IMagmaJockey(data: ICard) : IBattleCard<PiglinBrute>(data) {
 
     @Passive(1)
     private fun magmaAI() {
+        if (!this::magma.isInitialized) return
         magma.target = entity.target
     }
 
