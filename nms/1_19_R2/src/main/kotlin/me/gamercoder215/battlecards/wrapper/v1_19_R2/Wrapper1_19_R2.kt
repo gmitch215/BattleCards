@@ -23,10 +23,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeMap
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes
 import net.minecraft.world.entity.ai.goal.*
 import net.minecraft.world.entity.ai.goal.target.*
+import net.minecraft.world.entity.ai.memory.MemoryModuleType
 import net.minecraft.world.entity.boss.wither.WitherBoss
 import net.minecraft.world.entity.monster.CrossbowAttackMob
 import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.monster.RangedAttackMob
+import net.minecraft.world.entity.monster.piglin.Piglin
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
@@ -161,6 +163,19 @@ internal class Wrapper1_19_R2 : Wrapper {
                     }
                 }
             }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
+
+        if (nms is Piglin) {
+            nms.interestItems.clear()
+            nms.allowedBarterItems.clear()
+
+            object : BukkitRunnable() {
+                override fun run() {
+                    if (en.isDead) return cancel()
+
+                    nms.brain.setMemory(MemoryModuleType.ADMIRING_DISABLED, true)
+                }
+            }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
+        }
     }
 
     override fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T {

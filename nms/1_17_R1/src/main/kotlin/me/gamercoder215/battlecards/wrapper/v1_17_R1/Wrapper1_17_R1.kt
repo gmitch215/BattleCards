@@ -26,10 +26,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeMapBase
 import net.minecraft.world.entity.ai.attributes.AttributeModifiable
 import net.minecraft.world.entity.ai.goal.*
 import net.minecraft.world.entity.ai.goal.target.*
+import net.minecraft.world.entity.ai.memory.MemoryModuleType
 import net.minecraft.world.entity.boss.wither.EntityWither
 import net.minecraft.world.entity.monster.EntityMonster
 import net.minecraft.world.entity.monster.ICrossbow
 import net.minecraft.world.entity.monster.IRangedEntity
+import net.minecraft.world.entity.monster.piglin.EntityPiglin
 import net.minecraft.world.phys.Vec3D
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -170,6 +172,19 @@ internal class Wrapper1_17_R1 : Wrapper {
                     }
                 }
             }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
+
+        if (nms is EntityPiglin) {
+            nms.interestItems.clear()
+            nms.allowedBarterItems.clear()
+
+            object : BukkitRunnable() {
+                override fun run() {
+                    if (en.isDead) return cancel()
+
+                    nms.behaviorController.setMemory(MemoryModuleType.aa, true)
+                }
+            }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
+        }
     }
 
     override fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T {

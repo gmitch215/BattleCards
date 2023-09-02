@@ -150,6 +150,16 @@ internal class Wrapper1_16_R2 : Wrapper {
                     }
                 }
             }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
+
+        if (nms is EntityPiglin)
+            object : BukkitRunnable() {
+                override fun run() {
+                    if (en.isDead) return cancel()
+
+                    nms.behaviorController.setMemory(MemoryModuleType.ADMIRING_DISABLED, true)
+                }
+            }.runTaskTimer(BattleConfig.plugin, 0L, 1L)
+
     }
 
     override fun <T : Creature> spawnMinion(clazz: Class<T>, ownerCard: IBattleCard<*>): T {

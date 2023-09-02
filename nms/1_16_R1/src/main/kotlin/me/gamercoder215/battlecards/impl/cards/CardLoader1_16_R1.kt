@@ -1,11 +1,13 @@
 package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.events.entity.CardSpawnEvent
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.random
 import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.CardLoader
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
+import org.bukkit.entity.Piglin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.PrepareSmithingEvent
@@ -42,6 +44,13 @@ internal class CardLoader1_16_R1 : CardLoader, Listener {
 
         if (inv.filterNotNull().any { it.nbt.hasTag("nointeract") })
             event.result = null
+    }
+
+    @EventHandler
+    fun onSpawn(event: CardSpawnEvent) {
+        val entity = event.entity
+        if (entity is Piglin)
+            entity.setIsAbleToHunt(false)
     }
 
 }
