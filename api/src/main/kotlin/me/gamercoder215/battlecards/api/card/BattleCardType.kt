@@ -214,7 +214,12 @@ enum class BattleCardType {
     /**
      * Represents a Piglin BattleCard.
      */
-    MAGMA_JOCKEY(1, "Piglin", Rarity.RARE, Material.MAGMA_CREAM)
+    MAGMA_JOCKEY(1, "Piglin", Rarity.RARE, Material.MAGMA_CREAM),
+
+    /**
+     * Represents a Piglin Brute BattleCard.
+     */
+    PIGLIN_TITAN(1, "PiglinBrute", Rarity.ULTIMATE, Material.matchMaterial("PIGLIN_HEAD") ?: Material.matchMaterial("NETHERITE_BLOCK"), Material.matchMaterial("NETHERITE_BLOCK"))
     ;
 
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(
