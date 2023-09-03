@@ -16,7 +16,6 @@ import org.bukkit.entity.Arrow
 import org.bukkit.entity.MagmaCube
 import org.bukkit.entity.Piglin
 import org.bukkit.event.EventHandler
-import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
 import org.bukkit.event.entity.SlimeSplitEvent
@@ -105,7 +104,7 @@ class IMagmaJockey(data: ICard) : IBattleCard<Piglin>(data) {
 
         object : BukkitRunnable() {
             override fun run() {
-                if (proj.isDead || !proj.isValid || proj.isOnGround || proj.isInBlock) return cancel()
+                if (entity.isDead || target.isDead || proj.isDead || !proj.isValid || proj.isOnGround || proj.isInBlock) return cancel()
 
                 val loc = target.location.add(0.0, 0.6, 0.0)
 
@@ -123,11 +122,7 @@ class IMagmaJockey(data: ICard) : IBattleCard<Piglin>(data) {
         if (event.hitEntity == null) return
 
         val proj = event.entity as? Arrow ?: return
-        println(proj.shooter)
-
         if (proj.shooter != entity) return
-
-        println("called")
 
         proj.knockbackStrength = (level / 10).coerceAtMost(5)
         proj.damage = statistics.attackDamage
