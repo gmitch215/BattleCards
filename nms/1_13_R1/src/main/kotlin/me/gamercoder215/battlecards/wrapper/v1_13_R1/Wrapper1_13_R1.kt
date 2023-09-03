@@ -18,7 +18,6 @@ import org.bukkit.Particle
 import org.bukkit.craftbukkit.v1_13_R1.CraftWorld
 import org.bukkit.craftbukkit.v1_13_R1.entity.*
 import org.bukkit.entity.*
-import org.bukkit.entity.Entity
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 

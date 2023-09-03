@@ -16,10 +16,12 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.craftbukkit.v1_14_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_14_R1.entity.*
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftMob
+import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_14_R1.util.CraftNamespacedKey
 import org.bukkit.entity.*
-import org.bukkit.entity.Entity
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 
