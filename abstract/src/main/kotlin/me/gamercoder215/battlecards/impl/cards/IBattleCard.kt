@@ -85,6 +85,7 @@ abstract class IBattleCard<T : Creature>(
             (entity as Ageable).apply {
                 ageLock = true
                 setAdult()
+                setBreed(false)
             }
 
         w.loadProperties(entity, this)
@@ -93,12 +94,17 @@ abstract class IBattleCard<T : Creature>(
         return entity
     }
 
-    fun despawn() {
+    fun despawn(animation: Boolean = false) {
         if (!this::entity.isInitialized) throw IllegalStateException("Entity not spawned")
 
         uninit()
-        entity.remove()
-        w.spawnParticle(BattleParticle.CLOUD, p.location, 30, 0.0, 1.0, 0.0, 0.2)
+
+        if (animation)
+            entity.health = 0.0
+        else {
+            entity.remove()
+            w.spawnParticle(BattleParticle.CLOUD, entity.location, 30, 0.0, 1.0, 0.0, 0.2)
+        }
     }
 
     // Implementation
@@ -144,29 +150,23 @@ abstract class IBattleCard<T : Creature>(
                     entity.teleport(value())
                 }
 
-                minions.iterator().apply {
-                    while (hasNext()) {
-                        val minion = next()
-                        if (minion.isDead) {
-                            remove()
-                            minionAttachments[minion.uniqueId]?.forEach { (key, _) ->
-                                val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
-                                entity.remove()
-                            }
-                            continue
-                        }
-
-                        minionAttachments[minion.uniqueId]?.forEach { (key, value) ->
+                for (minion in minions) {
+                    if (minion.isDead) {
+                        minionAttachments[minion.uniqueId]?.forEach { (key, _) ->
                             val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
-                            entity.teleport(value())
+                            entity.remove()
                         }
+                        continue
+                    }
+
+                    minionAttachments[minion.uniqueId]?.forEach { (key, value) ->
+                        val entity = Bukkit.getServer().getEntity(key) ?: return@forEach
+                        entity.teleport(value())
                     }
                 }
 
                 particles()
 
-                if (entity is Ageable)
-                    (entity as Ageable).setBreed(false)
 
                 if ((entity.world.uid != p.world.uid || entity.location.distanceSquared(p.location) > (30 * 30)) && entity.isOnGround) {
                     val target = p.location
@@ -292,6 +292,10 @@ abstract class IBattleCard<T : Creature>(
         val minion = w.spawnMinion(clazz, this)
         action(minion)
         CardUtils.createMinionAttachments(minion, this)
+
+        if (minions.size >= 100)
+            minion.remove()
+
         return minion
     }
 
