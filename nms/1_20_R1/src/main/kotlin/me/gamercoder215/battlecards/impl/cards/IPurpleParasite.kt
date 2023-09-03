@@ -4,15 +4,10 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.*
 import org.bukkit.DyeColor
 import org.bukkit.attribute.Attribute
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Shulker
-import org.bukkit.entity.ShulkerBullet
-import org.bukkit.entity.Silverfish
-import org.bukkit.entity.Sniffer
+import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
-import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
@@ -29,7 +24,7 @@ class IPurpleParasite(data: ICard) : IBattleCard<Shulker>(data) {
         super.init()
 
         host = entity.world.spawn(entity.location, Sniffer::class.java).apply {
-            passengers.add(entity)
+            addPassenger(entity)
             minions.add(this)
 
             val health = statistics.maxHealth * 1.1
@@ -78,6 +73,6 @@ class IPurpleParasite(data: ICard) : IBattleCard<Shulker>(data) {
     private fun onHostDie(event: EntityDeathEvent) {
         if (event.entity != host) return
 
-        entity.health = 0.0
+        despawn(true)
     }
 }
