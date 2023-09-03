@@ -455,6 +455,10 @@ fun Number.formatInt(): String {
     }
 }
 
+fun Double.toDegrees() = Math.toDegrees(this)
+
+fun Double.toRadians() = Math.toRadians(this)
+
 private val ROMAN_NUMERALS = TreeMap<Long, String>().apply {
     putAll(mutableMapOf(
         1000L to "M",
