@@ -315,6 +315,9 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 }
 
                 card.statistics.checkQuestCompletions()
+
+                if (card.entity.target == null)
+                    card.entity.target = damager
             }
         }
 
@@ -393,6 +396,9 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 }
 
                 card.statistics.checkQuestCompletions()
+
+                if (card.entity.target == null)
+                    card.entity.target = entity
             }
         }
     }
@@ -427,7 +433,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             if (card.p.uniqueId == event.target.uniqueId || event.reason.name == "TEMPT")
                 event.isCancelled = true
 
-            if (event.target.isMinion && event.target.cardByMinion == card)
+            if (event.target.cardByMinion == card)
                 event.isCancelled = true
 
             if (event.target.isCard) {
@@ -438,7 +444,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             }
         }
 
-        if (event.entity.isMinion && event.entity.cardByMinion != null) {
+        if (event.entity.cardByMinion != null) {
             val card = event.entity.cardByMinion!!
             val minions = event.target.card?.minions?.map { it.uniqueId } ?: event.target.cardByMinion?.minions?.map { it.uniqueId } ?: listOf()
 
