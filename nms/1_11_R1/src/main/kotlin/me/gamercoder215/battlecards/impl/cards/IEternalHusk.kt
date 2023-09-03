@@ -61,7 +61,7 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
     }
 
     override fun particles() {
-        circle(entity.eyeLocation, BattleParticle.FLAME, 10, 2.0)
+        circle(entity.eyeLocation, BattleParticle.FLAME, 25, 1.0)
     }
 
     private var chargedDamage: Double = 0.0
@@ -84,11 +84,13 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
 
     @CardAbility("card.eternal_husk.ability.charge", ChatColor.AQUA)
     @Defensive(0.7, CardOperation.ADD, 0.02)
+    @UnlockedAt(35)
     private fun charge(event: EntityDamageByEntityEvent) {
         chargedDamage += event.finalDamage / 2.0
     }
 
     @Offensive(0.1)
+    @UnlockedAt(35)
     private fun releaseCharge(event: EntityDamageByEntityEvent) {
         if (chargedDamage <= 0.0) return
 
@@ -115,6 +117,9 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
                 equipment.itemInMainHand = ItemStack(BattleMaterial.GOLDEN_SWORD.find()).apply {
                     itemMeta = itemMeta.apply {
                         isUnbreakable = true
+
+                        addEnchant(Enchantment.DAMAGE_ALL, 5, true)
+                        addEnchant(Enchantment.DAMAGE_UNDEAD, 15, true)
                     }
                 }
 
@@ -123,6 +128,7 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
                 this.health = health
 
                 getAttribute(Attribute.GENERIC_ARMOR)!!.baseValue = 20.0 + ((level - 5) * 0.75).coerceAtMost(55.0)
+                getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)!!.baseValue = statistics.attackDamage / 25.0
 
                 target = entity.target
             }
