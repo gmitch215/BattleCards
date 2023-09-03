@@ -429,13 +429,13 @@ operator fun Inventory.set(indexes: Iterable<Int>, item: ItemStack?) {
 }
 operator fun Inventory.set(vararg index: Int, item: ItemStack?) = set(index.toList(), item)
 
-operator fun Inventory.get(indexes: Iterable<Int>): Set<ItemStack?> {
-    val items = mutableSetOf<ItemStack?>()
+operator fun Inventory.get(indexes: Iterable<Int>): List<ItemStack?> {
+    val items = mutableListOf<ItemStack?>()
     for (i in indexes) items.add(getItem(i))
 
     return items
 }
-operator fun Inventory.get(vararg index: Int): Set<ItemStack?> = get(index.toList())
+operator fun Inventory.get(vararg index: Int): List<ItemStack?> = get(index.toList())
 
 // Kotlin Util
 
