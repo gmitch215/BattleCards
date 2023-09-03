@@ -28,6 +28,16 @@ Purchase and download the plugin on our Spigot Page, and drop it in to your Spig
 ### ‼️ Important Note
 This plugin is built in Kotlin. While the plugin will automatically download the necessary libraries for the plugin to run, it is recommended that you install the [Kotlin Spigot Plugin](https://modrinth.com/plugin/kotlinmc/). **This is only required if you are running on a server version below 1.16.**
 
+---
+
+## 📓Changelog
+
+🃏 **v1.0.0** - September 3, 2023
+
+Initial Release of BattleCards
+
+---
+
 ## 🔮 Future Features
 
 Coming Soon...
