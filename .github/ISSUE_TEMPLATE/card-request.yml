@@ -1,4 +1,4 @@
-name: Feature Request
+name: Card Request
 description: Suggest a new Card to be added to the next BattleCards Generation.
 labels: [enhancement, 'card suggestion']
 body:
