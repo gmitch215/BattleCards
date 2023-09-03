@@ -95,7 +95,6 @@ class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
             }
 
             militaryDolphin.addPassenger(minion(if (r.nextBoolean()) Drowned::class.java else Zombie::class.java) {
-                conversionTime = Int.MAX_VALUE
                 getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.baseValue = health
                 this.health = health
 
