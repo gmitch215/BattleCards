@@ -16,9 +16,11 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld
-import org.bukkit.craftbukkit.v1_12_R1.entity.*
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftWither
 import org.bukkit.entity.*
-import org.bukkit.entity.Entity
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 
@@ -68,7 +70,7 @@ internal class Wrapper1_12_R1 : Wrapper {
             if (handle == null) {
                 val attributesF = AttributeMapBase::class.java.getDeclaredField("b")
                 attributesF.isAccessible = true
-                val attributes = attributesF.get(nms) as MutableMap<String, AttributeInstance>
+                val attributes = attributesF.get(nms.attributeMap) as MutableMap<String, AttributeInstance>
 
                 handle = AttributeModifiable(nms.attributeMap, attribute)
                 attributes[attribute.name] = handle

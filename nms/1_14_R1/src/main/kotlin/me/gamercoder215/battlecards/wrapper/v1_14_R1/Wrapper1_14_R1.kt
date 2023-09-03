@@ -61,7 +61,7 @@ internal class Wrapper1_14_R1 : Wrapper {
             if (handle == null) {
                 val attributesF = AttributeMapBase::class.java.getDeclaredField("b")
                 attributesF.isAccessible = true
-                val attributes = attributesF.get(nms) as MutableMap<String, AttributeInstance>
+                val attributes = attributesF.get(nms.attributeMap) as MutableMap<String, AttributeInstance>
 
                 handle = AttributeModifiable(nms.attributeMap, attribute)
                 attributes[attribute.name] = handle

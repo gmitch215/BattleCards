@@ -12,7 +12,6 @@ import net.md_5.bungee.api.ChatMessageType
 import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.nbt.*
 import net.minecraft.network.Connection
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket
 import net.minecraft.resources.ResourceLocation
@@ -36,9 +35,15 @@ import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
-import org.bukkit.craftbukkit.v1_19_R3.entity.*
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMob
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftNamespacedKey
-import org.bukkit.entity.*
+import org.bukkit.entity.Creature
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
+import org.bukkit.entity.Wither
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
@@ -90,7 +95,7 @@ internal class Wrapper1_19_R3 : Wrapper {
             if (handle == null) {
                 val attributesF = AttributeMap::class.java.getDeclaredField("b")
                 attributesF.isAccessible = true
-                val attributes = attributesF.get(nms) as MutableMap<net.minecraft.world.entity.ai.attributes.Attribute, AttributeInstance>
+                val attributes = attributesF.get(nms.attributes) as MutableMap<net.minecraft.world.entity.ai.attributes.Attribute, AttributeInstance>
 
                 handle = AttributeInstance(attribute) {}
                 attributes[attribute] = handle

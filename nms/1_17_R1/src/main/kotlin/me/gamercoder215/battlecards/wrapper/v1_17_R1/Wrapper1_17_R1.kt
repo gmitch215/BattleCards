@@ -13,7 +13,6 @@ import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.minecraft.core.IRegistry
 import net.minecraft.core.RegistryMaterials
-import net.minecraft.nbt.*
 import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle
 import net.minecraft.resources.MinecraftKey
 import net.minecraft.world.entity.EntityCreature
@@ -39,7 +38,10 @@ import org.bukkit.NamespacedKey
 import org.bukkit.Particle
 import org.bukkit.attribute.Attribute
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer
-import org.bukkit.craftbukkit.v1_17_R1.entity.*
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftCreature
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftMob
+import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer
 import org.bukkit.craftbukkit.v1_17_R1.util.CraftNamespacedKey
 import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
@@ -97,7 +99,7 @@ internal class Wrapper1_17_R1 : Wrapper {
             if (handle == null) {
                 val attributesF = AttributeMapBase::class.java.getDeclaredField("b")
                 attributesF.isAccessible = true
-                val attributes = attributesF.get(nms) as MutableMap<AttributeBase, AttributeModifiable>
+                val attributes = attributesF.get(nms.attributeMap) as MutableMap<AttributeBase, AttributeModifiable>
 
                 handle = AttributeModifiable(attribute) {}
                 attributes[attribute] = handle

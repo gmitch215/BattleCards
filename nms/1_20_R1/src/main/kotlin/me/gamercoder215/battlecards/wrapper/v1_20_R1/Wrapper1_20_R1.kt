@@ -96,7 +96,7 @@ internal class Wrapper1_20_R1 : Wrapper {
             if (handle == null) {
                 val attributesF = AttributeMap::class.java.getDeclaredField("b")
                 attributesF.isAccessible = true
-                val attributes = attributesF.get(nms) as MutableMap<net.minecraft.world.entity.ai.attributes.Attribute, AttributeInstance>
+                val attributes = attributesF.get(nms.attributes) as MutableMap<net.minecraft.world.entity.ai.attributes.Attribute, AttributeInstance>
 
                 handle = AttributeInstance(attribute) {}
                 attributes[attribute] = handle

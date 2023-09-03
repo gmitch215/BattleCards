@@ -14,7 +14,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftCreature
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.*
@@ -62,7 +61,7 @@ internal class Wrapper1_8_R3 : Wrapper {
             if (handle == null) {
                 val attributesF = AttributeMapBase::class.java.getDeclaredField("b")
                 attributesF.isAccessible = true
-                val attributes = attributesF.get(nms) as MutableMap<String, AttributeInstance>
+                val attributes = attributesF.get(nms.attributeMap) as MutableMap<String, AttributeInstance>
 
                 handle = AttributeModifiable(nms.attributeMap, attribute)
                 attributes[attribute.name] = handle
