@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discord
+    url: https://discord.gg/WVFNWEvuqX
+    about: Report an issue on our official Discord!
+  - name: Jenkins CI
+    url: https://ci.codemc.io/job/gamercoder215/job/BattleCards/
+    about: Official API Builds for BattleCards, downloadable on CodeMC!

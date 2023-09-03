@@ -1,0 +1,79 @@
+name: Report a Bug
+description: Report a BattleCards Bug.
+labels: ['unconfirmed bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a BattleCards bug. Please take time to fill out the information below.
+  - type: dropdown
+    attributes:
+      label: Bug Type
+      description: What type of bug are you trying to report?
+      multiple: true
+      options:
+        - Performance / Memory Leak / Server Crash
+        - Configuration Data Loss / Data Corruption
+        - Permission Issues
+        - Compatibility Issues
+        - Plugin Conflict
+        - Console Errors
+        - Other Unexpected Behavior
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Minecraft Version
+      description: What is the Minecraft version you are using?
+      placeholder: |
+        Ex: 1.19
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Description
+      placeholder: |
+        Ex: "Card Fetching fails"
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: Explain how to recreate this bug.
+      placeholder: |
+        Ex: 
+        1. Run /bcard create warrior_husk
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: What you expect the plugin to do.
+      placeholder: |
+        Ex: "Receive Warrior Husk Card"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: What does the plugin do? What are the error messages shown?
+      placeholder: |
+        Ex: "Says that the card isn't available on this version, when it should be"
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        In the box below, you can attach any relevant info or files that may help us solve the bug.
+        If you think this issue is relevant to any other issues, please mention it here.
+  - type: textarea
+    attributes:
+      label: Additional Info
+      description: Any additional info that may help us solve the bug.
+      placeholder: |
+        Ex: "I am using Spigot instead of Paper"
+    validations:
+      required: false

@@ -1,0 +1,43 @@
+name: Feature Request
+description: Suggest a new Card to be added to the next BattleCards Generation.
+labels: [enhancement, 'card suggestion']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a BattleCards Card. Please fill out the information below.
+  - type: input
+    attributes:
+      label: Card Name
+      description: The name of the card you are suggesting.
+      placeholder: |
+        Ex: "Super Creeper"
+  - type: dropdown
+    attributes:
+      label: Suggested Rarity
+      description: What's the rarity of the card you are suggesting?
+      multiple: false
+      options:
+        - Common
+        - Uncommon
+        - Rare
+        - Epic
+        - Legend
+        - Mythical
+        - Ultimate
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Card Description
+      placeholder: |
+        Ex: A creeper that explodes 10x more than a normal creeper.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Ability Description
+      placeholder: |
+        Ex: "When it explodes, deals 1000 points of damage."
+    validations:
+      required: false
