@@ -29,6 +29,7 @@ import org.bukkit.event.inventory.*
 import org.bukkit.inventory.ItemStack
 import java.util.function.BiConsumer
 import java.util.function.Consumer
+import kotlin.math.abs
 
 @Suppress("unchecked_cast")
 internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
@@ -103,8 +104,10 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     inv[28..34], inv[37..43]
                 ).flatten().filterNotNull().filter { it.type != Material.AIR }
 
-                if (matrix().isEmpty()) return@put p.playFailure();
+                if (matrix().isEmpty()) return@put p.playFailure()
+                if (inv["running", Boolean::class.java, false]) return@put e.setCancelled(true)
 
+                inv["running"] = true
                 inv["stopped"] = false
                 inv[22] = BattleMaterial.RED_WOOL.findStack().apply {
                     itemMeta = itemMeta.apply {
@@ -112,9 +115,9 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     }
                 }.nbt { nbt -> nbt.id = "card_combiner:stop"; nbt.addTag("_cancel") }
 
-                sync( { if (stopped()) return@sync cancel(); p.playFailure(); inv[23]?.amount = 3 }, 20)
-                sync( { if (stopped()) return@sync cancel(); BattleSound.BLOCK_NOTE_BLOCK_PLING.play(p.location, 1F, 1F); inv[23]?.amount = 2 }, 40)
-                sync( { if (stopped()) return@sync cancel(); p.playSuccess(); inv[23]?.amount = 1 }, 60)
+                sync( { if (stopped()) return@sync cancel(); BattleSound.ENTITY_ARROW_HIT_PLAYER.play(p.location, 1F, 0F); inv[23]?.amount = 3 }, 20)
+                sync( { if (stopped()) return@sync cancel(); BattleSound.ENTITY_ARROW_HIT_PLAYER.play(p.location, 1F, 0.75F); inv[23]?.amount = 2 }, 40)
+                sync( { if (stopped()) return@sync cancel(); BattleSound.ENTITY_ARROW_HIT_PLAYER.play(p.location, 1F, 1F); inv[23]?.amount = 1 }, 60)
                 sync({
                     if (stopped()) return@sync cancel()
 
@@ -122,8 +125,27 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     inv[28..34] = null
                     inv[37..43] = null
 
+                    inv["running"] = false
+
                     val chosen = CardUtils.calculateCardChances(matrix).randomCumulative()
-                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random().createCardData()
+
+                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random().createCardData().apply {
+                        var total = 0.0
+
+                        for ((amount, card) in matrix.map { it.amount to it.card }) {
+                            if (card == null) continue
+
+                            val diff = rarity.ordinal - card.rarity.ordinal
+
+                            total += (when {
+                                diff > 0 -> card.experience / (diff + 1)
+                                diff < 0 -> card.experience * (abs(diff) + 1)
+                                else -> card.experience
+                            }) * amount
+                        }
+
+                        experience = total.coerceAtMost(maxCardExperience)
+                    }
 
                     inv[13] = CardGenerator.toItem(card)
                     BattleSound.ENTITY_PLAYER_LEVELUP.play(p.location, 1F, 0F)
@@ -136,8 +158,20 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     inv[23] = GUI_BACKGROUND
                 }, 90)
             }
-            .put("card_combiner:stop") { _, inv ->
+            .put("card_combiner:stop") { e, inv ->
+                val p = e.whoClicked as Player
+
                 inv["stopped"] = true
+                inv["running"] = false
+
+                p.playFailure()
+
+                inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
+                    itemMeta = itemMeta.apply {
+                        displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                    }
+                }.nbt { nbt -> nbt.addTag("_cancel") }
+                inv[23] = GUI_BACKGROUND
             }
             .build()
 
@@ -267,7 +301,8 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 ).flatten().filterNotNull().filter { it.type != Material.AIR }
 
                 sync {
-                    if (matrix().isEmpty()) {
+                    val matrix = matrix()
+                    if (matrix.isEmpty() || inv[13] != null) {
                         inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
                             itemMeta = itemMeta.apply {
                                 displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
@@ -275,7 +310,6 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         }.nbt { nbt -> nbt.addTag("_cancel") }
                         inv[23] = GUI_BACKGROUND
                     } else {
-                        val matrix = matrix()
                         val power = CardUtils.getCardPower(matrix)
 
                         if (power < 50) {
