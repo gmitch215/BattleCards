@@ -13,7 +13,8 @@ internal class CardLoader1_11_R1 : CardLoader {
         IMiner::class.java,
         ISuspiciousZombie::class.java,
         IEmeraldHusk::class.java,
-        IEternalHusk::class.java
+        IEternalHusk::class.java,
+        IWarriorHusk::class.java
     )
 
     override fun loadedEquipment(): Collection<CardEquipment> = CardEquipments1_11_R1.entries
