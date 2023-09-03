@@ -212,9 +212,10 @@ object CardUtils {
     @JvmStatic
     private val intervalCardChances = listOf(
         250,
-        1500,
-        13500,
-        31525
+        1250,
+        8500,
+        19750,
+        31475
     )
 
     @JvmStatic
@@ -222,24 +223,25 @@ object CardUtils {
         val power = getCardPower(cards)
         if (power < 50) return emptyMap()
 
-        val map = mutableMapOf<Rarity, Double>()
+        val raw = mutableMapOf<Rarity, Double>()
         val p = power - 50
 
         for ((i, interval) in intervalCardChances.withIndex())
-            if (p <= interval) {
-                map[Rarity.entries[i + 1]] = 1.0 - (p / interval.toDouble())
-                map[Rarity.entries[i + 2]] = 1.0 - (abs(p - interval.div(2.0)) / interval.div(2.0))
-                map[Rarity.entries[i + 3]] = p / interval.toDouble()
+            if (i == intervalCardChances.size - 1 || p <= interval) {
+                raw[Rarity.entries[i + 1]] = 1.0 - (p / interval.toDouble())
+                raw[Rarity.entries[i + 2]] = 1.0 - (abs(p - interval.div(2.0)) / interval.div(2.0))
+                raw[Rarity.entries[i + 3]] = p / interval.toDouble()
                 break
             }
 
+        val map = raw.mapValues { it.value.coerceAtLeast(0.0) }.toMutableMap()
         val sum = map.values.sum()
 
         for (rarity in Rarity.entries) {
             if (rarity == Rarity.BASIC) continue
 
             map.putIfAbsent(rarity, 0.0)
-            map[rarity] = (map[rarity]!! / sum).coerceAtLeast(0.0)
+            map[rarity] = map[rarity]!! / sum
         }
 
         return map
