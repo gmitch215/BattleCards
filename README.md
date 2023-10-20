@@ -1,12 +1,12 @@
 # <img style="height: 7vh; width: auto;" src="https://repository-images.githubusercontent.com/555359817/10af05e9-d2f4-41c8-9451-d9bbfa2bd0bb"> BattleCards
-> Premium, action-packed Minecraft Plugin, featuring upgradable and collectible cards used in Battle.
+> Unique, action-packed Minecraft Plugin, featuring upgradable and collectible cards used in Battle.
 
 # 🎴 Deploy your Mobs!
 
 <details>
     <summary>About</summary>
 
-BattleCards is a premium Minecraft Plugin developed for Spigot 1.8+ servers. It creates a unique combat system inspired from games like Clash Royale where entities can drop collectible cards that are upgradable and usable in PvP and PvE combat.
+BattleCards is a free Minecraft Plugin developed for Spigot 1.8+ servers. It creates a unique combat system inspired from games like Clash Royale where entities can drop collectible cards that are upgradable and usable in PvP and PvE combat.
 Created by GamerCoder, it allows for an amazing and unique Minecraft Experience for all ages. Deploy your Cards!
 </details>
 
