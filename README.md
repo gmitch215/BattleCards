@@ -23,7 +23,7 @@ Created by GamerCoder, it allows for an amazing and unique Minecraft Experience 
 ---
 
 ## 🗒️ Usage
-Purchase and download the plugin on our Spigot Page, and drop it in to your Spigot/Paper "plugins" folder.
+Download the plugin from any official providers (Spigot, Modrinth, BuiltByBit, Hangar, etc.). Drop the JAR file into your "plugins" folder.
 
 ### ‼️ Important Note
 This plugin is built in Kotlin. While the plugin will automatically download the necessary libraries for the plugin to run, it is recommended that you install the [Kotlin Spigot Plugin](https://modrinth.com/plugin/kotlinmc/). **This is only required if you are running on a server version below 1.16.**
