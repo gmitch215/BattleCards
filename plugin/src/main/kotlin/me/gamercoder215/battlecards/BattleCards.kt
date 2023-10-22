@@ -24,6 +24,8 @@ import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bstats.bukkit.Metrics
+import org.bstats.charts.SimplePie
+import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -134,7 +136,10 @@ class BattleCards : JavaPlugin(), BattleConfig {
         }
 
         // bStats
-        Metrics(this, bstats)
+        Metrics(this, bstats).apply {
+            addCustomChart(SimplePie("language") { language })
+            addCustomChart(SingleLineChart("cards") { Bukkit.getOnlinePlayers().sumOf { it.inventory.size } })
+        }
 
         logger.info("Loaded Dependencies...")
 
