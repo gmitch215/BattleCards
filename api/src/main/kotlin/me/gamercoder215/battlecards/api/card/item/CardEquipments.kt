@@ -62,6 +62,13 @@ enum class CardEquipments(
     ),
 
     /**
+     * Represents a Leahter Cap CardEquipment.
+     */
+    SILK_HAT(Material.LEATHER_HELMET, AVERAGE,
+        mod(defense = 1.03, speed = 1.015, knockbackResistance = 0.94)
+    ),
+
+    /**
      * Represents a Leather Tunic CardEquipment.
      */
     SILK_TUNIC(Material.LEATHER_CHESTPLATE, AVERAGE,
