@@ -27,7 +27,7 @@ sonarqube {
 allprojects {
     group = pGroup
     version = pVersion
-    description = "BattleCards is a premium, action-packed Minecraft Plugin, featuring upgradable and collectible cards used in Battle."
+    description = "BattleCards is a unique, action-packed Minecraft Plugin, featuring upgradable and collectible cards used in Battle."
 
     apply<JavaPlugin>()
     apply<JavaLibraryPlugin>()

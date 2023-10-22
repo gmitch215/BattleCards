@@ -15,10 +15,10 @@ Created by GamerCoder, it allows for an amazing and unique Minecraft Experience 
 ## ❓ Why?
 
 - **Efficient**: BattleCards is designed in the Kotlin language, providing a unique method of handling API, properties, and elements for a optimized and performative experience.
-- **Simple**: BattleCards is one of the most well-documented premium plugins on the market, allowing for easy customization and modification. We also offer an easy-to-learn API for directly modifying plugin behavior to your liking.
+- **Simple**: BattleCards is one of the most well-documented plugins on the market, allowing for easy customization and modification. We also offer an easy-to-learn API for directly modifying plugin behavior to your liking.
 - **Unique**: The concept of BattleCards is one of its unique, inspired by popular games known for their quality and strategy.
 - **Strategic**: Similar to how strategy is implemented in other card-based games, it encourages critical thinking through the limiations of how cards are used to win your battles.
-- **Transparent**: Despite being a premium plugin, all source code and implementation is open source for developers to contribute, test, and modify. Please consider supporting my work :)
+- **Transparent**: All source code and implementation is open source for developers to contribute, test, and modify. Please consider supporting my work :)
 
 ---
 

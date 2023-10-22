@@ -7,7 +7,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT")
 }
 
-description = "API for the Premium Plugin BattleCards"
+description = "API for the Plugin BattleCards"
 
 tasks {
     kotlinSourcesJar {
