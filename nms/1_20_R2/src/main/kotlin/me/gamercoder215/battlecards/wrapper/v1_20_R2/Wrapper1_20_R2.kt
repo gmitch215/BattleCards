@@ -15,7 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.Connection
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.network.ServerGamePacketListenerImpl
+import net.minecraft.server.network.ServerCommonPacketListenerImpl
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.MoverType
 import net.minecraft.world.entity.PathfinderMob
@@ -265,7 +265,7 @@ internal class Wrapper1_20_R2 : Wrapper {
 
     override fun addPacketInjector(p: Player) {
         val sp = (p as CraftPlayer).handle
-        val ch = (ServerGamePacketListenerImpl::class.java.getDeclaredField("h").apply { isAccessible = true }.get(sp.connection) as Connection).channel
+        val ch = (ServerCommonPacketListenerImpl::class.java.getDeclaredField("c").apply { isAccessible = true }.get(sp.connection) as Connection).channel
 
         if (ch.pipeline().get(PACKET_INJECTOR_ID) != null) return
         ch.pipeline().addAfter("decoder", PACKET_INJECTOR_ID, PacketHandler1_20_R2(p))
@@ -286,7 +286,7 @@ internal class Wrapper1_20_R2 : Wrapper {
 
     override fun removePacketInjector(p: Player) {
         val sp = (p as CraftPlayer).handle
-        val ch = (ServerGamePacketListenerImpl::class.java.getDeclaredField("h").apply { isAccessible = true }.get(sp.connection) as Connection).channel
+        val ch = (ServerCommonPacketListenerImpl::class.java.getDeclaredField("c").apply { isAccessible = true }.get(sp.connection) as Connection).channel
 
         if (ch.pipeline().get(PACKET_INJECTOR_ID) == null) return
         ch.pipeline().remove(PACKET_INJECTOR_ID)
