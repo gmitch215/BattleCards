@@ -32,6 +32,14 @@ This plugin is built in Kotlin. While the plugin will automatically download the
 
 ## 📓Changelog
 
+🐛 v1.0.1 - October 27, 2023
+- Dependency Updates
+- Fix 1.20.2 Support, Packet Errors
+- Add New Metrics
+- Buff Thunder Revenant's Max Health Modifier
+- Fix Card Identification on 1.8-1.11.2
+- Other Minor Additions
+
 🃏 **v1.0.0** - September 3, 2023
 
 Initial Release of BattleCards
