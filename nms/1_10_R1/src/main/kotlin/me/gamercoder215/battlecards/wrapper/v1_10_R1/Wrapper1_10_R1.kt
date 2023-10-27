@@ -86,10 +86,7 @@ internal class Wrapper1_10_R1 : Wrapper {
         nms.targetSelector.a(2, CardOwnerHurtTargetGoal1_10_R1(nms, card))
         nms.targetSelector.a(3, PathfinderGoalHurtByTarget(nms, true))
 
-        val tag = NBTTagCompound()
-        nms.b(tag)
-        tag.setBoolean("battlecard", true)
-        nms.a(tag)
+        nms.a("battlecards")
 
         if (nms is EntityWither)
             object : BukkitRunnable() {
@@ -164,11 +161,7 @@ internal class Wrapper1_10_R1 : Wrapper {
         return NBTWrapper1_10_R1(item)
     }
 
-    override fun isCard(en: Creature): Boolean {
-        val tag = NBTTagCompound()
-        (en as CraftCreature).handle.b(tag)
-        return tag.getBoolean("battlecard")
-    }
+    override fun isCard(en: Creature): Boolean = (en as CraftCreature).handle.P().contains("battlecards")
 
     override fun createInventory(id: String, name: String, size: Int): BattleInventory {
         return BattleInventory1_10_R1(id, name, size)
