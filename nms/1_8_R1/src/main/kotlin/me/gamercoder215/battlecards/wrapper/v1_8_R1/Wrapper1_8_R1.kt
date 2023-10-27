@@ -20,6 +20,7 @@ import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer
 import org.bukkit.entity.*
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
+import java.util.*
 
 @Suppress("unchecked_cast")
 internal class Wrapper1_8_R1 : Wrapper {
@@ -50,6 +51,10 @@ internal class Wrapper1_8_R1 : Wrapper {
         } as? AttributeBase
     }
 
+    private companion object {
+        private val cards = mutableListOf<UUID>()
+    }
+
     override fun loadProperties(en: Creature, card: IBattleCard<*>) {
         val nms = (en as CraftCreature).handle
         EntityLiving::class.java.getDeclaredField("drops").apply { isAccessible = true }[nms] = emptyList<ItemStack>()
@@ -77,11 +82,7 @@ internal class Wrapper1_8_R1 : Wrapper {
         nms.targetSelector.a(1, CardOwnerHurtByTargetGoal1_8_R1(nms, card))
         nms.targetSelector.a(2, CardOwnerHurtTargetGoal1_8_R1(nms, card))
         nms.targetSelector.a(3, PathfinderGoalHurtByTarget(nms, true))
-
-        val tag = NBTTagCompound()
-        nms.b(tag)
-        tag.setBoolean("battlecard", true)
-        nms.a(tag)
+        cards.add(en.uniqueId)
 
         if (nms is EntityWither)
             object : BukkitRunnable() {
@@ -155,11 +156,7 @@ internal class Wrapper1_8_R1 : Wrapper {
         return NBTWrapper1_8_R1(item)
     }
 
-    override fun isCard(en: Creature): Boolean {
-        val tag = NBTTagCompound()
-        (en as CraftCreature).handle.b(tag)
-        return tag.getBoolean("battlecard")
-    }
+    override fun isCard(en: Creature): Boolean = cards.contains(en.uniqueId)
 
     override fun createInventory(id: String, name: String, size: Int): BattleInventory {
         return BattleInventory1_8_R1(id, name, size)

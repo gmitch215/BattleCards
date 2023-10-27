@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffectType
 
 @Type(BattleCardType.THUNDER_REVENANT)
 @Attributes(400.0, 16.5, 100.0, 0.29, 50.0)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.25)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.275)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 0.32)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 4.55)
 @Rideable
