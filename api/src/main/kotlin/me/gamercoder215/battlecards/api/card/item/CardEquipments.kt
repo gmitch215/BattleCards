@@ -268,6 +268,17 @@ enum class CardEquipments(
         effects = arrayOf(
             Potion(PotionEffectType.SPEED, 4, Potion.Status.USER_ONLY)
         )
+    ),
+
+    /**
+     * Represents an Ender Eye CardEquipment.
+     */
+    EYE_OF_BEYOND(Material.matchMaterial("ENDER_EYE") ?: Material.matchMaterial("EYE_OF_ENDER")!!, SPECIAL,
+        mod(health = 1.04, defense = 1.325, damage = 1.3, knockbackResistance = 1.06),
+        effects = arrayOf(
+            Potion(PotionEffectType.NIGHT_VISION, 0, Potion.Status.USER_ONLY),
+            Potion(PotionEffectType.WEAKNESS, 1, Potion.Status.BOTH)
+        )
     )
 
     ;
