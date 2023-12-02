@@ -13,7 +13,7 @@ plugins {
 }
 
 val pGroup = "me.gamercoder215.battlecards"
-val pVersion = "1.0.1-SNAPSHOT"
+val pVersion = "1.0.2-SNAPSHOT"
 val pAuthor = "GamerCoder"
 
 sonarqube {
@@ -63,7 +63,7 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.1.0")
-        val kotlin = compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
+        val kotlin = compileOnly(kotlin("stdlib"))
         project.ext["kotlin_version"] = kotlin!!.version
         compileOnly(kotlin("reflect"))
 

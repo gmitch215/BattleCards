@@ -32,6 +32,11 @@ This plugin is built in Kotlin. While the plugin will automatically download the
 
 ## 📓Changelog
 
+🛠️ v1.0.2 - December 2, 2023
+- Dependency Updates
+- 10+ New Card Equipments
+- Added missing `chainmail` Ability Translation
+
 🐛 v1.0.1 - October 27, 2023
 - Dependency Updates
 - Fix 1.20.2 Support, Packet Errors
