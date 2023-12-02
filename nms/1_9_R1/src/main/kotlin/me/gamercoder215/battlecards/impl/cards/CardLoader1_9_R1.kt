@@ -1,5 +1,6 @@
 package me.gamercoder215.battlecards.impl.cards
 
+import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.util.isCard
 import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.wrapper.CardLoader
@@ -17,6 +18,8 @@ internal class CardLoader1_9_R1 : CardLoader, Listener {
     override fun loadedCards(): Collection<Class<out IBattleCard<*>>> = listOf(
         IEyeOfEnderman::class.java
     )
+
+    override fun loadedEquipment(): Collection<CardEquipment> = CardEquipments1_9_R1.entries
 
     @EventHandler
     fun onDamage(event: EntityDamageByEntityEvent) {

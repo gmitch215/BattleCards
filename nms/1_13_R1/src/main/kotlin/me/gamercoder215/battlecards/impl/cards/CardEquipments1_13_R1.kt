@@ -40,6 +40,40 @@ internal enum class CardEquipments1_13_R1(
 
     // Historical
 
+    CHOCOLATE(Material.DARK_OAK_TRAPDOOR, HISTORICAL,
+        mod(health = 1.037, damage = 1.045, speed = 1.06, defense = 0.86)
+    ),
+
+    DAMAGE_ELEMENT(Material.FIRE_CORAL, HISTORICAL,
+        mod(damage = 1.1, defense = 0.9)
+    ),
+
+    DEFENSE_ELEMENT(Material.HORN_CORAL, HISTORICAL,
+        mod(damage = 0.9, defense = 1.1)
+    ),
+
+    SPEED_ELEMENT(Material.TUBE_CORAL, HISTORICAL,
+        mod(speed = 1.1, knockbackResistance = 0.9)
+    ),
+
+    KNOCKBACK_ELEMENT(Material.BUBBLE_CORAL, HISTORICAL,
+        mod(speed = 0.9, knockbackResistance = 1.1)
+    ),
+
+    HEALTH_ELEMENT(Material.BRAIN_CORAL, HISTORICAL,
+        mod(health = 1.1, damage = 0.9)
+    ),
+
+    // Mythological
+
+    SUPER_ICE(Material.BLUE_ICE, MYTHOLOGICAL,
+        mod(speed = 0.5625, knockbackResistance = 1.32, defense = 1.475)
+    ),
+
+    FORK_OF_DESTINY(Material.TRIDENT, MYTHOLOGICAL,
+        mod(damage = 1.365, knockbackResistance = 0.75, defense = 0.845, speed = 1.09)
+    ),
+
     // Special
 
     DRAGON_BLOOD(Material.DRAGON_BREATH, SPECIAL,
