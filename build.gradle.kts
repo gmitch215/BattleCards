@@ -63,7 +63,7 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.1.0")
-        val kotlin = compileOnly(kotlin("stdlib"))
+        val kotlin = compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
         project.ext["kotlin_version"] = kotlin!!.version
         compileOnly(kotlin("reflect"))
 
