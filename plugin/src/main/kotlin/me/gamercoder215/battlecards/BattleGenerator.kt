@@ -51,7 +51,7 @@ internal class BattleGenerator(private val plugin: BattleCards) : Listener {
         if (p.itemInHand.containsEnchantment(Enchantment.LOOT_BONUS_BLOCKS))
             luck += p.itemInHand.getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS)
 
-        if (block.world.environment == World.Environment.NORMAL && block.x < 48)
+        if (block.world.environment == World.Environment.NORMAL && block.y < 48)
             if (r.nextDouble() < 0.08.plus(luck / 100.0).coerceAtMost(0.5))
                 block.world.dropItemNaturally(block.location, Items.cardShard(rarityChances.randomCumulative()))
     }
