@@ -102,7 +102,10 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 fun stopped() = inv["stopped", Boolean::class.java, false]
                 fun matrix() = listOf(
                     inv[28..34], inv[37..43]
-                ).flatten().filterNotNull().filter { it.type != Material.AIR }
+                ).flatten()
+                    .filterNotNull()
+                    .filter { it.type != Material.AIR }
+                    .filter { it.isCard || it.id == "card_shard" }
 
                 if (matrix().isEmpty()) return@put p.playFailure()
                 if (inv["running", Boolean::class.java, false]) return@put e.setCancelled(true)
