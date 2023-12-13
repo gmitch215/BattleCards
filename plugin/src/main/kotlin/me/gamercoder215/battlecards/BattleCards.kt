@@ -56,6 +56,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
     fun loadListeners() {
         BattleCardListener(this)
         BattleGUIManager(this)
+        BattleSpawner(this)
 
         IBattleCardListener(this)
     }
