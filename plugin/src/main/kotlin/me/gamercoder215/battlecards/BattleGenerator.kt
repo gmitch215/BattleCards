@@ -53,6 +53,6 @@ internal class BattleGenerator(private val plugin: BattleCards) : Listener {
 
         if (block.world.environment == World.Environment.NORMAL && block.y < 48)
             if (r.nextDouble() < 0.08.plus(luck / 100.0).coerceAtMost(0.5))
-                block.world.dropItemNaturally(block.location, Items.cardShard(rarityChances.randomCumulative()))
+                block.world.dropItemNaturally(block.location, Items.cardShard(rarityChances.randomCumulative()!!))
     }
 }

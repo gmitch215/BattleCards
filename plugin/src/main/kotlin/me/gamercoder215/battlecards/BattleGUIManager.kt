@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
+import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
 import me.gamercoder215.battlecards.util.*
@@ -130,7 +131,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                     inv["running"] = false
 
-                    val chosen = CardUtils.calculateCardChances(matrix).randomCumulative()
+                    val chosen = CardUtils.calculateCardChances(matrix).randomCumulative() ?: Rarity.COMMON
 
                     val card = BattleCardType.entries.filter { it.rarity == chosen }.random().createCardData().apply {
                         var total = 0.0

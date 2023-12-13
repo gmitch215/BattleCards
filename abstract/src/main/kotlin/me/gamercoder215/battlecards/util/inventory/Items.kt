@@ -323,7 +323,9 @@ object Items {
         item to (it.value / GENERATED_ITEMS.values.sum())
     }.toMap() }
 
-    fun <T> Map<T, Double>.randomCumulative(reroll: Int = 0): T {
+    fun <T> Map<T, Double>.randomCumulative(reroll: Int = 0): T? {
+        if (isEmpty()) return null
+
         val distribution = DoubleArray(size)
         var cumulative = 0.0
 
