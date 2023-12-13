@@ -132,7 +132,9 @@ class ICard(
         private const val serialVersionUID: Long = 193409138419023815L
 
         @JvmStatic
-        fun fromByteArray(array: ByteArray): ICard {
+        fun fromByteArray(array: ByteArray): ICard? {
+            if (array.isEmpty()) return null
+
             val bIs = ByteArrayInputStream(array)
             val iS = BukkitObjectInputStream(BufferedInputStream(bIs))
             val card = iS.readObject() as ICard
