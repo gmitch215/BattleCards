@@ -29,7 +29,7 @@ internal class CardLoader1_16_R1 : CardLoader, Listener {
         if (event.inventoryHolder?.inventory == null) return
 
         val luck = event.lootContext.luck
-        if (r.nextDouble() < 0.3) return
+        if (r.nextDouble() > 0.3) return
 
         val limit = (luck / 0.5F).toInt().coerceAtMost(3)
 

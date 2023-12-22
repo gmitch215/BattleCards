@@ -8,13 +8,7 @@ import me.gamercoder215.battlecards.util.isMinion
 import me.gamercoder215.battlecards.util.itemStack
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Animals
-import org.bukkit.entity.EntityType
-import org.bukkit.entity.Golem
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Monster
-import org.bukkit.entity.Player
-import org.bukkit.entity.WaterMob
+import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -70,7 +64,7 @@ internal class BattleSpawner(private val plugin: BattleCards) : Listener {
 
         if (entity.health - event.finalDamage > 0) return
 
-        if (r.nextDouble() < 0.1) return
+        if (r.nextDouble() > 0.1) return
 
         var rerolls = 0
         var count = 1
