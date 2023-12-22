@@ -226,7 +226,7 @@ enum class BattleCardType {
         generation,
         try {
             Class.forName("org.bukkit.entity.${entityClass}") as Class<out LivingEntity>
-        } catch (e: ClassNotFoundException) {
+        } catch (e: ReflectiveOperationException) {
             null
         },
         rarity,
@@ -286,6 +286,13 @@ enum class BattleCardType {
      * @return New Card Data
      */
     fun createCardData(): Card = BattleConfig.config.createCardData(this)
+
+    /**
+     * Creates a new card data object.
+     * @return New Card Data
+     * @see [createCardData]
+     */
+    operator fun invoke(): Card = createCardData()
 
     companion object {
 

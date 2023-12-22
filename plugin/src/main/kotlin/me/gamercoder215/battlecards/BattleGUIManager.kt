@@ -133,7 +133,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                     val chosen = CardUtils.calculateCardChances(matrix).randomCumulative() ?: Rarity.COMMON
 
-                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random().createCardData().apply {
+                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random()().apply {
                         var total = 0.0
 
                         for ((amount, card) in matrix.map { it.amount to it.card }) {

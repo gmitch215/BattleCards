@@ -52,7 +52,7 @@ object CardGenerator {
     @JvmStatic
     fun createBasicCard(entity: Creature): ItemStack {
         if (!BattleConfig.getValidBasicCards().contains(entity.type)) throw IllegalArgumentException("Invalid Entity Type: ${entity.type}")
-        val card = BattleCardType.BASIC.createCardData() as ICard
+        val card = BattleCardType.BASIC() as ICard
         card.storedEntityType = entity.type
         return toItem(card)
     }

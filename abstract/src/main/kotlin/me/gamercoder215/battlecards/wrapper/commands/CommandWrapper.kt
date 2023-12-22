@@ -95,7 +95,7 @@ interface CommandWrapper {
             if (basicType == null || !BattleConfig.getValidBasicCards().contains(basicType))
                 return p.sendMessage(getError("error.argument.basic_type"))
 
-        p.inventory.addItem(CardGenerator.toItem(type.createCardData().apply { this as ICard; storedEntityType = basicType } ))
+        p.inventory.addItem(CardGenerator.toItem(type().apply { this as ICard; storedEntityType = basicType } ))
         p.sendMessage(format(getSuccess("success.card.created"), type.formatName()))
         p.playSuccess()
     }
@@ -104,7 +104,7 @@ interface CommandWrapper {
         if (!p.hasPermission("battlecards.user.query"))
             return p.sendMessage(getError("error.permission.argument"))
 
-        p.openInventory(Generator.generateCardInfo(type.createCardData()))
+        p.openInventory(Generator.generateCardInfo(type()))
         p.playSuccess()
     }
 

@@ -264,7 +264,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
         cards.add(card)
 
         if (type != BattleCardType.BASIC)
-            Bukkit.addRecipe(createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
+            Bukkit.addRecipe(createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type())).apply {
                 shape("SSS", "SMS", "SSS")
 
                 setIngredient('M', type.craftingMaterial)
