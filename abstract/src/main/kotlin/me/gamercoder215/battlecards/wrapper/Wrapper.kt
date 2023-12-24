@@ -156,7 +156,14 @@ interface Wrapper {
                 } catch (ignored: ClassNotFoundException) {}
             }
 
-            cards.forEach(BattleConfig.config::registerCard)
+            cards.forEach {
+                try {
+                    BattleConfig.config.registerCard(it)
+                } catch (e: IllegalStateException) {
+                    BattleConfig.logger.warning("Failed to register card '${it.name}'")
+                    BattleConfig.print(e)
+                }
+            }
             equipment.forEach(BattleConfig.config::registerEquipment)
         }
 
