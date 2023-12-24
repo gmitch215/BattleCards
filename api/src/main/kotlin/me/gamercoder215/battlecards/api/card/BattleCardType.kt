@@ -209,7 +209,7 @@ enum class BattleCardType {
     /**
      * Represents a Skeleton BattleCard.
      */
-    GOAT_GLADIATOR(1, Skeleton::class, Rarity.RARE, Material.matchMaterial("GOAT_HORN")),
+    GOAT_GLADIATOR(1, Skeleton::class, Rarity.RARE, Material.matchMaterial("GOAT_HORN") ?: Material.matchMaterial("HORN_CORAL_BLOCK")),
 
     /**
      * Represents a Piglin BattleCard.
