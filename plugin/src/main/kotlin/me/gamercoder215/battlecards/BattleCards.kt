@@ -309,6 +309,8 @@ class BattleCards : JavaPlugin(), BattleConfig {
         registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } != null || type == BattleCardType.BASIC
 
     override fun createCardData(type: BattleCardType): Card {
+        if (disabledCards.contains(type)) throw IllegalStateException("$type is not available on this Minecraft Version: Disabled")
+
         val clazz = registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } ?: throw IllegalStateException("$type is not available on this Minecraft Version: Unregistered")
         return ICard(
             clazz,

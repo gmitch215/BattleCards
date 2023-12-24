@@ -5,6 +5,7 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.util.cardInHand
 import me.gamercoder215.battlecards.util.inventory.Items
+import me.gamercoder215.battlecards.util.isDisabled
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.EntityType
@@ -30,7 +31,7 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
             handler = BukkitCommandHandler.create(plugin)
 
             handler.autoCompleter
-                .registerParameterSuggestions(BattleCardType::class.java, SuggestionProvider.of { BattleCardType.entries.filter { it != BattleCardType.BASIC }.map { it.name.lowercase() } })
+                .registerParameterSuggestions(BattleCardType::class.java, SuggestionProvider.of { BattleCardType.entries.filter { it != BattleCardType.BASIC && !it.isDisabled }.map { it.name.lowercase() } })
                 .registerParameterSuggestions(EntityType::class.java, SuggestionProvider.of { EntityType.entries.map { it.name.lowercase() } })
                 .registerSuggestion("items", SuggestionProvider.of { Items.PUBLIC_ITEMS.keys })
 

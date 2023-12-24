@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
@@ -233,6 +234,9 @@ inline val Player.attackable: Boolean
 
 inline val Player.gameName: String
     get() = displayName ?: name
+
+inline val BattleCardType.isDisabled: Boolean
+    get() = BattleConfig.config.disabledCards.contains(this)
 
 fun Event.call() {
     Bukkit.getPluginManager().callEvent(this)

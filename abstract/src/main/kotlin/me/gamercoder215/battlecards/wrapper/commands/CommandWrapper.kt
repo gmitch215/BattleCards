@@ -88,6 +88,9 @@ interface CommandWrapper {
         if (!p.hasPermission("battlecards.admin.card.create"))
             return p.sendMessage(getError("error.permission.argument"))
 
+        if (type.isDisabled)
+            return p.sendMessage(getError("error.card.disabled"))
+
         if (p.inventory.firstEmpty() == -1)
             return p.sendMessage(getError("error.inventory.full"))
 
@@ -103,6 +106,9 @@ interface CommandWrapper {
     fun queryCard(p: Player, type: BattleCardType) {
         if (!p.hasPermission("battlecards.user.query"))
             return p.sendMessage(getError("error.permission.argument"))
+
+        if (type.isDisabled)
+            return p.sendMessage(getError("error.card.disabled"))
 
         p.openInventory(Generator.generateCardInfo(type()))
         p.playSuccess()
