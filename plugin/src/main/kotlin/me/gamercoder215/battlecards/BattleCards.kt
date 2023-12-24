@@ -259,7 +259,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
         if (cards.contains(card)) throw IllegalArgumentException("Card ${card.simpleName} already registered")
         val type = card.getAnnotation(Type::class.java).type
 
-        if (type != BattleCardType.BASIC && type.craftingMaterial == Material.AIR) throw IllegalStateException("$type is not available on this Minecraft Version")
+        if (type != BattleCardType.BASIC && type.craftingMaterial == Material.AIR) throw IllegalStateException("$type is not available on this Minecraft Version: Crafting Material is AIR")
 
         cards.add(card)
 
@@ -309,7 +309,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
         registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } != null || type == BattleCardType.BASIC
 
     override fun createCardData(type: BattleCardType): Card {
-        val clazz = registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } ?: throw IllegalStateException("$type is not available on this Minecraft Version")
+        val clazz = registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } ?: throw IllegalStateException("$type is not available on this Minecraft Version: Unregistered")
         return ICard(
             clazz,
             type,
