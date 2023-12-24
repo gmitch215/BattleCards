@@ -69,7 +69,7 @@ subprojects {
 
         testImplementation("org.mockito:mockito-core:5.8.0")
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-        testImplementation("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT")
+        testImplementation(kotlin("test"))
     }
 
     java {
