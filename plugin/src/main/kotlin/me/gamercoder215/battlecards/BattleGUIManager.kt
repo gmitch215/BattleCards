@@ -105,7 +105,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     inv[28..34], inv[37..43]
                 ).flatten()
                     .filterNotNull()
-                    .filter { it.type != Material.AIR }
+                    .filter { !it.type.airOrNull }
                     .filter { it.isCard || it.id == "card_shard" }
 
                 if (matrix().isEmpty()) return@put p.playFailure()
@@ -247,7 +247,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         e.newItems.values.toList()
                     }
                     else -> listOf()
-                }.filterNotNull().filter { it.type != Material.AIR }
+                }.filterNotNull().filter { !it.type.airOrNull }
 
                 if (items.isNotEmpty()) {
                     if (items.any { it.nbt.id != "card_equipment" }) {
@@ -285,8 +285,8 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
             .put("card_combiner") { e, inv ->
                 val p = e.whoClicked as Player
                 if (inv["running", Boolean::class.java, false]) {
-                    if (e is InventoryClickEvent && (e.currentItem?.type ?: Material.AIR) == Material.AIR) return@put
-                    if (e is InventoryDragEvent && e.newItems.values.all { it.type == Material.AIR }) return@put
+                    if (e is InventoryClickEvent && e.currentItem?.type.airOrNull) return@put
+                    if (e is InventoryDragEvent && e.newItems.values.all { it.type.airOrNull }) return@put
 
                     inv["stopped"] = true; inv["running"] = false
                     p.playFailure()
@@ -300,10 +300,10 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     return@put
                 }
 
-                val filter = { item: ItemStack? -> item != null && item.type != Material.AIR && (item.isCard || item.id == "card_shard") }
+                val filter = { item: ItemStack? -> item != null && !item.type.airOrNull && (item.isCard || item.id == "card_shard") }
                 fun matrix() = listOf(
                     inv[28..34], inv[37..43]
-                ).flatten().filterNotNull().filter { it.type != Material.AIR }
+                ).flatten().filterNotNull().filter { !it.type.airOrNull }
 
                 if (e is InventoryClickEvent) {
                     if (when (e.action) {

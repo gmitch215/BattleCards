@@ -1,12 +1,10 @@
 package me.gamercoder215.battlecards.impl.cards
 
 import me.gamercoder215.battlecards.impl.Type
-import org.bukkit.Material
-import org.junit.jupiter.api.Assertions
+import me.gamercoder215.battlecards.util.airOrNull
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 class TestCardLoader1_9_R1 {
 
@@ -19,7 +17,7 @@ class TestCardLoader1_9_R1 {
     fun testCardLoader() {
         for (clazz in cardLoader.loadedCards()) {
             val type = clazz.getAnnotation(Type::class.java).type
-            assertTrue { type.craftingMaterial != Material.AIR }
+            assertFalse { type.craftingMaterial.airOrNull }
         }
 
         cardLoader.loadedEquipment()

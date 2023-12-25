@@ -283,6 +283,9 @@ inline val Chunk.blocks: Set<Block>
         return blocks
     }
 
+inline val Material?.airOrNull: Boolean
+    get() = this == null || this == Material.AIR
+
 val PotionEffectType.prefix: String
     get() = when (this.name.lowercase()) {
         "absorption", "fire_resistance" -> ChatColor.GOLD
