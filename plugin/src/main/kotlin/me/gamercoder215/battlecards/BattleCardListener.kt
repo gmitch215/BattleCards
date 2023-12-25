@@ -645,9 +645,9 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         if (!block.isCardBlock) return
 
         if (block["container"]?.toString()?.isNotEmpty() == true) {
-            event.setUseInteractedBlock(Event.Result.DENY)
-            if (p.isSneaking && p.itemInHand != null) return
+            if (p.isSneaking && p.itemInHand?.type.airOrNull) return
 
+            event.setUseInteractedBlock(Event.Result.DENY)
             p.openInventory(CONTAINERS_CARD_BLOCKS[block["container"].toString()].let { if (it == null) return else it() })
 
             if (block["success"] as? Boolean == true) p.playSuccess()
