@@ -62,7 +62,7 @@ object Items {
 
             nbt["attach"] = "enchanting_table"
             nbt["attach.small"] = true
-            nbt["attach.mod.y"] = -0.3
+            nbt["attach.mod.y"] = -0.4
         }
     )
 
