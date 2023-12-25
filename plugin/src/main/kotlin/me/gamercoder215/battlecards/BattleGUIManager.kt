@@ -133,7 +133,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                     val chosen = CardUtils.calculateCardChances(matrix).randomCumulative() ?: Rarity.COMMON
 
-                    val card = BattleCardType.entries.filter { it.rarity == chosen }.random()().apply {
+                    val card = BattleCardType.entries.filter { it.rarity == chosen && !it.isDisabled }.random()().apply {
                         var total = 0.0
 
                         for ((amount, card) in matrix.map { it.amount to it.card }) {
@@ -164,10 +164,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
             }
             .put("card_combiner:stop") { e, inv ->
                 val p = e.whoClicked as Player
-
-                inv["stopped"] = true
-                inv["running"] = false
-
+                inv["stopped"] = true; inv["running"] = false
                 p.playFailure()
 
                 inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
@@ -286,6 +283,28 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 }
             }
             .put("card_combiner") { e, inv ->
+                val p = e.whoClicked as Player
+                if (inv["running", Boolean::class.java, false]) {
+                    if (e is InventoryClickEvent && (e.currentItem?.type ?: Material.AIR) == Material.AIR) return@put
+                    if (e is InventoryDragEvent && e.newItems.values.all { it.type == Material.AIR }) return@put
+
+                    inv["stopped"] = true; inv["running"] = false
+                    p.playFailure()
+
+                    inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
+                        itemMeta = itemMeta.apply {
+                            displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                        }
+                    }.nbt { nbt -> nbt.addTag("_cancel") }
+                    inv[23] = GUI_BACKGROUND
+                    return@put
+                }
+
+                val filter = { item: ItemStack? -> item != null && item.type != Material.AIR && (item.isCard || item.id == "card_shard") }
+                fun matrix() = listOf(
+                    inv[28..34], inv[37..43]
+                ).flatten().filterNotNull().filter { it.type != Material.AIR }
+
                 if (e is InventoryClickEvent) {
                     if (when (e.action) {
                             InventoryAction.MOVE_TO_OTHER_INVENTORY -> inv.firstEmpty()
@@ -293,16 +312,17 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         } == 13
                     ) return@put e.setCancelled(true)
 
-                    if (if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) !e.currentItem.isCard else !e.cursor.isCard && e.clickedInventory is BattleInventory)
+                    if (if (e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) !filter(e.currentItem) else !filter(e.cursor) && e.clickedInventory is BattleInventory)
                         return@put e.setCancelled(true)
                 }
 
-                if (e is InventoryDragEvent && (13 in e.rawSlots || e.newItems.values.any { !it.isCard }))
-                    return@put e.setCancelled(true)
+                if (e is InventoryDragEvent) {
+                    if (e.rawSlots.any { it < 54 } && inv["running", Boolean::class.java, false])
+                        return@put e.setCancelled(true)
 
-                fun matrix() = listOf(
-                    inv[28..34], inv[37..43]
-                ).flatten().filterNotNull().filter { it.type != Material.AIR }
+                    if (13 in e.rawSlots || e.newItems.values.any { !filter(it) })
+                        return@put e.setCancelled(true)
+                }
 
                 sync {
                     val matrix = matrix()

@@ -208,7 +208,7 @@ object CardUtils {
     @JvmStatic
     fun getCardPower(cards: Iterable<ItemStack>)
         = cards.filter { it.isCard }.map { it to it.card!! }.sumOf { it.second.power * it.first.amount } +
-            cards.filter { it.id == "card_shard" }.sumOf { Rarity.valueOf(it.nbt.getString("rarity")).ordinal * it.amount }
+            cards.filter { it.id == "card_shard" }.sumOf { 3.0.pow(Rarity.valueOf(it.nbt.getString("rarity")).ordinal) * it.amount }
 
     @JvmStatic
     private val intervalCardChances = listOf(
