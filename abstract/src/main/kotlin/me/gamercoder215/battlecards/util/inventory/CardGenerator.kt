@@ -19,7 +19,6 @@ import org.bukkit.util.ChatPaginator
 
 object CardGenerator {
 
-    @JvmStatic
     fun toItem(card: Card): ItemStack {
         val config = BattleConfig.configuration
 
@@ -49,7 +48,6 @@ object CardGenerator {
         }.nbt { nbt -> nbt["card"] = card.toByteArray() }
     }
 
-    @JvmStatic
     fun createBasicCard(entity: Creature): ItemStack {
         if (!BattleConfig.getValidBasicCards().contains(entity.type)) throw IllegalArgumentException("Invalid Entity Type: ${entity.type}")
         val card = BattleCardType.BASIC() as ICard
@@ -67,7 +65,6 @@ object CardGenerator {
         ChatColor.LIGHT_PURPLE
     )
 
-    @JvmStatic
     fun generateCardInfo(card: Card): ItemStack {
         val config = BattleConfig.configuration
 
@@ -159,7 +156,6 @@ object CardGenerator {
         }
     }
 
-    @JvmStatic
     fun generateCardStatistics(card: Card): ItemStack? {
         if (!BattleConfig.configuration.getBoolean("Cards.Display.Info.ShowStatistics")) return null
 

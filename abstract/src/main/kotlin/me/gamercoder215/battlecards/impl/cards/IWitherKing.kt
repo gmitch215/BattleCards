@@ -65,7 +65,6 @@ class IWitherKing(data: ICard) : IBattleCard<Wither>(data) {
     }
 
     private companion object {
-        @JvmStatic
         private val types: List<EntityType> = listOf<Any>(
             EntityType.BLAZE,
             EntityType.SKELETON,

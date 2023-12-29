@@ -27,7 +27,6 @@ class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
     private lateinit var ravager: Ravager
 
     private companion object {
-        @JvmStatic
         val bannerPattern = listOf(
             Pattern(DyeColor.ORANGE, PatternType.DIAGONAL_RIGHT_MIRROR),
             Pattern(DyeColor.YELLOW, PatternType.CROSS),

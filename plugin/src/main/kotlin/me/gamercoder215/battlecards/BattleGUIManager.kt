@@ -41,12 +41,10 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
     companion object {
 
-        @JvmStatic
         private val cardTableSlots = listOf(
             10, 11, 12, 19, 20, 21, 24, 28, 29, 30
         )
 
-        @JvmStatic
         private val CLICK_ITEMS = ImmutableMap.builder<String, (InventoryClickEvent, BattleInventory) -> Unit>()
             .put("card:info_item") { e, inv ->
                 val p = e.whoClicked as Player
@@ -176,7 +174,6 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
             }
             .build()
 
-        @JvmStatic
         private val CLICK_INVENTORIES = ImmutableMap.builder<String, (InventoryInteractEvent, BattleInventory) -> Unit>()
             .put("card_table") { e, inv ->
                 val p = e.whoClicked as Player

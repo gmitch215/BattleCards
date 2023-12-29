@@ -178,7 +178,6 @@ interface CardEquipment : Serializable {
     ) {
 
         private companion object {
-            @JvmStatic
             private val r = SecureRandom()
         }
 

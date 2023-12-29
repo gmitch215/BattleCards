@@ -20,38 +20,32 @@ import java.util.*
 interface CommandWrapper {
 
     companion object {
-        @JvmStatic
         val COMMANDS: Map<String, List<String>> = ImmutableMap.builder<String, List<String>>()
             .put("bcard", listOf("card", "battlecard"))
             .put("cardreload", listOf("creload"))
             .put("bquery", listOf("cardquery", "battlequery"))
             .build()
 
-        @JvmStatic
         val COMMAND_PERMISSION: Map<String, String> = ImmutableMap.builder<String, String>()
             .put("bcard", "battlecards.user.card")
             .put("cardreload", "battlecards.admin.reload")
             .put("bquery", "battlecards.user.query")
             .build()
 
-        @JvmStatic
         val COMMAND_DESCRIPTION: Map<String, String> = ImmutableMap.builder<String, String>()
             .put("bcard", "Main BattleCards Card Command")
             .put("cardreload", "Reloads the BattleCards Plugin")
             .put("bquery", "Command for Querying BattleCards Cards")
             .build()
 
-        @JvmStatic
         val COMMAND_USAGE: Map<String, String> = ImmutableMap.builder<String, String>()
             .put("bcard", "/bcard")
             .put("cardreload", "/cardreload")
             .put("bquery", "/bquery <card>")
             .build()
 
-        @JvmStatic
         fun getError(key: String): String = "${get("plugin.prefix")} ${ChatColor.RED}${get(key)}"
 
-        @JvmStatic
         fun getSuccess(key: String): String = "${get("plugin.prefix")} ${ChatColor.GREEN}${get(key)}"
 
         private val COOLDOWN: MutableMap<String, MutableMap<UUID, Long>> = mutableMapOf()

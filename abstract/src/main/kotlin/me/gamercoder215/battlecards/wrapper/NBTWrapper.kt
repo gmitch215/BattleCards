@@ -12,29 +12,22 @@ abstract class NBTWrapper(
 ) {
 
     companion object {
-        @JvmStatic
         val ROOT = "BattleCards"
 
-        @JvmStatic
         protected val TAGS_KEY = "tags"
 
-        @JvmStatic
         fun of(item: ItemStack) = w.getNBTWrapper(item)
 
-        @JvmStatic
         fun builder(item: ItemStack, action: (NBTWrapper) -> Unit): ItemStack {
             return of(item.clone()).apply {
                 action(this)
             }.item
         }
 
-        @JvmStatic
         fun builder(material: Material, action: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material), action)
 
-        @JvmStatic
         fun builder(material: BattleMaterial, action: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material.findStack()), action)
 
-        @JvmStatic
         fun builder(item: ItemStack, meta: ItemMeta.() -> Unit, nbt: (NBTWrapper) -> Unit): ItemStack {
             val item0 = item.clone()
             item0.itemMeta = item0.itemMeta.apply { meta(this) }
@@ -42,10 +35,8 @@ abstract class NBTWrapper(
             return of(item0).apply { nbt(this) }.item
         }
 
-        @JvmStatic
         fun builder(material: Material, meta: ItemMeta.() -> Unit, nbt: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material), meta, nbt)
 
-        @JvmStatic
         fun builder(material: BattleMaterial, meta: ItemMeta.() -> Unit, nbt: (NBTWrapper) -> Unit): ItemStack = builder(ItemStack(material.findStack()), meta, nbt)
     }
 

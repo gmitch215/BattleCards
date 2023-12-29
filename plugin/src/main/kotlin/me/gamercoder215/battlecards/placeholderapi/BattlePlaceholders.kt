@@ -18,7 +18,6 @@ internal class BattlePlaceholders(private val plugin: BattleCards) : Placeholder
 
     companion object {
 
-        @JvmStatic
         private val PLACEHOLDERS = ImmutableMap.builder<String, (OfflinePlayer) -> Any>()
             .put("card_count") { p ->
                 if (p !is Player) return@put 0

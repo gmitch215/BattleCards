@@ -7,10 +7,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 internal object VaultChat {
 
-    @JvmStatic
     private lateinit var chat: Chat
 
-    @JvmStatic
     fun loadChat() {
         if (this::chat.isInitialized) return
 
@@ -18,7 +16,6 @@ internal object VaultChat {
         if (rsp.provider != null) chat = rsp.provider
     }
 
-    @JvmStatic
     fun isInGroup(player: Player, vararg groups: String): Boolean {
         if (!this::chat.isInitialized) return false
 

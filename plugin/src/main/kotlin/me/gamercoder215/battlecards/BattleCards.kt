@@ -240,7 +240,6 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     companion object {
 
-        @JvmStatic
         val cardRecipes: MutableMap<BattleCardType, ShapedRecipe> = mutableMapOf()
     }
 

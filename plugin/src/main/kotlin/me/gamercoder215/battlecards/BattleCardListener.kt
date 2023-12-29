@@ -83,10 +83,8 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
     }
 
     private companion object {
-        @JvmStatic
         private val uses = mutableMapOf<UUID, Int>()
 
-        @JvmStatic
         private val basicCardDrops: List<DamageCause> = listOf(
             "ENTITY_ATTACK",
             "ENTITY_SWEEP_ATTACK",

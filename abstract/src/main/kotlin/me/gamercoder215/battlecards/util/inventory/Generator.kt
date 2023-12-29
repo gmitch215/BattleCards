@@ -30,12 +30,10 @@ import kotlin.math.floor
 @Suppress("unchecked_cast")
 object Generator {
 
-    @JvmStatic
     fun genGUI(size: Int, name: String?): BattleInventory {
         return genGUI("", size, name)
     }
 
-    @JvmStatic
     fun genGUI(key: String, size: Int, name: String?): BattleInventory {
         if (size < 9 || size > 54) throw IllegalArgumentException("Size must be between 9 and 54")
         if (size % 9 > 0) throw IllegalArgumentException("Size must be a multiple of 9")
@@ -57,7 +55,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     fun generatePluginInfo(): BattleInventory {
         val inv = genGUI(27, get("menu.plugin_info"))
 
@@ -92,7 +89,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     fun generateCardInfo(card: Card): BattleInventory {
         val inv = genGUI(27, get("menu.card.info"))
         inv.isCancelled = true
@@ -143,7 +139,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     fun generateCardTable(): BattleInventory {
         val inv = genGUI("card_table", 45, get("menu.card_table"))
 
@@ -172,7 +167,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     fun generateCardQuests(card: Card, quest: CardQuest? = null): BattleInventory {
         val inv: BattleInventory
 
@@ -281,7 +275,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     private val progressString: List<Int> = listOf(
         10 nineTo 37,
         37..39,
@@ -309,7 +302,6 @@ object Generator {
         return (start..end).filter { (it % 9) - remainder == 0 }.run { if (reverse) reversed() else this }
     }
 
-    @JvmStatic
     fun generateCardEquipment(card: Card): BattleInventory {
         val equipment = (card as ICard).cardEquipment
         val slots = card.statistics.equipmentSlots
@@ -391,7 +383,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     fun generateEffectiveModifiers(equipment: Map<Int, CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
         itemMeta = itemMeta.apply {
             displayName = "${ChatColor.BLUE}${get("constants.effective_modifiers")}"
@@ -461,7 +452,6 @@ object Generator {
         nbt.addTag("_cancel")
     }
 
-    @JvmStatic
     fun generateCardCombiner(): BattleInventory {
         val inv = genGUI("card_combiner", 54, get("menu.card_combiner"))
 

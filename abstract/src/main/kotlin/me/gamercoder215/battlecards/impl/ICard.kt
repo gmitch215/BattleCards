@@ -131,7 +131,6 @@ class ICard(
 
         private const val serialVersionUID: Long = 193409138419023815L
 
-        @JvmStatic
         fun fromByteArray(array: ByteArray): ICard? {
             if (array.isEmpty()) return null
 
@@ -143,7 +142,6 @@ class ICard(
             return card
         }
 
-        @JvmStatic
         fun deserialize(map: Map<String, Any>): ICard {
             val clazz = Class.forName(map["clazz"] as String).asSubclass(BattleCard::class.java)
             val type = BattleCardType.valueOf((map["type"] as String).uppercase())

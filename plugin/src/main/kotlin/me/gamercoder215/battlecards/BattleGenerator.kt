@@ -35,7 +35,6 @@ internal class BattleGenerator(private val plugin: BattleCards) : Listener {
 
     private companion object {
 
-        @JvmStatic
         private val rarityChances = Rarity.entries.filter { it != Rarity.BASIC }.associateWith {
             (2.0 / 10.0.pow(it.ordinal))
         }

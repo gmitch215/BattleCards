@@ -28,13 +28,10 @@ abstract class IBattleCard<T : Creature>(
 ) : BattleCard<T> {
 
     companion object {
-        @JvmStatic
         val spawned: MutableMap<UUID, IBattleCard<*>> = mutableMapOf()
 
-        @JvmStatic
         fun byEntity(entity: Creature): IBattleCard<*>? = spawned[entity.uniqueId]
 
-        @JvmStatic
         fun byMinion(minion: LivingEntity): IBattleCard<*>? {
             spawned.forEach { (_, card) ->
                 if (card.minions.any { it.uniqueId == minion.uniqueId })
@@ -44,7 +41,6 @@ abstract class IBattleCard<T : Creature>(
             return null
         }
 
-        @JvmStatic
         protected val r = SecureRandom()
     }
 

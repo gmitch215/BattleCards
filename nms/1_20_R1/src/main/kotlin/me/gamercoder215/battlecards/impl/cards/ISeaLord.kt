@@ -34,7 +34,6 @@ import org.bukkit.scheduler.BukkitRunnable
 class ISeaLord(data: ICard) : IBattleCard<Drowned>(data) {
 
     private companion object {
-        @JvmStatic
         val dolphinKey = NamespacedKey(BattleConfig.plugin, "sealord_dolphin")
     }
     
