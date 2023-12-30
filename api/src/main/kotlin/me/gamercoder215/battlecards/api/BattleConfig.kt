@@ -489,4 +489,16 @@ interface BattleConfig {
          */
         set(value) = setConfig("Cards.Trades.Chance", value)
 
+    var isAdvancementsEnabled: Boolean
+        /**
+         * Fetches whether Advancements are enabled.
+         * @return true if enabled, false otherwise
+         */
+        get() = configuration.getBoolean("Functionality.Advancements")
+        /**
+         * Sets whether Advancements are enabled.
+         * @param value true if enabled, false otherwise
+         */
+        set(value) = setConfig("Functionality.Advancements", value)
+
 }

@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards
 import com.google.common.collect.ImmutableSet
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
+import me.gamercoder215.battlecards.advancements.BattleAdvancements
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.BattleConfig.Companion.print
 import me.gamercoder215.battlecards.api.card.BattleCard
@@ -101,6 +102,12 @@ class BattleCards : JavaPlugin(), BattleConfig {
         return Bukkit.getPluginManager().getPlugin("Vault") != null
     }
 
+    fun loadAdvancements() {
+        if (!isAdvancementsEnabled) return
+
+        BattleAdvancements.check()
+    }
+
     override fun onEnable() {
         saveDefaultConfig()
 
@@ -144,6 +151,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
         logger.info("Loaded Dependencies...")
 
         checkIntegrations()
+        loadAdvancements()
         logger.info("Loaded Addons...")
 
         logger.info("Finished!")
