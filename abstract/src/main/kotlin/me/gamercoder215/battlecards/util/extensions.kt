@@ -299,7 +299,7 @@ val PotionEffectType.prefix: String
         "dolphins_grace" -> "a5d1d3"
         "harm", "increase_damage" -> ChatColor.DARK_RED
         "hunger" -> "8b4513"
-        "levitation", "slow_digging" -> ChatColor.WHITE
+        "levitation", "slow_digging", "slow_falling" -> ChatColor.WHITE
         "luck", "poison" -> ChatColor.DARK_GREEN
         "night_vision" -> ChatColor.DARK_BLUE
         "speed", "water_breathing" -> ChatColor.AQUA
