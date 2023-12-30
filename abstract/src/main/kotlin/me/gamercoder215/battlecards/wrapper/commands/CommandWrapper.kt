@@ -120,6 +120,17 @@ interface CommandWrapper {
         p.playSuccess()
     }
 
+    fun catalogueCard(p: Player, type: BattleCardType) {
+        if (!p.hasPermission("battlecards.user.query"))
+            return p.sendMessage(getError("error.permission.argument"))
+
+        if (type.isDisabled)
+            return p.sendMessage(getError("error.card.disabled"))
+
+        p.openInventory(Generator.generateCardCatalogue(type()))
+        p.playSuccess()
+    }
+
     fun giveItem(p: Player, id: String) {
         if (!p.hasPermission("battlecards.admin.items"))
             return p.sendMessage(getError("error.permission.argument"))

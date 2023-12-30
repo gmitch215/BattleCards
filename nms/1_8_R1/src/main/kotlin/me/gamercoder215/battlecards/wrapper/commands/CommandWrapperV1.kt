@@ -197,6 +197,17 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
                             despawnCards(sender)
                             true
                         }
+                        "catalogue" -> {
+                            if (args.size < 2)
+                                return sender.sendMessage(getError("error.argument.card"), false)
+
+                            return try {
+                                catalogueCard(sender, BattleCardType.valueOf(args[1].uppercase()))
+                                true
+                            } catch (ignored: IllegalArgumentException) {
+                                sender.sendMessage(getError("error.argument.card"), false)
+                            }
+                        }
                         else -> {
                             sender.sendMessage(getError("error.argument"))
                             false

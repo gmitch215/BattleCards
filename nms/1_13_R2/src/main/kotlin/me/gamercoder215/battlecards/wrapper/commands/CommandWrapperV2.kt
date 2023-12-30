@@ -137,6 +137,10 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
         @CommandPermission("battlecards.user.despawn")
         fun despawnCards(p: Player) = wrapper.despawnCards(p)
 
+        @Subcommand("catalogue")
+        @CommandPermission("battlecards.user.query")
+        fun cardCatalogue(p: Player, type: BattleCardType) = wrapper.catalogueCard(p, type)
+
     }
 
 }
