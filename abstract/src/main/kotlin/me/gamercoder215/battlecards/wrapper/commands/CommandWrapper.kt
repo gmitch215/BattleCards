@@ -127,6 +127,9 @@ interface CommandWrapper {
         if (type.isDisabled)
             return p.sendMessage(getError("error.card.disabled"))
 
+        if (type == BattleCardType.BASIC)
+            return p.sendMessage(getError("error.argument.basic_type"))
+
         p.openInventory(Generator.generateCardCatalogue(type()))
         p.playSuccess()
     }

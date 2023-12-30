@@ -55,9 +55,10 @@ object CardGenerator {
         return toItem(card)
     }
 
-    private val generationColors = listOf(
-        ChatColor.GREEN,
+    internal val generationColors = arrayOf(
+        ChatColor.RESET, // Generation 0
         ChatColor.AQUA,
+        ChatColor.GREEN,
         ChatColor.DARK_BLUE,
         ChatColor.YELLOW,
         ChatColor.DARK_PURPLE,

@@ -12,6 +12,7 @@ import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
+import me.gamercoder215.battlecards.util.inventory.Generator.genGUI
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.util.inventory.Items.randomCumulative
@@ -54,6 +55,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 when (item.nbt.getString("type")) {
                     "quests" -> p.openInventory(Generator.generateCardQuests(card))
                     "equipment" -> p.openInventory(Generator.generateCardEquipment(card))
+                    "catalogue" -> p.openInventory(Generator.generateCardCatalogue(card))
                 }
             }
             .put("scroll:stored") { e, inv ->
@@ -171,6 +173,26 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     }
                 }.nbt { nbt -> nbt.addTag("_cancel") }
                 inv[23] = GUI_BACKGROUND
+            }
+            .put("card_catalogue:crafting_recipe") { e, inv ->
+                val p = e.whoClicked as Player
+                val item = e.currentItem
+                val type = BattleCardType.valueOf(item.nbt.getString("type"))
+
+                val gui = genGUI(45, format(get("menu.card_catalogue.crafting"), type.name.lowercase()))
+                gui.isCancelled = true
+                gui["back"] = Consumer { pl: Player -> pl.openInventory(inv) }
+                gui[10..34 except (cardTableSlots + 24)] = GUI_BACKGROUND
+
+                val rarityShard = Items.cardShard(type.rarity)
+                gui[10..12] = rarityShard; gui[listOf(19, 21)] = rarityShard; gui[28..30] = rarityShard
+                gui[20] = ItemStack(type.craftingMaterial)
+                gui[24] = CardGenerator.toItem(type())
+
+                gui[37] = Items.back("action")
+
+                p.openInventory(gui)
+                p.playSuccess()
             }
             .build()
 
