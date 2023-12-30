@@ -541,3 +541,9 @@ fun String.capitalizeFully(): String =
     split(" ").joinToString(" ") {
         s -> s.lowercase(BattleConfig.config.locale).replaceFirstChar { it.uppercase(BattleConfig.config.locale) }
     }
+
+infix fun <T> Iterable<T>.except(other: Iterable<T>): List<T> =
+    filter { !other.contains(it) }
+
+infix fun <T> Iterable<T>.except(other: T): List<T> =
+    filter { it != other }
