@@ -143,7 +143,7 @@ object Items {
 
         return (if (Wrapper.legacy) ItemStack(matchMaterial("SKULL_ITEM"), 1, 3.toShort()) else ItemStack(matchMaterial("PLAYER_HEAD"))).apply {
             itemMeta = (itemMeta as SkullMeta).apply {
-                val profile = GameProfile(UUID.randomUUID(), null).apply {
+                val profile = GameProfile(UUID.randomUUID(), key).apply {
                     properties.put("textures", Property("textures", value))
                 }
 
