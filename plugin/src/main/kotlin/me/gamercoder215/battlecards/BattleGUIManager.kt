@@ -55,7 +55,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 when (item.nbt.getString("type")) {
                     "quests" -> p.openInventory(Generator.generateCardQuests(card))
                     "equipment" -> p.openInventory(Generator.generateCardEquipment(card))
-                    "catalogue" -> p.openInventory(Generator.generateCardCatalogue(card))
+                    "catalogue" -> p.openInventory(Generator.generateCatalogue(card))
                 }
             }
             .put("scroll:stored") { e, inv ->
@@ -298,7 +298,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         } ?: return@mapNotNull null)
                     }.toMap()
 
-                    inv[8] = Generator.generateEffectiveModifiers(equipment)
+                    inv[8] = Generator.generateEffectiveModifiers(equipment.values)
                 }
             }
             .put("card_combiner") { e, inv ->

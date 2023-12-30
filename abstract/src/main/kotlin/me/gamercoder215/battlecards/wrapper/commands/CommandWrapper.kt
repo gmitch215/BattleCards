@@ -120,17 +120,28 @@ interface CommandWrapper {
         p.playSuccess()
     }
 
-    fun catalogueCard(p: Player, type: BattleCardType) {
+    fun catalogue(p: Player, input: String) {
         if (!p.hasPermission("battlecards.user.query"))
             return p.sendMessage(getError("error.permission.argument"))
 
-        if (type.isDisabled)
-            return p.sendMessage(getError("error.card.disabled"))
+        if (BattleCardType.entries.map { it.name.lowercase() }.contains(input.lowercase())) {
+            val type = BattleCardType.valueOf(input.uppercase())
 
-        if (type == BattleCardType.BASIC)
-            return p.sendMessage(getError("error.argument.basic_type"))
+            if (type.isDisabled)
+                return p.sendMessage(getError("error.card.disabled"))
 
-        p.openInventory(Generator.generateCardCatalogue(type()))
+            if (type == BattleCardType.BASIC)
+                return p.sendMessage(getError("error.argument.basic_type"))
+
+            p.openInventory(Generator.generateCatalogue(type()))
+        }
+
+        if (BattleConfig.config.registeredEquipment.any { it.name.lowercase() == input.lowercase() }) {
+            val equipment = BattleConfig.config.registeredEquipment.first { it.name.lowercase() == input.lowercase() }
+
+            p.openInventory(Generator.generateCatalogue(equipment))
+        }
+
         p.playSuccess()
     }
 

@@ -202,7 +202,7 @@ internal class CommandWrapperV1(private val plugin: Plugin) : CommandWrapper, Co
                                 return sender.sendMessage(getError("error.argument.card"), false)
 
                             return try {
-                                catalogueCard(sender, BattleCardType.valueOf(args[1].uppercase()))
+                                catalogue(sender, args[1].uppercase())
                                 true
                             } catch (ignored: IllegalArgumentException) {
                                 sender.sendMessage(getError("error.argument.card"), false)

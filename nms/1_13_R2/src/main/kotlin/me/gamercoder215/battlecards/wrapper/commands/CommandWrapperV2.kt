@@ -33,6 +33,10 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
                 .registerParameterSuggestions(BattleCardType::class.java, SuggestionProvider.of { BattleCardType.entries.filter { it != BattleCardType.BASIC && !it.isDisabled }.map { it.name.lowercase() } })
                 .registerParameterSuggestions(EntityType::class.java, SuggestionProvider.of { EntityType.entries.map { it.name.lowercase() } })
                 .registerSuggestion("items", SuggestionProvider.of { Items.PUBLIC_ITEMS.keys })
+                .registerSuggestion("catalogue", SuggestionProvider.of {
+                    BattleCardType.entries.filter { it != BattleCardType.BASIC && !it.isDisabled }.map { it.name.lowercase() } +
+                    BattleConfig.config.registeredEquipment.map { it.name.lowercase() }
+                })
 
             handler.register(this)
             handler.register(CardCommands(this))
@@ -139,7 +143,8 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
 
         @Subcommand("catalogue")
         @CommandPermission("battlecards.user.query")
-        fun cardCatalogue(p: Player, type: BattleCardType) = wrapper.catalogueCard(p, type)
+        @AutoComplete("@catalogue")
+        fun cardCatalogue(p: Player, input: String) = wrapper.catalogue(p, input)
 
     }
 

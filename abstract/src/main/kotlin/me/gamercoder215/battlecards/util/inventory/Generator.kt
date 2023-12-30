@@ -359,7 +359,7 @@ object Generator {
             }
         }
 
-        inv[8] = generateEffectiveModifiers(equipment)
+        inv[8] = generateEffectiveModifiers(equipment.values)
 
         inv[9..17] = Items.GUI_BACKGROUND
         inv[13] = Items.back()
@@ -367,12 +367,12 @@ object Generator {
         return inv
     }
 
-    fun generateEffectiveModifiers(equipment: Map<Int, CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
+    fun generateEffectiveModifiers(equipment: Iterable<CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
         itemMeta = itemMeta.apply {
             displayName = "${ChatColor.BLUE}${get("constants.effective_modifiers")}"
 
             val lore = mutableListOf<String>()
-            val modifiers = equipment.values.map { it.mods }.run {
+            val modifiers = equipment.map { it.mods }.run {
                 val map = mutableMapOf<CardAttribute, Double>()
 
                 for (mods in this)
@@ -409,7 +409,7 @@ object Generator {
                 lore.add(format(get(str), modS))
             }
 
-            val effects = equipment.values.map { it.effects }.flatten().run {
+            val effects = equipment.map { it.effects }.flatten().run {
                 val effects = mutableSetOf<Potion>()
 
                 for (type in PotionEffectType.values()) {
@@ -436,9 +436,9 @@ object Generator {
         nbt.addTag("_cancel")
     }
 
-    fun generateCardCatalogue(original: Card, type: BattleCardType = original.type): BattleInventory {
+    fun generateCatalogue(original: Card, type: BattleCardType = original.type): BattleInventory {
         val card = type().apply { experience = maxCardExperience } as ICard
-        val inv = genGUI(45, format(get("menu.card_catalogue"), card.name))
+        val inv = genGUI(45, format(get("menu.catalogue"), card.name))
         inv.isCancelled = true
         inv["card"] = card
 
@@ -522,6 +522,15 @@ object Generator {
 
         inv["back"] = Consumer { p: Player -> p.openInventory(generateCardInfo(original)) }
         inv[37] = Items.back("action")
+
+        return inv
+    }
+
+    fun generateCatalogue(equipment: CardEquipment): BattleInventory {
+        val inv = genGUI(27, format(get("menu.catalogue"), equipment.name.replace("_", " ").capitalizeFully()))
+        inv.isCancelled = true
+        inv[12] = equipment.itemStack
+        inv[14] = generateEffectiveModifiers(listOf(equipment))
 
         return inv
     }
