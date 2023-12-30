@@ -122,6 +122,16 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                 },
                 4 to {
                     recipe(BattleCardType.SILVERFISH_HIVE)
+                },
+                4 to {
+                    MerchantRecipe(Items.LARGE_EXPERIENCE_BOOK, 2).apply {
+                        setExperienceReward(true)
+                        villagerExperience = 50
+
+                        ingredients = listOf(
+                            ItemStack(Material.EMERALD_BLOCK, r.nextInt(18, 24))
+                        )
+                    }
                 }
             ),
             Villager.Profession.ARMORER to setOf(
@@ -227,6 +237,16 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         ingredients = listOf(
                             Items.cardShard(Rarity.UNCOMMON).apply { amount = r.nextInt(3, 6) },
                             ItemStack(Material.EMERALD, r.nextInt(38, 65))
+                        )
+                    }
+                },
+                3 to {
+                    MerchantRecipe(Items.TINY_EXPERIENCE_BOOK, 5).apply {
+                        setExperienceReward(true)
+                        villagerExperience = 5
+
+                        ingredients = listOf(
+                            ItemStack(Material.EMERALD, r.nextInt(35, 53))
                         )
                     }
                 },
