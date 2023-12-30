@@ -4,7 +4,10 @@ import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCard
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
-import me.gamercoder215.battlecards.impl.*
+import me.gamercoder215.battlecards.impl.IBattleStatistics
+import me.gamercoder215.battlecards.impl.ICard
+import me.gamercoder215.battlecards.impl.Passive
+import me.gamercoder215.battlecards.impl.UnlockedAt
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
@@ -272,7 +275,7 @@ abstract class IBattleCard<T : Creature>(
         get() = data.statistics
 
     final override val isRideable: Boolean
-        get() = this::class.java.isAnnotationPresent(Rideable::class.java)
+        get() = this.data.isRideable
 
     // Utilities
 

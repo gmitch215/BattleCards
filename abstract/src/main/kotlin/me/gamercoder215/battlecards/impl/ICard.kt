@@ -57,6 +57,9 @@ class ICard(
 
     override fun spawnCard(owner: Player): IBattleCard<*> = spawnCard(owner, itemStack)
 
+    override val isRideable: Boolean
+        get() = entityCardClass.isAnnotationPresent(Rideable::class.java)
+
     fun spawnCard(owner: Player, itemUsed: ItemStack): IBattleCard<*> {
         if (owner.spawnedCards.size >= BattleConfig.config.maxCardsSpawned) throw IllegalStateException("Player already has ${BattleConfig.config.maxCardsSpawned} spawned cards")
 
