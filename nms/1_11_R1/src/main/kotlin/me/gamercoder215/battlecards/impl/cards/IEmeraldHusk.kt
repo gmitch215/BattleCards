@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 @Attributes(100.0, 5.5, 10.0, 0.2, 100.0, 128.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 0.55)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 2.72)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.385)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 3.175)
 class IEmeraldHusk(data: ICard) : IBattleCard<Husk>(data) {
 
     override fun init() {
