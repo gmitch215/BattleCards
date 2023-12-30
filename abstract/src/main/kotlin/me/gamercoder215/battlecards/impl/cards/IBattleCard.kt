@@ -44,6 +44,7 @@ abstract class IBattleCard<T : Creature>(
             return null
         }
 
+        @JvmStatic
         protected val r = SecureRandom()
     }
 

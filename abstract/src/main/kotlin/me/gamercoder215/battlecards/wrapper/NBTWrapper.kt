@@ -12,8 +12,10 @@ abstract class NBTWrapper(
 ) {
 
     companion object {
+        @JvmStatic
         val ROOT = "BattleCards"
 
+        @JvmStatic
         protected val TAGS_KEY = "tags"
 
         fun of(item: ItemStack) = w.getNBTWrapper(item)
