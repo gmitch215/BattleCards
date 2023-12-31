@@ -108,6 +108,15 @@ class BattleCards : JavaPlugin(), BattleConfig {
         BattleAdvancements.check()
     }
 
+    fun unloadAdvancements() {
+        if (!isAdvancementsEnabled) return
+
+        try {
+            Class.forName("org.bukkit.advancement.Advancement")
+            BattleAdvancements.unload()
+        } catch (ignored: ClassNotFoundException) {}
+    }
+
     override fun onEnable() {
         saveDefaultConfig()
 
@@ -167,6 +176,9 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
         saveMetadata()
         logger.info("Saved Metadata...")
+
+        unloadAdvancements()
+        logger.info("Unloaded Addons...")
 
         logger.info("Finished!")
     }

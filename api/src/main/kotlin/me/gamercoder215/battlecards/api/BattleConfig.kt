@@ -99,6 +99,7 @@ interface BattleConfig {
 
             if (!config.isConfigurationSection("Functionality")) config.createSection("Functionality")
             if (!config.isString("Functionality.CommandVersion") && !config.isInt("Functionality.CommandVersion")) config["Functionality.CommandVersion"] = "auto"
+            if (!config.isBoolean("Functionality.Advancements")) config["Functionality.Advancements"] = true
 
             if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
             if (!config.isList("Cards.Disabled")) config["Cards.Disabled"] = listOf<String>()
