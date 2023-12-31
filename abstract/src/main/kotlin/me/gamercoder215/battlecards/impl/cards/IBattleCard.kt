@@ -278,6 +278,9 @@ abstract class IBattleCard<T : Creature>(
     final override val isRideable: Boolean
         get() = this.data.isRideable
 
+    final override val owner: Player
+        get() = p
+
     // Utilities
 
     private fun checkUnlockedAt(method: Method): Boolean =
