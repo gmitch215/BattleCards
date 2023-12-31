@@ -13,11 +13,7 @@ open class CardUseAbilityEvent(card: BattleCard<*>, type: AbilityType) : EntityC
     /**
      * The [AbilityType] of the ability used.
      */
-    val abilityType: AbilityType
-
-    init {
-        this.abilityType = type
-    }
+    val abilityType: AbilityType = type
 
     override fun isCancelled(): Boolean = cancelled
     override fun setCancelled(cancel: Boolean) { cancelled = cancel }

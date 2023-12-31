@@ -8,37 +8,20 @@ import me.gamercoder215.battlecards.api.card.CardQuest
  */
 open class CardQuestLevelUpEvent(
     card: Card,
-    quest: CardQuest,
-    oldLevel: Int,
-    newLevel: Int,
-    experienceAdded: Double
-) : CardEvent(card) {
-
     /**
      * The Quest involved in this Event
      */
-    val quest: CardQuest
-
+    val quest: CardQuest,
     /**
      * The old Level of the Quest
      */
-    val oldLevel: Int
-
+    val oldLevel: Int,
     /**
      * The new Level of the Quest
      */
-    val newLevel: Int
-
+    val newLevel: Int,
     /**
      * The amount of Card Experience added to the Card as a reward
      */
     var experienceAdded: Double
-
-    init {
-        this.quest = quest
-        this.oldLevel = oldLevel
-        this.newLevel = newLevel
-        this.experienceAdded = experienceAdded
-    }
-
-}
+) : CardEvent(card)

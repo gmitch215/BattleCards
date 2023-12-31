@@ -9,24 +9,19 @@ import org.bukkit.inventory.ItemStack
 /**
  * Called before an item is crafted in the Card Workbench.
  */
-open class PrepareCardCraftEvent(player: Player, matrix: Array<ItemStack>, result: ItemStack?) : PlayerEvent(player), Cancellable {
+open class PrepareCardCraftEvent(
+    player: Player,
+    /**
+    * The matrix of items used to craft the item.
+    */
+    val matrix: Array<ItemStack>,
+    /**
+    * The result of the crafting.
+    */
+    var result: ItemStack?
+) : PlayerEvent(player), Cancellable {
 
     private var cancelled = false
-
-    /**
-     * The matrix of items used to craft the item.
-     */
-    val matrix: Array<ItemStack>
-
-    /**
-     * The result of the crafting.
-     */
-    var result: ItemStack?
-
-    init {
-        this.matrix = matrix
-        this.result = result
-    }
 
     companion object {
         @JvmStatic
