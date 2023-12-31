@@ -7,6 +7,7 @@ import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
+import me.gamercoder215.battlecards.api.events.PrepareCardCombineEvent
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.format
@@ -124,16 +125,9 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 sync( { if (stopped()) return@sync cancel(); BattleSound.ENTITY_ARROW_HIT_PLAYER.play(p.location, 1F, 1F); inv[23]?.amount = 1 }, 60)
                 sync({
                     if (stopped()) return@sync cancel()
-
                     val matrix = matrix()
-                    inv[28..34] = null
-                    inv[37..43] = null
-
-                    inv["running"] = false
-
                     val chosen = CardUtils.calculateCardChances(matrix).randomCumulative() ?: Rarity.COMMON
-
-                    val card = BattleCardType.entries.filter { it.rarity == chosen && !it.isDisabled }.random()().apply {
+                    val card = CardGenerator.toItem(BattleCardType.entries.filter { it.rarity == chosen && !it.isDisabled }.random()().apply {
                         var total = 0.0
 
                         for ((amount, card) in matrix.map { it.amount to it.card }) {
@@ -149,9 +143,16 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         }
 
                         experience = total.coerceAtMost(maxCardExperience)
-                    }
+                    })
 
-                    inv[13] = CardGenerator.toItem(card)
+                    val event = PrepareCardCombineEvent(p, matrix.toTypedArray(), card).apply { call() }
+                    if (event.isCancelled) return@sync cancel()
+
+                    inv[28..34] = null
+                    inv[37..43] = null
+
+                    inv["running"] = false
+                    inv[13] = card
                     BattleSound.ENTITY_PLAYER_LEVELUP.play(p.location, 1F, 0F)
 
                     inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
