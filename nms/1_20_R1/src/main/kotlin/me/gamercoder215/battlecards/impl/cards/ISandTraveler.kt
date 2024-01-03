@@ -15,7 +15,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 @Type(BattleCardType.SAND_TRAVELER)
-@Attributes(155.0, 13.7, 31.7, 0.38, 25.0)
+@Attributes(155.0, 13.7, 31.7, 0.29, 25.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.81)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 3.15)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 2.545)
@@ -35,6 +35,9 @@ class ISandTraveler(data: ICard) : IBattleCard<Husk>(data) {
         camel = entity.world.spawn(entity.location, Camel::class.java).apply {
             addPassenger(entity)
             minions.add(this)
+
+            isTamed = true
+            inventory.saddle = ItemStack(Material.SADDLE)
 
             addPotionEffect(fireResistance)
 

@@ -11,7 +11,8 @@ internal class CardLoader1_20_R1 : CardLoader, Listener {
 
     override fun loadedCards(): Collection<Class<out IBattleCard<*>>> = listOf(
         ISeaLord::class.java,
-        IPurpleParasite::class.java
+        IPurpleParasite::class.java,
+        ISandTraveler::class.java,
     )
 
     override fun loadedEquipment(): Collection<CardEquipment> = CardEquipments1_20_R1.entries

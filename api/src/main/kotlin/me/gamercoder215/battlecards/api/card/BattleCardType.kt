@@ -225,6 +225,16 @@ enum class BattleCardType {
      * Represents a Husk BattleCard.
      */
     SAND_TRAVELER(2, "Husk", Rarity.EPIC, Material.SAND),
+
+    /**
+     * Represents a Wither Skeleton BattleCard.
+     */
+    THE_IMMORTAL(2, "WitherSkeleton", Rarity.ULTIMATE, Material.matchMaterial("END_CRYSTAL")),
+
+    /**
+     * Represents a Snowman BattleCard.
+     */
+    BLIZZARD(2, "Snowman", Rarity.LEGEND, Material.SNOW_BLOCK),
     ;
 
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(
