@@ -13,7 +13,7 @@ class IBattleCardListener(plugin: Plugin) : org.bukkit.event.Listener {
     init {
         Bukkit.getPluginManager().registerEvents(this, plugin)
 
-        val reg = RegisteredListener(this, { _, e -> onEvent(e) }, EventPriority.NORMAL, plugin, false)
+        val reg = RegisteredListener(this, { _, e -> onEvent(e) }, EventPriority.HIGHEST, plugin, false)
         HandlerList.getHandlerLists().forEach { it.register(reg) }
     }
 
