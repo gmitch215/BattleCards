@@ -13,11 +13,11 @@ enum class Rarity(
     /**
      * Represents the Basic rarity
      */
-    BASIC(ChatColor.WHITE, 1.05),
+    BASIC(ChatColor.WHITE, 1.025),
     /**
      * Represents the Common rarity
      */
-    COMMON(ChatColor.GREEN, 1.075),
+    COMMON(ChatColor.GREEN, 1.05),
     /**
      * Represents the Uncommon rarity
      */
