@@ -24,7 +24,7 @@ class IImmortal(data: ICard) : IBattleCard<WitherSkeleton>(data) {
     override fun init() {
         super.init()
 
-        val regen = PotionEffect(PotionEffectType.REGENERATION, deployTime, 0, false, false)
+        val regen = PotionEffect(PotionEffectType.REGENERATION, deployTime * 20, 0, false, false)
         entity.addPotionEffect(regen)
         p.addPotionEffect(regen)
 

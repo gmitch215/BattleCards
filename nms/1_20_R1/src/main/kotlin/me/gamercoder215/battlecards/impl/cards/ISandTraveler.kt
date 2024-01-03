@@ -28,7 +28,7 @@ class ISandTraveler(data: ICard) : IBattleCard<Husk>(data) {
     override fun init() {
         super.init()
 
-        val fireResistance = PotionEffect(PotionEffectType.FIRE_RESISTANCE, data.deployTime, 0, true, false)
+        val fireResistance = PotionEffect(PotionEffectType.FIRE_RESISTANCE, deployTime * 20, 0, true, false)
         entity.addPotionEffect(fireResistance)
         p.addPotionEffect(fireResistance)
 
@@ -37,7 +37,6 @@ class ISandTraveler(data: ICard) : IBattleCard<Husk>(data) {
             minions.add(this)
 
             isTamed = true
-            inventory.saddle = ItemStack(Material.SADDLE)
 
             addPotionEffect(fireResistance)
 
