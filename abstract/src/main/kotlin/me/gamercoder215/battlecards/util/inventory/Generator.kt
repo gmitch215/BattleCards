@@ -478,7 +478,7 @@ object Generator {
         }
 
         fun formatCount(count: Double): String {
-            val long = ceil(count).toLong()
+            val long = ceil(count).toLong().coerceAtLeast(1)
             val str = long.formatInt()
             return if (long == Long.MAX_VALUE) "$str+"
             else str
@@ -492,6 +492,7 @@ object Generator {
         val passive = formatCount(maxCardExperience / BattleConfig.config.growthPassiveAmount)
         val smallBook = formatCount(maxCardExperience / Items.SMALL_EXPERIENCE_BOOK.nbt.getDouble("amount"))
         val largeBook = formatCount(maxCardExperience / Items.LARGE_EXPERIENCE_BOOK.nbt.getDouble("amount"))
+        val hugeBook = formatCount(maxCardExperience / Items.HUGE_EXPERIENCE_BOOK.nbt.getDouble("amount"))
 
         inv[14] = ItemStack(Material.BOOK).apply {
             itemMeta = itemMeta.apply {
@@ -506,7 +507,8 @@ object Generator {
                     "${ChatColor.RED}${format(get("constants.card.to_max.passive"), passive)}",
                     " ",
                     "${ChatColor.GOLD}${format(get("constants.card.to_max.small_experience_books"), smallBook)}",
-                    "${ChatColor.GOLD}${format(get("constants.card.to_max.large_experience_books"), largeBook)}"
+                    "${ChatColor.GOLD}${format(get("constants.card.to_max.large_experience_books"), largeBook)}",
+                    "${ChatColor.GOLD}${format(get("constants.card.to_max.huge_experience_books"), hugeBook)}"
                 )
             }
         }
