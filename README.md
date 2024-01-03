@@ -32,6 +32,19 @@ This plugin is built in Kotlin. While the plugin will automatically download the
 
 ## 📓Changelog
 
+📖 **v1.1.0** - January 2, 2024 | Generation II
+- 3 new Generation II Cards
+- New Card Equipment
+- Turkish Translation
+- **Card & Equipment Catalogue**
+  - View useful information & crafting recipes about all cards & card equipment
+- Release of the [official guide](https://guide.battlecards.gamercoder215.me)
+- Equipment Drops from Normal Entities
+- Piglin Bartering for Equipment & Card Shards (1.16+)
+- Decrease BASIC and COMMON Max Experience Requirements
+- Minor Bug Fixes
+  - Added Missing Translations 
+
 🛠️ v1.0.2 - December 2, 2023
 - Dependency Updates
 - 10+ New Card Equipments

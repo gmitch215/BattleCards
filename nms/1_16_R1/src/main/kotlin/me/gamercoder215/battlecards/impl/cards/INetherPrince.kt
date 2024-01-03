@@ -81,7 +81,6 @@ class INetherPrince(data: ICard) : IBattleCard<WitherSkeleton>(data) {
     }
 
     private companion object {
-        @JvmStatic
         private val netherTypes: List<EntityType> = listOf<Any>(
             EntityType.WITHER_SKELETON,
             EntityType.BLAZE,

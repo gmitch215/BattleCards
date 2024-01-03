@@ -54,15 +54,12 @@ interface Wrapper {
     fun addFollowGoal(entity: LivingEntity, ownerCard: IBattleCard<*>)
 
     companion object {
-        @JvmStatic
         val w = getWrapper()
 
         const val PACKET_INJECTOR_ID = "battlecards:packet_injector"
 
-        @JvmStatic
         val r = SecureRandom()
 
-        @JvmStatic
         val versions = listOf(
             "1_8_R1",
             "1_8_R2",
@@ -90,7 +87,6 @@ interface Wrapper {
             "1_20_R3"
         )
 
-        @JvmStatic
         fun getWrapper(): Wrapper {
             val constr = Class.forName("${Wrapper::class.java.`package`.name}.v${getServerVersion()}.Wrapper${getServerVersion()}")
                 .asSubclass(Wrapper::class.java)
@@ -100,7 +96,6 @@ interface Wrapper {
             return constr.newInstance()
         }
 
-        @JvmStatic
         fun getCommandWrapper(): CommandWrapper {
             val cmdV: Int = when (BattleConfig.configuration.getString("Functionality.CommandVersion", "auto")) {
                 "1" -> 1
@@ -117,7 +112,6 @@ interface Wrapper {
             return constr.newInstance(BattleConfig.plugin)
         }
 
-        @JvmStatic
         fun loadCards() {
             val current = getServerVersion()
             val cards: MutableList<Class<out IBattleCard<*>>> = mutableListOf(
@@ -156,26 +150,29 @@ interface Wrapper {
                 } catch (ignored: ClassNotFoundException) {}
             }
 
-            cards.forEach(BattleConfig.config::registerCard)
+            cards.forEach {
+                try {
+                    BattleConfig.config.registerCard(it)
+                } catch (e: IllegalStateException) {
+                    BattleConfig.logger.warning("Failed to register card '${it.name}'")
+                    BattleConfig.print(e)
+                }
+            }
             equipment.forEach(BattleConfig.config::registerEquipment)
         }
 
-        @JvmStatic
         fun getServerVersion(): String {
             return Bukkit.getServer().javaClass.`package`.name.split(".")[3].substring(1)
         }
 
-        @JvmStatic
         fun get(key: String): String {
             return BattleConfig.config.get(key)
         }
 
-        @JvmStatic
         fun getMessage(key: String): String {
             return BattleConfig.config.getMessage(key)
         }
 
-        @JvmStatic
         val legacy: Boolean
             get() = w.getCommandVersion() == 1
 

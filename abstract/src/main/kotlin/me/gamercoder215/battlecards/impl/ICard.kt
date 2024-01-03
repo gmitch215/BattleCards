@@ -57,6 +57,9 @@ class ICard(
 
     override fun spawnCard(owner: Player): IBattleCard<*> = spawnCard(owner, itemStack)
 
+    override val isRideable: Boolean
+        get() = entityCardClass.isAnnotationPresent(Rideable::class.java)
+
     fun spawnCard(owner: Player, itemUsed: ItemStack): IBattleCard<*> {
         if (owner.spawnedCards.size >= BattleConfig.config.maxCardsSpawned) throw IllegalStateException("Player already has ${BattleConfig.config.maxCardsSpawned} spawned cards")
 
@@ -131,8 +134,9 @@ class ICard(
 
         private const val serialVersionUID: Long = 193409138419023815L
 
-        @JvmStatic
-        fun fromByteArray(array: ByteArray): ICard {
+        fun fromByteArray(array: ByteArray): ICard? {
+            if (array.isEmpty()) return null
+
             val bIs = ByteArrayInputStream(array)
             val iS = BukkitObjectInputStream(BufferedInputStream(bIs))
             val card = iS.readObject() as ICard
@@ -141,7 +145,6 @@ class ICard(
             return card
         }
 
-        @JvmStatic
         fun deserialize(map: Map<String, Any>): ICard {
             val clazz = Class.forName(map["clazz"] as String).asSubclass(BattleCard::class.java)
             val type = BattleCardType.valueOf((map["type"] as String).uppercase())

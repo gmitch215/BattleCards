@@ -21,12 +21,10 @@ import kotlin.math.pow
 
 object CardUtils {
 
-    @JvmStatic
     val BLOCK_DATA: MutableMap<Location, BattleBlockData> = mutableMapOf()
 
     // Entity Utils
 
-    @JvmStatic
     fun createAttachments(card: IBattleCard<*>) {
         val attachments = card.javaClass.getAnnotationsByType(BlockAttachment::class.java)
         if (attachments.isEmpty()) return
@@ -73,7 +71,6 @@ object CardUtils {
         }
     }
 
-    @JvmStatic
     fun createMinionAttachments(minion: LivingEntity, card: IBattleCard<*>) {
         val attachments = card.javaClass.getAnnotationsByType(MinionBlockAttachment::class.java).filter { it.type == minion.type }
         if (attachments.isEmpty()) return
@@ -124,12 +121,10 @@ object CardUtils {
 
     // String Utils / Extensions
 
-    @JvmStatic
     fun format(string: String, vararg args: Any): String {
         return String.format(BattleConfig.config.locale, string, *args)
     }
 
-    @JvmStatic
     fun color(s: String): String {
         val array = s.trim().split("\\s".toRegex()).toTypedArray()
 
@@ -159,7 +154,6 @@ object CardUtils {
         return list.joinToString(" ")
     }
 
-    @JvmStatic
     fun dateFormat(date: Date?, time: Boolean = false): String? {
         if (date == null || date.time == 0L) return null
 
@@ -169,7 +163,6 @@ object CardUtils {
 
     // Other
 
-    @JvmStatic
     fun local(reference: Location, local: Vector): Location {
         val base = Vector(0, 0, 1)
         val left: Vector = base.clone().rotateAroundY(Math.toRadians(-reference.yaw + 90.0))
@@ -185,7 +178,6 @@ object CardUtils {
         return loc
     }
 
-    @JvmStatic
     fun createLine(card: Card): String {
         val builder = StringBuilder()
 
@@ -205,11 +197,10 @@ object CardUtils {
     val Card.power: Long
         get() = (level.toDouble().pow(rarity.experienceModifier) * rarity.ordinal.plus(1)).toLong()
 
-    @JvmStatic
     fun getCardPower(cards: Iterable<ItemStack>)
-        = cards.map { it to it.card!! }.sumOf { it.second.power * it.first.amount }
+        = cards.filter { it.isCard }.map { it to it.card!! }.sumOf { it.second.power * it.first.amount } +
+            cards.filter { it.id == "card_shard" }.sumOf { 3.0.pow(Rarity.valueOf(it.nbt.getString("rarity")).ordinal) * it.amount }
 
-    @JvmStatic
     private val intervalCardChances = listOf(
         250,
         1250,
@@ -218,7 +209,6 @@ object CardUtils {
         31475
     )
 
-    @JvmStatic
     fun calculateCardChances(cards: Iterable<ItemStack>): Map<Rarity, Double> {
         val power = getCardPower(cards)
         if (power < 50) return emptyMap()

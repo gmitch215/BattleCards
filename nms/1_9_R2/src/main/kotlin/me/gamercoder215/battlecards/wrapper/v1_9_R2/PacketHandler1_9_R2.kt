@@ -23,7 +23,6 @@ internal class PacketHandler1_9_R2(private val p: Player) : ChannelDuplexHandler
     }
 
     companion object {
-        @JvmStatic
         val PACKET_HANDLERS: MutableMap<UUID, (Packet<*>) -> Unit> = mutableMapOf()
     }
 }

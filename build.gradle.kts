@@ -13,7 +13,7 @@ plugins {
 }
 
 val pGroup = "me.gamercoder215.battlecards"
-val pVersion = "1.0.2-SNAPSHOT"
+val pVersion = "1.1.0-SNAPSHOT"
 val pAuthor = "GamerCoder"
 
 sonarqube {
@@ -43,6 +43,7 @@ allprojects {
         maven("https://oss.sonatype.org/content/repositories/central")
 
         maven("https://repo.codemc.org/repository/nms/")
+        maven("https://repo.codemc.io/repository/maven-releases/")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://hub.jeff-media.com/nexus/repository/jeff-media-public/")
@@ -69,7 +70,7 @@ subprojects {
 
         testImplementation("org.mockito:mockito-core:5.8.0")
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-        testImplementation("org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT")
+        testImplementation(kotlin("test"))
     }
 
     java {

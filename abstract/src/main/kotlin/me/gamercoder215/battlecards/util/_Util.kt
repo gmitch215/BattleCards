@@ -171,6 +171,16 @@ enum class BattleMaterial(
         { ItemStack(Material.matchMaterial("red_wool")) }
     ),
 
+    STONE_BRICKS(
+        { ItemStack(Material.matchMaterial("smooth_brick")) },
+        { ItemStack(Material.matchMaterial("stone_bricks")) }
+    ),
+
+    SPIDER_SPAWN_EGG(
+        { ItemStack(Material.matchMaterial("monster_egg"), 1, 52) },
+        { ItemStack(Material.matchMaterial("spider_spawn_egg")) }
+    ),
+
     ;
 
     fun findStack(): ItemStack = if (Wrapper.legacy) onLegacy() else onModern()

@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.util.inventory
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.api.card.CardQuest
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
@@ -9,6 +10,7 @@ import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.format
+import me.gamercoder215.battlecards.util.inventory.CardGenerator.generationColors
 import me.gamercoder215.battlecards.wrapper.BattleInventory
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
@@ -21,21 +23,21 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.potion.PotionEffectType
+import org.bukkit.util.ChatPaginator
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.pow
 
 @Suppress("unchecked_cast")
 object Generator {
 
-    @JvmStatic
     fun genGUI(size: Int, name: String?): BattleInventory {
         return genGUI("", size, name)
     }
 
-    @JvmStatic
     fun genGUI(key: String, size: Int, name: String?): BattleInventory {
         if (size < 9 || size > 54) throw IllegalArgumentException("Size must be between 9 and 54")
         if (size % 9 > 0) throw IllegalArgumentException("Size must be a multiple of 9")
@@ -57,7 +59,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     fun generatePluginInfo(): BattleInventory {
         val inv = genGUI(27, get("menu.plugin_info"))
 
@@ -92,7 +93,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     fun generateCardInfo(card: Card): BattleInventory {
         val inv = genGUI(27, get("menu.card.info"))
         inv.isCancelled = true
@@ -135,7 +135,15 @@ object Generator {
                 }
             else Items.locked(floor(card.maxCardLevel / 2.0).toInt())
 
-        inv[23] = Items.COMING_SOON
+        if (card.type != BattleCardType.BASIC)
+            inv[23] = ItemStack(Material.BOOK).apply {
+                itemMeta = itemMeta.apply {
+                    displayName = "${ChatColor.YELLOW}${get("menu.card_catalogue.view_in_catalogue")}"
+                }
+            }.nbt { nbt ->
+                nbt.id = "card:info_item"
+                nbt["type"] = "catalogue"
+            }
 
         while (inv.firstEmpty() != -1)
             inv[inv.firstEmpty()] = Items.GUI_BACKGROUND
@@ -143,36 +151,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
-    fun generateCardTable(): BattleInventory {
-        val inv = genGUI("card_table", 45, get("menu.card_table"))
-
-        inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
-            val items = listOfNotNull(
-                inventory[10], inventory[11], inventory[12],
-                inventory[19], inventory[20], inventory[21],
-                inventory[28], inventory[29], inventory[30]
-            ).toTypedArray()
-
-            items.withIndex().forEach { (i, item) ->
-                if (p.inventory.firstEmpty() == -1)
-                    p.world.dropItemNaturally(p.location, item)
-                else
-                    p.inventory.addItem(item)
-
-                inventory[i] = null
-            }
-        }
-
-        for (i in 4..7)
-            for (j in 1..3) inv[i + j.times(9)] = Items.GUI_BACKGROUND
-
-        inv[24] = null
-
-        return inv
-    }
-
-    @JvmStatic
     fun generateCardQuests(card: Card, quest: CardQuest? = null): BattleInventory {
         val inv: BattleInventory
 
@@ -281,7 +259,6 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
     private val progressString: List<Int> = listOf(
         10 nineTo 37,
         37..39,
@@ -309,7 +286,6 @@ object Generator {
         return (start..end).filter { (it % 9) - remainder == 0 }.run { if (reverse) reversed() else this }
     }
 
-    @JvmStatic
     fun generateCardEquipment(card: Card): BattleInventory {
         val equipment = (card as ICard).cardEquipment
         val slots = card.statistics.equipmentSlots
@@ -383,7 +359,7 @@ object Generator {
             }
         }
 
-        inv[8] = generateEffectiveModifiers(equipment)
+        inv[8] = generateEffectiveModifiers(equipment.values)
 
         inv[9..17] = Items.GUI_BACKGROUND
         inv[13] = Items.back()
@@ -391,13 +367,12 @@ object Generator {
         return inv
     }
 
-    @JvmStatic
-    fun generateEffectiveModifiers(equipment: Map<Int, CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
+    fun generateEffectiveModifiers(equipment: Iterable<CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
         itemMeta = itemMeta.apply {
             displayName = "${ChatColor.BLUE}${get("constants.effective_modifiers")}"
 
             val lore = mutableListOf<String>()
-            val modifiers = equipment.values.map { it.mods }.run {
+            val modifiers = equipment.map { it.mods }.run {
                 val map = mutableMapOf<CardAttribute, Double>()
 
                 for (mods in this)
@@ -434,7 +409,7 @@ object Generator {
                 lore.add(format(get(str), modS))
             }
 
-            val effects = equipment.values.map { it.effects }.flatten().run {
+            val effects = equipment.map { it.effects }.flatten().run {
                 val effects = mutableSetOf<Potion>()
 
                 for (type in PotionEffectType.values()) {
@@ -461,35 +436,103 @@ object Generator {
         nbt.addTag("_cancel")
     }
 
-    @JvmStatic
-    fun generateCardCombiner(): BattleInventory {
-        val inv = genGUI("card_combiner", 54, get("menu.card_combiner"))
+    fun generateCatalogue(original: Card, type: BattleCardType = original.type): BattleInventory {
+        val card = type().apply { experience = maxCardExperience } as ICard
+        val inv = genGUI(45, format(get("menu.catalogue"), card.name))
+        inv.isCancelled = true
+        inv["card"] = card
 
-        inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
-            listOf(
-                inventory[28..34], inventory[37..43], inventory[13]
-            ).map {
-                when (it) {
-                    is Iterable<*> -> it.filterIsInstance<ItemStack?>().filterNotNull()
-                    is ItemStack? -> listOf(it)
-                    else -> emptyList()
-                }
-            }.forEach { items ->
-                for (item in items.filterNotNull())
-                    if (p.inventory.firstEmpty() == -1)
-                        p.world.dropItemNaturally(p.location, item)
-                    else
-                        p.inventory.addItem(item)
+        inv[4] = card.icon
+
+        val rideable = card.isRideable
+        inv[12] = ItemStack(Material.ARMOR_STAND).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "${generationColors[type.generation]}${format(get("constants.card.generation"), type.generation.toRoman())}"
+                lore = listOf(
+                    "${ChatColor.GOLD}${get("constants.card.rideable")} ${if (rideable) "${ChatColor.GREEN}${get("constants.yes")}" else "${ChatColor.RED}${get("constants.no")}" }"
+                )
             }
         }
 
-        inv[10..25] = Items.GUI_BACKGROUND
-        inv[13] = null
-        inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
+        val attributes = mapOf(
+            "health" to (ChatColor.RED to card.statistics.maxHealth),
+            "damage" to (ChatColor.DARK_RED to card.statistics.attackDamage * 2),
+            "defense" to (ChatColor.GREEN to card.statistics.defense * 1.75),
+            "speed" to (ChatColor.DARK_AQUA to card.statistics.speed.pow(500.0)),
+            "knockback_resistance" to (ChatColor.BLUE to card.statistics.knockbackResistance)
+        )
+        val best = attributes.maxBy { it.value.second }
+        inv[13] = ItemStack(Material.IRON_HELMET).apply {
             itemMeta = itemMeta.apply {
-                displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                displayName = "${ChatColor.YELLOW}${get("constants.card.attr.best")}"
+                lore = mutableListOf(
+                    "${best.value.first}${get("constants.card.attr.${best.key}")}",
+                    " "
+                ).apply {
+                    addAll(ChatPaginator.wordWrap(get("constants.card.attr.${best.key}.desc"), 30).map { "${ChatColor.GRAY}$it" })
+                }
+
+                addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
+                addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS)
             }
-        }.nbt { nbt -> nbt.addTag("_cancel") }
+        }
+
+        fun formatCount(count: Double): String {
+            val long = ceil(count).toLong().coerceAtLeast(1)
+            val str = long.formatInt()
+            return if (long == Long.MAX_VALUE) "$str+"
+            else str
+        }
+
+        val maxCardExperience = card.maxCardExperience
+        val zombies = formatCount(maxCardExperience / 20.0)
+        val endermen = formatCount(maxCardExperience / 40.0)
+        val withers = formatCount(maxCardExperience / 300.0)
+        val wardens = formatCount(maxCardExperience / 500.0)
+        val passive = formatCount(maxCardExperience / BattleConfig.config.growthPassiveAmount)
+        val smallBook = formatCount(maxCardExperience / Items.SMALL_EXPERIENCE_BOOK.nbt.getDouble("amount"))
+        val largeBook = formatCount(maxCardExperience / Items.LARGE_EXPERIENCE_BOOK.nbt.getDouble("amount"))
+        val hugeBook = formatCount(maxCardExperience / Items.HUGE_EXPERIENCE_BOOK.nbt.getDouble("amount"))
+
+        inv[14] = ItemStack(Material.BOOK).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.LIGHT_PURPLE}${get("constants.card.to_max")}"
+                lore = listOf(
+                    "${ChatColor.DARK_GREEN}-> ${maxCardExperience.withSuffix()} XP",
+                    " ",
+                    "${ChatColor.DARK_GREEN}${format(get("constants.card.to_max.zombies"), zombies)}",
+                    "${ChatColor.DARK_PURPLE}${format(get("constants.card.to_max.endermen"), endermen)}",
+                    "${ChatColor.DARK_GRAY}${format(get("constants.card.to_max.withers"), withers)}",
+                    "${ChatColor.BLUE}${format(get("constants.card.to_max.wardens"), wardens)}",
+                    "${ChatColor.RED}${format(get("constants.card.to_max.passive"), passive)}",
+                    " ",
+                    "${ChatColor.GOLD}${format(get("constants.card.to_max.small_experience_books"), smallBook)}",
+                    "${ChatColor.GOLD}${format(get("constants.card.to_max.large_experience_books"), largeBook)}",
+                    "${ChatColor.GOLD}${format(get("constants.card.to_max.huge_experience_books"), hugeBook)}"
+                )
+            }
+        }
+
+        inv[31] = ItemStack(BattleMaterial.CRAFTING_TABLE.find()).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "${ChatColor.GOLD}${get("menu.card_catalogue.view_crafting_recipe")}"
+            }
+        }.nbt { nbt ->
+            nbt.id = "card_catalogue:crafting_recipe"
+            nbt["type"] = type.name
+        }
+
+        inv["back"] = Consumer { p: Player -> p.openInventory(generateCardInfo(original)) }
+        inv[37] = Items.back("action")
+
+        return inv
+    }
+
+    fun generateCatalogue(equipment: CardEquipment): BattleInventory {
+        val inv = genGUI(27, format(get("menu.catalogue"), equipment.name.replace("_", " ").capitalizeFully()))
+        inv.isCancelled = true
+        inv[12] = equipment.itemStack
+        inv[14] = generateEffectiveModifiers(listOf(equipment))
 
         return inv
     }

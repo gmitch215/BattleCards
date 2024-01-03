@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.api.card
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
@@ -26,6 +27,12 @@ interface BattleCard<T : LivingEntity> {
          * @return true if spawned, false otherwise
          */
         get() = entity != null
+
+    /**
+     * Fetches the Player that owns this BattleCard.
+     * @return Owner
+     */
+    val owner: Player
 
     /**
      * Fetches the Entity that this BattleCard is spawned as, or null if not spawned.

@@ -245,6 +245,11 @@ interface Card : ConfigurationSerializable {
          */
         get() = statistics.equipmentSlots
 
+    /**
+     * Gets whether or not this card can be ridden.
+     */
+    val isRideable: Boolean
+
     // Serialization
 
     /**

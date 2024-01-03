@@ -44,7 +44,7 @@ enum class CardAttribute(
     MAX_HEALTH(25_000_000.0),
     ATTACK_DAMAGE(3_500_000.0),
     DEFENSE(2_000_000.0),
-    SPEED(0.45),
+    SPEED(1.05),
     KNOCKBACK_RESISTANCE,
     FOLLOW_RANGE(1024.0)
 

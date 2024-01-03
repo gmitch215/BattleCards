@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.util
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
@@ -234,6 +235,9 @@ inline val Player.attackable: Boolean
 inline val Player.gameName: String
     get() = displayName ?: name
 
+inline val BattleCardType.isDisabled: Boolean
+    get() = BattleConfig.config.disabledCards.contains(this)
+
 fun Event.call() {
     Bukkit.getPluginManager().callEvent(this)
 }
@@ -279,6 +283,9 @@ inline val Chunk.blocks: Set<Block>
         return blocks
     }
 
+inline val Material?.airOrNull: Boolean
+    get() = this == null || this == Material.AIR
+
 val PotionEffectType.prefix: String
     get() = when (this.name.lowercase()) {
         "absorption", "fire_resistance" -> ChatColor.GOLD
@@ -292,7 +299,7 @@ val PotionEffectType.prefix: String
         "dolphins_grace" -> "a5d1d3"
         "harm", "increase_damage" -> ChatColor.DARK_RED
         "hunger" -> "8b4513"
-        "levitation", "slow_digging" -> ChatColor.WHITE
+        "levitation", "slow_digging", "slow_falling" -> ChatColor.WHITE
         "luck", "poison" -> ChatColor.DARK_GREEN
         "night_vision" -> ChatColor.DARK_BLUE
         "speed", "water_breathing" -> ChatColor.AQUA
@@ -534,3 +541,9 @@ fun String.capitalizeFully(): String =
     split(" ").joinToString(" ") {
         s -> s.lowercase(BattleConfig.config.locale).replaceFirstChar { it.uppercase(BattleConfig.config.locale) }
     }
+
+infix fun <T> Iterable<T>.except(other: Iterable<T>): List<T> =
+    filter { !other.contains(it) }
+
+infix fun <T> Iterable<T>.except(other: T): List<T> =
+    filter { it != other }

@@ -7,20 +7,17 @@ import org.bukkit.event.HandlerList
 /**
  * Represents an event involving a [Card].
  */
-abstract class CardEvent(card: Card, async: Boolean = false) : Event(async) {
+abstract class CardEvent(
+    /**
+     * The [Card] involved in this event.
+     */
+    val card: Card,
+    async: Boolean = false
+) : Event(async) {
 
     companion object {
         @JvmStatic
         val handlerList = HandlerList()
-    }
-
-    /**
-     * The [Card] involved in this event.
-     */
-    val card: Card
-
-    init {
-        this.card = card
     }
 
     override fun getHandlers() = handlerList

@@ -29,7 +29,6 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
 
     private companion object {
-        @JvmStatic
         val capePattern = listOf(
             Pattern(DyeColor.BLACK, PatternType.GRADIENT_UP),
             Pattern(DyeColor.WHITE, PatternType.SKULL)

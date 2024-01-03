@@ -13,17 +13,12 @@ open class CardExperienceChangeEvent(card: Card, old: Double, new: Double) : Car
     /**
      * The old experience amount of the [Card].
      */
-    val oldExperience: Double
+    val oldExperience: Double = old
 
     /**
      * The new experience amount of the [Card].
      */
-    var newExperience: Double
-
-    init {
-        this.oldExperience = old
-        this.newExperience = new
-    }
+    var newExperience: Double = new
 
     override fun isCancelled(): Boolean = cancelled
     override fun setCancelled(cancel: Boolean) { cancelled = cancel }

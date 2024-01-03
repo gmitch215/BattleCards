@@ -25,25 +25,21 @@ import java.util.*
 
 object Items {
 
-    @JvmStatic
     val GUI_BACKGROUND: ItemStack = builder(BattleMaterial.BLACK_STAINED_GLASS_PANE,
         { displayName = " " },
         { nbt -> nbt.id = "gui_background" }
     )
 
-    @JvmStatic
     val LOCKED: ItemStack = builder(Material.BEDROCK,
         { displayName = "${ChatColor.DARK_PURPLE}${get("constants.locked")}" },
         { nbt -> nbt.addTag("_cancel") }
     )
 
-    @JvmStatic
     val COMING_SOON: ItemStack = builder(Material.BEDROCK,
         { displayName = "${ChatColor.YELLOW}${get("constants.coming_soon")}" },
         { nbt -> nbt.addTag("_cancel") }
     )
 
-    @JvmStatic
     fun locked(unlockedAt: Int): ItemStack = LOCKED.clone().apply {
         itemMeta = itemMeta.apply {
             lore = listOf(
@@ -54,7 +50,6 @@ object Items {
 
     // Card Items
 
-    @JvmStatic
     val CARD_TABLE: ItemStack = builder(BattleMaterial.CRAFTING_TABLE,
         { displayName = "${ChatColor.RESET}Card Table" },
         { nbt -> nbt["card_block"] = true; nbt.id = "card_table"
@@ -66,7 +61,6 @@ object Items {
         }
     )
 
-    @JvmStatic
     val CARD_COMBINER = builder(BattleMaterial.CAULDRON,
         { displayName = "${ChatColor.RESET}Card Combiner" },
         { nbt -> nbt["card_block"] = true; nbt.id = "card_combiner"
@@ -78,37 +72,31 @@ object Items {
         }
     )
 
-    @JvmStatic
     val TINY_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
         { displayName = "${ChatColor.WHITE}Tiny Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 100.0 }
     )
 
-    @JvmStatic
     val SMALL_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
         { displayName = "${ChatColor.GREEN}Small Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2500.0 }
     )
 
-    @JvmStatic
     val MEDIUM_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
         { displayName = "${ChatColor.BLUE}Medium Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 10000.0 }
     )
 
-    @JvmStatic
     val LARGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
         { displayName = "${ChatColor.DARK_PURPLE}Large Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
         { nbt -> nbt["exp_book"] = true; nbt["amount"] = 500000.0 }
     )
 
-    @JvmStatic
     val HUGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
         { displayName = "${ChatColor.GOLD}Huge Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
-        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2000000.0 }
+        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 4000000.0 }
     )
 
-    @JvmStatic
     fun cardShard(rarity: Rarity): ItemStack {
         if (rarity == Rarity.BASIC) throw UnsupportedOperationException("Cannot Use Basic Rarity")
 
@@ -120,7 +108,6 @@ object Items {
 
     // Static Util
 
-    @JvmStatic
     fun builder(material: Material, action: ItemMeta.() -> Unit): ItemStack {
         return ItemStack(material).apply {
             itemMeta = itemMeta.apply {
@@ -129,7 +116,6 @@ object Items {
         }
     }
 
-    @JvmStatic
     fun next(key: String = "stored"): ItemStack =
         head("arrow_right") {
             itemMeta = itemMeta.apply {
@@ -137,7 +123,6 @@ object Items {
             }
         }.nbt { nbt -> nbt.id = "scroll:$key"; nbt["operation"] = 1 }
 
-    @JvmStatic
     fun prev(key: String = "stored"): ItemStack =
         head("arrow_left") {
             itemMeta = itemMeta.apply {
@@ -145,7 +130,6 @@ object Items {
             }
         }.nbt { nbt -> nbt.id = "scroll:$key"; nbt["operation"] = -1 }
 
-    @JvmStatic
     fun back(key: String = "action"): ItemStack =
         head("arrow_left_log") {
             itemMeta = itemMeta.apply {
@@ -153,14 +137,13 @@ object Items {
             }
         }.nbt { nbt -> nbt.id = "back:$key" }
 
-    @JvmStatic
     fun head(key: String, action: ItemStack.() -> Unit = {}): ItemStack {
         val p = Properties().apply { load(Items::class.java.getResourceAsStream("/util/heads.properties")) }
         val value = p.getProperty(key) ?: throw IllegalArgumentException("Head not found: $key")
 
         return (if (Wrapper.legacy) ItemStack(matchMaterial("SKULL_ITEM"), 1, 3.toShort()) else ItemStack(matchMaterial("PLAYER_HEAD"))).apply {
             itemMeta = (itemMeta as SkullMeta).apply {
-                val profile = GameProfile(UUID.randomUUID(), null).apply {
+                val profile = GameProfile(UUID.randomUUID(), key).apply {
                     properties.put("textures", Property("textures", value))
                 }
 
@@ -171,7 +154,6 @@ object Items {
         }
     }
 
-    @JvmStatic
     fun createShapedRecipe(key: String, result: ItemStack): ShapedRecipe {
         return try {
             val namespacedKey = Class.forName("org.bukkit.NamespacedKey").run {
@@ -188,7 +170,6 @@ object Items {
 
     // Recipes & Public Items
 
-    @JvmStatic
     val RECIPES: List<Recipe> = mutableListOf(
         createShapedRecipe("card_table", CARD_TABLE).apply {
             shape(" W ", "WPW", " W ")
@@ -239,7 +220,6 @@ object Items {
         }
     }
 
-    @JvmStatic
     val CARD_TABLE_RECIPES: List<CardWorkbenchRecipe> = listOf(
         CardWorkbenchRecipe(
             { matrix ->
@@ -288,7 +268,6 @@ object Items {
         )
     )
 
-    @JvmStatic
     val PUBLIC_ITEMS = mutableMapOf(
         "card_table" to CARD_TABLE,
         "card_combiner" to CARD_COMBINER,
@@ -301,7 +280,6 @@ object Items {
         putAll(Rarity.entries.filter { it != Rarity.BASIC }.map { "${it.name.lowercase()}_card_shard" to cardShard(it) })
     }
 
-    @JvmStatic
     private val GENERATED_ITEMS: Map<String, Double> = mapOf(
         "tiny_experience_book" to 0.04,
         "small_experience_book" to 0.001,
@@ -317,13 +295,14 @@ object Items {
         "ultimate_card_shard" to 0.0000025
     )
 
-    @JvmStatic
     val EFFECTIVE_GENERATED_ITEMS = { GENERATED_ITEMS.mapNotNull {
         val item = PUBLIC_ITEMS[it.key] ?: return@mapNotNull null
         item to (it.value / GENERATED_ITEMS.values.sum())
     }.toMap() }
 
-    fun <T> Map<T, Double>.randomCumulative(reroll: Int = 0): T {
+    fun <T> Map<T, Double>.randomCumulative(reroll: Int = 0): T? {
+        if (isEmpty()) return null
+
         val distribution = DoubleArray(size)
         var cumulative = 0.0
 

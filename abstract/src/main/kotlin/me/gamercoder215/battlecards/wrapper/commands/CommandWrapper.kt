@@ -20,38 +20,32 @@ import java.util.*
 interface CommandWrapper {
 
     companion object {
-        @JvmStatic
         val COMMANDS: Map<String, List<String>> = ImmutableMap.builder<String, List<String>>()
             .put("bcard", listOf("card", "battlecard"))
             .put("cardreload", listOf("creload"))
             .put("bquery", listOf("cardquery", "battlequery"))
             .build()
 
-        @JvmStatic
         val COMMAND_PERMISSION: Map<String, String> = ImmutableMap.builder<String, String>()
             .put("bcard", "battlecards.user.card")
             .put("cardreload", "battlecards.admin.reload")
             .put("bquery", "battlecards.user.query")
             .build()
 
-        @JvmStatic
         val COMMAND_DESCRIPTION: Map<String, String> = ImmutableMap.builder<String, String>()
             .put("bcard", "Main BattleCards Card Command")
             .put("cardreload", "Reloads the BattleCards Plugin")
             .put("bquery", "Command for Querying BattleCards Cards")
             .build()
 
-        @JvmStatic
         val COMMAND_USAGE: Map<String, String> = ImmutableMap.builder<String, String>()
             .put("bcard", "/bcard")
             .put("cardreload", "/cardreload")
             .put("bquery", "/bquery <card>")
             .build()
 
-        @JvmStatic
         fun getError(key: String): String = "${get("plugin.prefix")} ${ChatColor.RED}${get(key)}"
 
-        @JvmStatic
         fun getSuccess(key: String): String = "${get("plugin.prefix")} ${ChatColor.GREEN}${get(key)}"
 
         private val COOLDOWN: MutableMap<String, MutableMap<UUID, Long>> = mutableMapOf()
@@ -65,7 +59,6 @@ interface CommandWrapper {
         plugin.reloadConfig()
         BattleConfig.loadConfig()
         Wrapper.getCommandWrapper()
-
         sender.sendMessage(getSuccess("command.reload.reloaded"))
     }
 
@@ -88,6 +81,9 @@ interface CommandWrapper {
         if (!p.hasPermission("battlecards.admin.card.create"))
             return p.sendMessage(getError("error.permission.argument"))
 
+        if (type.isDisabled)
+            return p.sendMessage(getError("error.card.disabled"))
+
         if (p.inventory.firstEmpty() == -1)
             return p.sendMessage(getError("error.inventory.full"))
 
@@ -95,7 +91,7 @@ interface CommandWrapper {
             if (basicType == null || !BattleConfig.getValidBasicCards().contains(basicType))
                 return p.sendMessage(getError("error.argument.basic_type"))
 
-        p.inventory.addItem(CardGenerator.toItem(type.createCardData().apply { this as ICard; storedEntityType = basicType } ))
+        p.inventory.addItem(CardGenerator.toItem(type().apply { this as ICard; storedEntityType = basicType } ))
         p.sendMessage(format(getSuccess("success.card.created"), type.formatName()))
         p.playSuccess()
     }
@@ -104,7 +100,10 @@ interface CommandWrapper {
         if (!p.hasPermission("battlecards.user.query"))
             return p.sendMessage(getError("error.permission.argument"))
 
-        p.openInventory(Generator.generateCardInfo(type.createCardData()))
+        if (type.isDisabled)
+            return p.sendMessage(getError("error.card.disabled"))
+
+        p.openInventory(Generator.generateCardInfo(type()))
         p.playSuccess()
     }
 
@@ -117,6 +116,31 @@ interface CommandWrapper {
         p.inventory.itemInHand = CardGenerator.toItem(
             card.apply { action(this) }
         )
+        p.playSuccess()
+    }
+
+    fun catalogue(p: Player, input: String) {
+        if (!p.hasPermission("battlecards.user.query"))
+            return p.sendMessage(getError("error.permission.argument"))
+
+        if (BattleCardType.entries.map { it.name.lowercase() }.contains(input.lowercase())) {
+            val type = BattleCardType.valueOf(input.uppercase())
+
+            if (type.isDisabled)
+                return p.sendMessage(getError("error.card.disabled"))
+
+            if (type == BattleCardType.BASIC)
+                return p.sendMessage(getError("error.argument.basic_type"))
+
+            p.openInventory(Generator.generateCatalogue(type()))
+        }
+
+        if (BattleConfig.config.registeredEquipment.any { it.name.lowercase() == input.lowercase() }) {
+            val equipment = BattleConfig.config.registeredEquipment.first { it.name.lowercase() == input.lowercase() }
+
+            p.openInventory(Generator.generateCatalogue(equipment))
+        }
+
         p.playSuccess()
     }
 

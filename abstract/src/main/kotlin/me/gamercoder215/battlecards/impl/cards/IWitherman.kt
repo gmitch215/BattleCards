@@ -12,10 +12,10 @@ import org.bukkit.potion.PotionEffectType
 
 @Type(BattleCardType.WITHERMAN)
 @Attributes(650.0, 16.5, 25.5, 0.25, 0.15)
-@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 8.0)
+@AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 7.6)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 5.75)
 @AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 4.5)
-@AttributesModifier(CardAttribute.SPEED, CardOperation.MULTIPLY, 1.01)
+@AttributesModifier(CardAttribute.SPEED, CardOperation.MULTIPLY, 1.015)
 class IWitherman(data: ICard) : IBattleCard<Enderman>(data) {
 
     @CardAbility("card.witherman.ability.wither", ChatColor.DARK_GRAY)

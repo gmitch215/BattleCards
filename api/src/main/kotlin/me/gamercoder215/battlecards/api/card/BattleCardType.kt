@@ -209,7 +209,7 @@ enum class BattleCardType {
     /**
      * Represents a Skeleton BattleCard.
      */
-    GOAT_GLADIATOR(1, Skeleton::class, Rarity.RARE, Material.matchMaterial("GOAT_HORN")),
+    GOAT_GLADIATOR(1, Skeleton::class, Rarity.RARE, Material.matchMaterial("GOAT_HORN") ?: Material.matchMaterial("HORN_CORAL_BLOCK")),
 
     /**
      * Represents a Piglin BattleCard.
@@ -219,14 +219,29 @@ enum class BattleCardType {
     /**
      * Represents a Piglin Brute BattleCard.
      */
-    PIGLIN_TITAN(1, "PiglinBrute", Rarity.ULTIMATE, Material.matchMaterial("PIGLIN_HEAD") ?: Material.matchMaterial("NETHERITE_BLOCK"), Material.matchMaterial("NETHERITE_BLOCK"))
+    PIGLIN_TITAN(1, "PiglinBrute", Rarity.ULTIMATE, Material.matchMaterial("PIGLIN_HEAD") ?: Material.matchMaterial("NETHERITE_BLOCK"), Material.matchMaterial("NETHERITE_BLOCK")),
+
+    /**
+     * Represents a Husk BattleCard.
+     */
+    SAND_TRAVELER(2, "Husk", Rarity.EPIC, Material.SAND),
+
+    /**
+     * Represents a Wither Skeleton BattleCard.
+     */
+    THE_IMMORTAL(2, "WitherSkeleton", Rarity.ULTIMATE, Material.matchMaterial("END_CRYSTAL")),
+
+    /**
+     * Represents a Snowman BattleCard.
+     */
+    BLIZZARD(2, "Snowman", Rarity.LEGEND, Material.SNOW_BLOCK),
     ;
 
     constructor(generation: Int, entityClass: String, rarity: Rarity, material: Material? = null, crafting: Material? = material) : this(
         generation,
         try {
             Class.forName("org.bukkit.entity.${entityClass}") as Class<out LivingEntity>
-        } catch (e: ClassNotFoundException) {
+        } catch (e: ReflectiveOperationException) {
             null
         },
         rarity,
@@ -286,6 +301,13 @@ enum class BattleCardType {
      * @return New Card Data
      */
     fun createCardData(): Card = BattleConfig.config.createCardData(this)
+
+    /**
+     * Creates a new card data object.
+     * @return New Card Data
+     * @see [createCardData]
+     */
+    operator fun invoke(): Card = createCardData()
 
     companion object {
 

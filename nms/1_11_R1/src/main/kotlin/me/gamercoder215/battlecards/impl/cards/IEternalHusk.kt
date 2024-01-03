@@ -135,7 +135,6 @@ class IEternalHusk(data: ICard) : IBattleCard<Husk>(data) {
     }
 
     private companion object {
-        @JvmStatic
         private val undeadTypes: List<EntityType> = listOf<Any>(
             EntityType.ZOMBIE,
             EntityType.SKELETON,

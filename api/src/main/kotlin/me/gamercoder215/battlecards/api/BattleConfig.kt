@@ -270,6 +270,18 @@ interface BattleConfig {
         plugin.saveConfig()
     }
 
+    var disabledCards: Set<BattleCardType>
+        /**
+         * Gets all disabled BattleCards.
+         * @return Set of disabled BattleCards
+         */
+        get() = configuration.getStringList("Cards.Disabled").mapNotNull { try { BattleCardType.valueOf(it.uppercase()) } catch (ignored: IllegalArgumentException) { null } }.toSet()
+        /**
+         * Sets the currently disabled BattleCards.
+         * @param value Set of disabled BattleCards
+         */
+        set(value) = setConfig("Cards.Disabled", value.map { it.name.lowercase() })
+
     var isBasicDropsEnabled: Boolean
         /**
          * Fetches whether cards of the [Rarity.BASIC] rarity can be dropped by mobs.

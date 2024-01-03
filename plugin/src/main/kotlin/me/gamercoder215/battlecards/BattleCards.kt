@@ -29,7 +29,6 @@ import org.bstats.charts.SingleLineChart
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.inventory.ShapedRecipe
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.plugin.java.JavaPlugin
@@ -56,6 +55,7 @@ class BattleCards : JavaPlugin(), BattleConfig {
     fun loadListeners() {
         BattleCardListener(this)
         BattleGUIManager(this)
+        BattleSpawner(this)
 
         IBattleCardListener(this)
     }
@@ -240,7 +240,6 @@ class BattleCards : JavaPlugin(), BattleConfig {
 
     companion object {
 
-        @JvmStatic
         val cardRecipes: MutableMap<BattleCardType, ShapedRecipe> = mutableMapOf()
     }
 
@@ -258,12 +257,12 @@ class BattleCards : JavaPlugin(), BattleConfig {
         if (cards.contains(card)) throw IllegalArgumentException("Card ${card.simpleName} already registered")
         val type = card.getAnnotation(Type::class.java).type
 
-        if (type != BattleCardType.BASIC && type.craftingMaterial == Material.AIR) throw IllegalStateException("$type is not available on this Minecraft Version")
+        if (type != BattleCardType.BASIC && type.craftingMaterial.airOrNull) throw IllegalStateException("$type is not available on this Minecraft Version: Crafting Material is AIR")
 
         cards.add(card)
 
         if (type != BattleCardType.BASIC)
-            Bukkit.addRecipe(createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type.createCardData())).apply {
+            Bukkit.addRecipe(createShapedRecipe("card_${card.simpleName.lowercase()}", CardGenerator.toItem(type())).apply {
                 shape("SSS", "SMS", "SSS")
 
                 setIngredient('M', type.craftingMaterial)
@@ -308,7 +307,9 @@ class BattleCards : JavaPlugin(), BattleConfig {
         registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } != null || type == BattleCardType.BASIC
 
     override fun createCardData(type: BattleCardType): Card {
-        val clazz = registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } ?: throw IllegalStateException("$type is not available on this Minecraft Version")
+        if (disabledCards.contains(type)) throw IllegalStateException("$type is not available on this Minecraft Version: Disabled")
+
+        val clazz = registeredCards.firstOrNull { it.getAnnotation(Type::class.java).type == type } ?: throw IllegalStateException("$type is not available on this Minecraft Version: Unregistered")
         return ICard(
             clazz,
             type,
