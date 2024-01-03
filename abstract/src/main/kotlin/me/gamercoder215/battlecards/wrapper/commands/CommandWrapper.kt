@@ -59,10 +59,6 @@ interface CommandWrapper {
         plugin.reloadConfig()
         BattleConfig.loadConfig()
         Wrapper.getCommandWrapper()
-        try {
-            Class.forName("me.gamercoder215.battlecards.advancements.BattleAdvancements").getDeclaredMethod("check", Boolean::class.java).invoke(null, true)
-        } catch (ignored: ReflectiveOperationException) {}
-
         sender.sendMessage(getSuccess("command.reload.reloaded"))
     }
 

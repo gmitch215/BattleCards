@@ -99,7 +99,6 @@ interface BattleConfig {
 
             if (!config.isConfigurationSection("Functionality")) config.createSection("Functionality")
             if (!config.isString("Functionality.CommandVersion") && !config.isInt("Functionality.CommandVersion")) config["Functionality.CommandVersion"] = "auto"
-            if (!config.isBoolean("Functionality.Advancements")) config["Functionality.Advancements"] = true
 
             if (!config.isConfigurationSection("Cards")) config.createSection("Cards")
             if (!config.isList("Cards.Disabled")) config["Cards.Disabled"] = listOf<String>()
@@ -489,17 +488,5 @@ interface BattleConfig {
          * @param value Chance
          */
         set(value) = setConfig("Cards.Trades.Chance", value)
-
-    var isAdvancementsEnabled: Boolean
-        /**
-         * Fetches whether Advancements are enabled.
-         * @return true if enabled, false otherwise
-         */
-        get() = configuration.getBoolean("Functionality.Advancements")
-        /**
-         * Sets whether Advancements are enabled.
-         * @param value true if enabled, false otherwise
-         */
-        set(value) = setConfig("Functionality.Advancements", value)
 
 }

@@ -23,10 +23,6 @@ Functionality:
   # - 2 | Use Command Wrapper V2 (1.13.2+)
   CommandVersion: auto
 
-  # Whether BattleCards Advancements are enabled
-  # Advancements are only available in 1.12+, and appear in the Advancement menu.
-  Advancements: true
-
 # Card Configuration
 Cards:
   # A list of Disabled BattleCards with case insensitive names
