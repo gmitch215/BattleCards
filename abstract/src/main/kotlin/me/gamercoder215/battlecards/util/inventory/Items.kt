@@ -94,7 +94,7 @@ object Items {
 
     val HUGE_EXPERIENCE_BOOK: ItemStack = builder(Material.BOOK,
         { displayName = "${ChatColor.GOLD}Huge Card Experience Book"; addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true); addItemFlags(ItemFlag.HIDE_ENCHANTS) },
-        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 2000000.0 }
+        { nbt -> nbt["exp_book"] = true; nbt["amount"] = 4000000.0 }
     )
 
     fun cardShard(rarity: Rarity): ItemStack {
