@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 plugins {
     kotlin("jvm") version "1.9.22"
@@ -13,7 +14,7 @@ plugins {
 }
 
 val pGroup = "me.gamercoder215.battlecards"
-val pVersion = "1.1.0-SNAPSHOT"
+val pVersion = "1.1.1-SNAPSHOT"
 val pAuthor = "GamerCoder"
 
 sonarqube {
@@ -64,7 +65,8 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.1.0")
-        val kotlin = compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
+
+        val kotlin = compileOnly("org.jetbrains.kotlin:kotlin-stdlib:${getKotlinPluginVersion()}")
         project.ext["kotlin_version"] = kotlin!!.version
         compileOnly(kotlin("reflect"))
 
