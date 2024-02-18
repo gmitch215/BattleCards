@@ -9,8 +9,11 @@ import me.gamercoder215.battlecards.api.card.Rarity
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.events.PrepareCardCombineEvent
 import me.gamercoder215.battlecards.api.events.PrepareCardCraftEvent
+import me.gamercoder215.battlecards.messages.format
+import me.gamercoder215.battlecards.messages.get
+import me.gamercoder215.battlecards.messages.sendError
+import me.gamercoder215.battlecards.messages.sendRaw
 import me.gamercoder215.battlecards.util.*
-import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Generator.genGUI
@@ -18,12 +21,10 @@ import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.util.inventory.Items.GUI_BACKGROUND
 import me.gamercoder215.battlecards.util.inventory.Items.randomCumulative
 import me.gamercoder215.battlecards.wrapper.BattleInventory
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
-import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.ChatColor
+import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -87,15 +88,15 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 val p = e.whoClicked as Player
                 val link = e.currentItem.nbt.getString("link")
 
-                val text = TextComponent("${ChatColor.YELLOW}Link: $link").apply {
+                val text = TextComponent("${YELLOW}Link: $link").apply {
                     clickEvent = ClickEvent(ClickEvent.Action.OPEN_URL, link)
-                    hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("${ChatColor.AQUA}$link")))
+                    hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("$AQUA$link")))
                 }
 
                 try {
                     p.spigot().sendMessage(text)
                 } catch (ignored: UnsupportedOperationException) {
-                    p.sendMessage(text.toLegacyText())
+                    p.sendRaw(text.toLegacyText())
                 }
             }
             .put("card_combiner:start") { e, inv ->
@@ -116,7 +117,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                 inv["stopped"] = false
                 inv[22] = BattleMaterial.RED_WOOL.findStack().apply {
                     itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.RED}${get("constants.cancel")}"
+                        displayName = "$RED${get("constants.cancel")}"
                     }
                 }.nbt { nbt -> nbt.id = "card_combiner:stop"; nbt.addTag("_cancel") }
 
@@ -157,7 +158,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                     inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
                         itemMeta = itemMeta.apply {
-                            displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                            displayName = "$YELLOW${get("constants.place_items")}"
                         }
                     }.nbt { nbt -> nbt.addTag("_cancel") }
                     inv[23] = GUI_BACKGROUND
@@ -170,7 +171,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                 inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
                     itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                        displayName = "$YELLOW${get("constants.place_items")}"
                     }
                 }.nbt { nbt -> nbt.addTag("_cancel") }
                 inv[23] = GUI_BACKGROUND
@@ -282,7 +283,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         (if (e is InventoryClickEvent && e.action == InventoryAction.MOVE_TO_OTHER_INVENTORY) e.clickedInventory !is BattleInventory else true) &&
                         (equipment.filter { it.rarity == CardEquipment.Rarity.SPECIAL }.size + itemEquipment.filter { it.rarity == CardEquipment.Rarity.SPECIAL }.size) > 1)
                     {
-                        p.sendMessage(getError("error.card.equipment.one_special"))
+                        p.sendError("error.card.equipment.one_special")
                         p.playFailure()
                         return@put e.setCancelled(true)
                     }
@@ -313,7 +314,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                     inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
                         itemMeta = itemMeta.apply {
-                            displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                            displayName = "$YELLOW${get("constants.place_items")}"
                         }
                     }.nbt { nbt -> nbt.addTag("_cancel") }
                     inv[23] = GUI_BACKGROUND
@@ -349,7 +350,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                     if (matrix.isEmpty() || inv[13] != null) {
                         inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
                             itemMeta = itemMeta.apply {
-                                displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
+                                displayName = "$YELLOW${get("constants.place_items")}"
                             }
                         }.nbt { nbt -> nbt.addTag("_cancel") }
                         inv[23] = GUI_BACKGROUND
@@ -359,9 +360,9 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
                         if (power < 50) {
                             inv[22] = ItemStack(Material.BARRIER).apply {
                                 itemMeta = itemMeta.apply {
-                                    displayName = "${ChatColor.RED}${get("menu.card_combiner.not_enough_power")}"
+                                    displayName = "$RED${get("menu.card_combiner.not_enough_power")}"
                                     lore = listOf(
-                                        "${ChatColor.DARK_RED}${format(get("constants.card_power"), power.format())}",
+                                        "$DARK_RED${format(get("constants.card_power"), power.format())}",
                                     )
                                 }
                             }.nbt { nbt -> nbt.addTag("_cancel") }
@@ -372,11 +373,11 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                         inv[22] = ItemStack(Material.PAPER).apply {
                             itemMeta = itemMeta.apply {
-                                displayName = "${ChatColor.YELLOW}${get("constants.card_chances")}"
+                                displayName = "$YELLOW${get("constants.card_chances")}"
                                 val chances = CardUtils.calculateCardChances(matrix).filterValues { it != 0.0 }
                                 lore = listOf(
                                     " ",
-                                    "${ChatColor.GOLD}${format(get("constants.card_power"), power.format())}",
+                                    "$GOLD${format(get("constants.card_power"), power.format())}",
                                     " "
                                 ) + chances.map {
                                     it.key to "${it.key.color}${format(get("constants.chance"), "${it.value.times(100).format()}%")} ${it.key}"
@@ -386,7 +387,7 @@ internal class BattleGUIManager(private val plugin: BattleCards) : Listener {
 
                         inv[23] = ItemStack(Material.BEACON).apply {
                             itemMeta = itemMeta.apply {
-                                displayName = "${ChatColor.AQUA}${get("constants.confirm")}"
+                                displayName = "$AQUA${get("constants.confirm")}"
                             }
                         }.nbt { nbt -> nbt.id = "card_combiner:start"; nbt.addTag("_cancel") }
                     }

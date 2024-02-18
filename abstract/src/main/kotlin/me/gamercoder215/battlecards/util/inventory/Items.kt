@@ -4,10 +4,11 @@ import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.Rarity
+import me.gamercoder215.battlecards.messages.format
+import me.gamercoder215.battlecards.messages.get
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.NBTWrapper.Companion.builder
 import me.gamercoder215.battlecards.wrapper.Wrapper
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -43,7 +44,7 @@ object Items {
     fun locked(unlockedAt: Int): ItemStack = LOCKED.clone().apply {
         itemMeta = itemMeta.apply {
             lore = listOf(
-                "${ChatColor.YELLOW}${CardUtils.format(get("constants.unlocks_at_level"), unlockedAt.formatInt())}"
+                "${ChatColor.YELLOW}${format(get("constants.unlocks_at_level"), unlockedAt.formatInt())}"
             )
         }
     }

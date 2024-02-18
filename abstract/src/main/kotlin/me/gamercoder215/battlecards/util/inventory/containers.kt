@@ -1,12 +1,12 @@
 package me.gamercoder215.battlecards.util.inventory
 
+import me.gamercoder215.battlecards.messages.get
 import me.gamercoder215.battlecards.util.BattleMaterial
 import me.gamercoder215.battlecards.util.get
 import me.gamercoder215.battlecards.util.inventory.Generator.genGUI
 import me.gamercoder215.battlecards.util.nbt
 import me.gamercoder215.battlecards.util.set
 import me.gamercoder215.battlecards.wrapper.BattleInventory
-import me.gamercoder215.battlecards.wrapper.Wrapper
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -18,7 +18,7 @@ val CONTAINERS_CARD_BLOCKS: Map<String, () -> BattleInventory> = mapOf(
 )
 
 fun generateCardTable(): BattleInventory {
-    val inv = genGUI("card_table", 45, Wrapper.get("menu.card_table"))
+    val inv = genGUI("card_table", 45, get("menu.card_table"))
 
     inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
         val items = listOfNotNull(
@@ -46,7 +46,7 @@ fun generateCardTable(): BattleInventory {
 }
 
 fun generateCardCombiner(): BattleInventory {
-    val inv = genGUI("card_combiner", 54, Wrapper.get("menu.card_combiner"))
+    val inv = genGUI("card_combiner", 54, get("menu.card_combiner"))
 
     inv["on_close"] = BiConsumer { p: Player, inventory: BattleInventory ->
         listOf(
@@ -70,7 +70,7 @@ fun generateCardCombiner(): BattleInventory {
     inv[13] = null
     inv[22] = BattleMaterial.YELLOW_STAINED_GLASS_PANE.findStack().apply {
         itemMeta = itemMeta.apply {
-            displayName = "${ChatColor.YELLOW}${Wrapper.get("constants.place_items")}"
+            displayName = "${ChatColor.YELLOW}${get("constants.place_items")}"
         }
     }.nbt { nbt -> nbt.addTag("_cancel") }
 

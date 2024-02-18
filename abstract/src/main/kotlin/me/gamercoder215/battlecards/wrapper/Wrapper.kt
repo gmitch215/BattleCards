@@ -165,14 +165,6 @@ interface Wrapper {
             return Bukkit.getServer().javaClass.`package`.name.split(".")[3].substring(1)
         }
 
-        fun get(key: String): String {
-            return BattleConfig.config.get(key)
-        }
-
-        fun getMessage(key: String): String {
-            return BattleConfig.config.getMessage(key)
-        }
-
         val legacy: Boolean
             get() = w.getCommandVersion() == 1
 

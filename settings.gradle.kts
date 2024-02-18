@@ -3,7 +3,7 @@ rootProject.name = "BattleCards"
 include(":battlecards")
 project(":battlecards").projectDir = rootDir.resolve("plugin")
 
-listOf("api", "abstract").forEach {
+listOf("api", "abstract", "adventure").forEach {
     include(":battlecards-$it")
     project(":battlecards-$it").projectDir = rootDir.resolve(it)
 }

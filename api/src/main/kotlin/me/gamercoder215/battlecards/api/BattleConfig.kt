@@ -235,7 +235,9 @@ interface BattleConfig {
      * Fetches a localized message from the plugin's language file, with the plugin prefix.
      * @param key Key to fetch
      * @return Message with prefix
+     * @deprecated Unused as of Messages Revamp of v1.1.1
      */
+    @Deprecated("Unused as of Messages Revamp in v1.1.1", ReplaceWith("get(key)"))
     fun getMessage(key: String): String {
         return "${get("plugin.prefix")} ${get(key)}"
     }
