@@ -45,6 +45,12 @@ interface BattleStatistics {
     // Statistics
 
     /**
+     * Fetches the instance of the raw statistics information for this card.
+     * @return Raw Statistics Copy
+     */
+    val rawStatistics: MutableMap<String, Number>
+
+    /**
      * Fetches the total amount of players this Card has killed
      * @return Player Kills
      */
