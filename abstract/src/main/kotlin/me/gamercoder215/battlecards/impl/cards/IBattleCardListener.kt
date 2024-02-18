@@ -1,14 +1,11 @@
 package me.gamercoder215.battlecards.impl.cards
 
 import org.bukkit.Bukkit
-import org.bukkit.event.Event
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.HandlerList
+import org.bukkit.event.*
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.RegisteredListener
 
-class IBattleCardListener(plugin: Plugin) : org.bukkit.event.Listener {
+class IBattleCardListener(plugin: Plugin) : Listener {
 
     init {
         Bukkit.getPluginManager().registerEvents(this, plugin)
