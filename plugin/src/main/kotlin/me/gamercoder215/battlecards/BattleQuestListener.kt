@@ -2,7 +2,6 @@ package me.gamercoder215.battlecards
 
 import me.gamercoder215.battlecards.api.card.BattleCard
 import org.bukkit.entity.LivingEntity
-import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 
 internal object BattleQuestListener {
@@ -13,7 +12,7 @@ internal object BattleQuestListener {
         val hp = target.maxHealth
         if (hp < card.statistics.maxHealth)
             card.statistics.rawStatistics["quest.titan"] = (card.statistics.rawStatistics["quest.titan"]?.toInt() ?: 0) + 1
-        else
+        else if (hp > card.statistics.maxHealth)
             card.statistics.rawStatistics["quest.goliath"] = (card.statistics.rawStatistics["quest.goliath"]?.toInt() ?: 0) + 1
     }
 
