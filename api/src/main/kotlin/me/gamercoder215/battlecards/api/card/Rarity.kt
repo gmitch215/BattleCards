@@ -6,9 +6,21 @@ import org.bukkit.ChatColor
  * Represents a Rarity, applicable to a [BattleCard]
  */
 enum class Rarity(
-    color: ChatColor,
-    experienceModifier: Double,
-    maxCardLevel: Int = Card.MAX_LEVEL
+    /**
+     * Fetches the color of this rarity.
+     * @return Rarity Color
+     */
+    val color: ChatColor,
+    /**
+     * Fetches the experience modifier for this rarity, which is used to calculate the amount of experience a player needs to increase the Card's Level.
+     * @return Experience Modifier
+     */
+    val experienceModifier: Double,
+    /**
+     * Fetches the maximum level a BattleCard can be for this rarity.
+     * @return Maximum Card Level
+     */
+    val maxCardLevel: Int = Card.MAX_LEVEL
 ) {
     /**
      * Represents the Basic rarity
@@ -45,36 +57,12 @@ enum class Rarity(
 
     ;
 
-    /**
-     * Fetches the color of this rarity.
-     * @return Rarity Color
-     */
-    val color: ChatColor
-
-    /**
-     * Fetches the experience modifier for this rarity, which is used to calculate the amount of experience a player needs to increase the Card's Level.
-     * @return Experience Modifier
-     */
-    val experienceModifier: Double
-
-    /**
-     * Fetches the maximum level a BattleCard can be for this rarity.
-     * @return Maximum Card Level
-     */
-    val maxCardLevel: Int
-
     val maxCardExperience: Double
         /**
          * Fetches the maximum experience a BattleCard can have for this rarity.
          * @return Maximum Card Experience
          */
         get() = Card.toExperience(maxCardLevel, this)
-
-    init {
-        this.color = color
-        this.experienceModifier = experienceModifier
-        this.maxCardLevel = maxCardLevel
-    }
 
     override fun toString(): String = "$color${ChatColor.BOLD}${name.uppercase()}"
 
