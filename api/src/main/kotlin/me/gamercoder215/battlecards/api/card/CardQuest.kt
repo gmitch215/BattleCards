@@ -13,8 +13,15 @@ private const val RARITY_MODIFIER = 0.478
  * Represents a Quest Road for a BattleCard
  */
 enum class CardQuest(
-    icon: Material,
-    maxLevel: Int,
+    /**
+     * The icon for the Card Quest.
+     */
+    val icon: Material,
+    /**
+     * The maximum level for this Card Achievement.
+     */
+    val maxLevel: Int,
+
     private val needed: (Card, Int) -> Number,
     private val completion: (Card, Double) -> Number,
     private val expReward: (Card, Int) -> Double,
@@ -63,26 +70,29 @@ enum class CardQuest(
         { card, current -> (20.0 + (5 * current) + (5 * current)).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(5) },
         { card, needed -> card.statistics.deaths.toDouble() / needed },
         { card, level -> ((40.0 * level) + (20.0 * level.minus(1))) * (6.95).pow(card.rarity.ordinal) }
+    ),
+
+    /**
+     * Goliath Quest
+     */
+    GOLIATH(Material.matchMaterial("CROSSBOW") ?: Material.BOW, 40,
+        { card, current -> (10.0 + (5 * current) + (7.5 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(5) },
+        { card, needed -> (card.statistics.rawStatistics["quests.goliath"]?.toDouble() ?: 0.0) / needed },
+        { card, level -> ((20.0 * level) + (15.0 * level.minus(1))) * 7.0.pow(card.rarity.ordinal) }
+    ),
+
+    /**
+     * Titan Quest
+     */
+    TITAN(Material.ANVIL, 40,
+        { card, current -> (75.0 + (25.0 * current) + (150.0 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(100) },
+        { card, needed -> (card.statistics.rawStatistics["quests.titan"]?.toDouble() ?: 0.0) / needed },
+        { card, level -> ((20.0 * level) + (15.0 * level.minus(1))) * 7.0.pow(card.rarity.ordinal) }
     )
 
     ;
 
     private val completionKey = "menu.card_quests.${name.lowercase()}.completion"
-
-    /**
-     * The maximum level for this Card Achievement.
-     */
-    val maxLevel: Int
-
-    /**
-     * The icon for the Card Quest.
-     */
-    val icon: Material
-
-    init {
-        this.maxLevel = maxLevel
-        this.icon = icon
-    }
 
     private val stackedNeeded: (Card, Int) -> Double = needed@{ card, level ->
         var amount = 0.0

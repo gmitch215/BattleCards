@@ -368,6 +368,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     else -> card.statistics.entityKills++
                 }
 
+                BattleQuestListener.onKill(card, event)
                 addExperience(card.data, modifier * entity.maxHealth * (if (entity.isCard) plugin.growthKillCardMultiplier else 1.0))
             }
             card.statistics.checkQuestCompletions()
