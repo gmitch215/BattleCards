@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 @Type(BattleCardType.FROST_BEAR)
 @Attributes(350.0, 15.0, 20.0, 0.27, 10.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 3.35)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.015)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.MULTIPLY, 1.0225)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.15, 115.5)
 @AttributesModifier(CardAttribute.KNOCKBACK_RESISTANCE, CardOperation.MULTIPLY, 1.013)
 @Rideable
