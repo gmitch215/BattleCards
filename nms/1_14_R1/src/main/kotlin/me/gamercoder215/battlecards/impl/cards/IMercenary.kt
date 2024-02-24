@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffectType
 @Attributes(100.0, 6.45, 20.0, 0.295, 15.0)
 @AttributesModifier(CardAttribute.MAX_HEALTH, CardOperation.ADD, 1.05)
 @AttributesModifier(CardAttribute.ATTACK_DAMAGE, CardOperation.ADD, 1.045)
-@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.055)
+@AttributesModifier(CardAttribute.DEFENSE, CardOperation.ADD, 1.07)
 class IMercenary(data: ICard) : IBattleCard<Pillager>(data) {
 
     override fun init() {
