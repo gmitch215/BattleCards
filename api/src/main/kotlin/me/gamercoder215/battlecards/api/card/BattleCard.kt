@@ -149,6 +149,13 @@ interface BattleCard<T : LivingEntity> {
          */
         get() = data.type
 
+    val cardClass: BattleCardClass
+        /**
+         * Fetches the BattleCardClass of this BattleCard.
+         * @return [BattleCardClass]
+         */
+        get() = data.type.cardClass
+
     val name: String
         /**
          * Fetches the name of this BattleCard.

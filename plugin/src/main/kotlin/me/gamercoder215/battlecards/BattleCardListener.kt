@@ -269,6 +269,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         if (entity.isCard) run {
             val card = entity.card ?: return@run
+            event.damage *= damager.card?.cardClass?.modifier(card.cardClass) ?: 1.0
 
             val defensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Defensive::class.java) }
             if (defensive.isNotEmpty())
@@ -333,6 +334,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         if (damager.isCard) run {
             val card = damager.card ?: return@run
+            event.damage /= entity.card?.cardClass?.modifier(card.cardClass) ?: 1.0
 
             if (entity.isMinion && entity.cardByMinion == card) {
                 event.isCancelled = true

@@ -16,23 +16,9 @@ import org.bukkit.Material
 import org.bukkit.entity.Creature
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.ChatPaginator
-import kotlin.collections.associate
-import kotlin.collections.associateWith
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.filter
-import kotlin.collections.isNotEmpty
-import kotlin.collections.iterator
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mapOf
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.plus
 import kotlin.collections.set
-import kotlin.collections.toList
-import kotlin.collections.toMap
-import kotlin.collections.toMutableMap
 
 object CardGenerator {
 
@@ -92,7 +78,7 @@ object CardGenerator {
 
                 val cardL = mutableListOf<String>()
                 cardL.addAll(listOf(
-                    card.rarity.toString(),
+                    "${card.rarity} ${card.cardClass}",
                     " ",
                     "$YELLOW${format(get("constants.level"), card.level)} $WHITE| $GOLD${format(get("constants.card.deploy"), card.deployTime)}",
                     if (card.isMaxed) "$AQUA$BOLD${get("constants.maxed")}" else "$GRAY${createLine(card).replace("=", "$GREEN=$GRAY")} $WHITE| $DARK_AQUA${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
