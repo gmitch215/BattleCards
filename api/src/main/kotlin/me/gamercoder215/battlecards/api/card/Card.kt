@@ -215,7 +215,7 @@ interface Card : ConfigurationSerializable {
                     displayName = String.format(BattleConfig.config.locale, BattleConfig.config.get("constants.card"), "${rarity.color}$name")
 
                     if (rarity != Rarity.BASIC)
-                        lore = listOf(rarity.toString(), " ") + ChatPaginator.wordWrap("\"${BattleConfig.config.get("card.${this@Card.type.name.lowercase()}")}\"", 30).map { s -> "${ChatColor.YELLOW}$s" } +
+                        lore = listOf("$rarity${if (cardClass != BattleCardClass.BASIC) " $cardClass" else ""}", " ") + ChatPaginator.wordWrap("\"${BattleConfig.config.get("card.${this@Card.type.name.lowercase()}")}\"", 30).map { s -> "${ChatColor.YELLOW}$s" } +
                                 listOf(" ") +
                                 ChatPaginator.wordWrap(BattleConfig.config.get("card.${this@Card.type.name.lowercase()}.desc"), 30).map { s -> "${ChatColor.GRAY}$s" }
 
