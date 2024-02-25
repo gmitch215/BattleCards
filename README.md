@@ -32,6 +32,20 @@ This plugin is built in Kotlin. While the plugin will automatically download the
 
 ## 📓Changelog
 
+🧙‍♂️ **v1.1.1** - February 25, 2024
+- **Card Weaknesses & Strengths**
+  - Cards now have Classes (Melee, Ranged, Tank, Group, Magic)
+  - These are all 2x or 3x stronger/weaker against one another 
+- **Balance Changes**
+  - Buff Mercenary, Frost Bear Defense
+- **Messages Revamp**
+  - New Message Handlers & Implementation for Bukkit, Spigot & Paper/Paper Forks
+  - Configurable & Information in `config.yml`
+- 2 New Card Quests
+  - `TITAN` and `GOLIATH` 
+- Expose BattleStatistics#rawStatistics
+- Optimization & Other Code Cleanup
+
 📖 **v1.1.0** - January 2, 2024 | Generation II
 - 3 new Generation II Cards
 - New Card Equipment
