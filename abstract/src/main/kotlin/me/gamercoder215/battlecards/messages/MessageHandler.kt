@@ -3,6 +3,7 @@ package me.gamercoder215.battlecards.messages
 import com.google.common.collect.ImmutableList
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
+import me.gamercoder215.battlecards.util.isDisabled
 import org.bukkit.ChatColor.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.EntityType
@@ -66,13 +67,13 @@ fun dateFormat(date: Date?, time: Boolean = false): String? {
 
 // Statics
 
-val prefix = get("plugin.prefix")
+val prefix = "${get("plugin.prefix")} "
 
 val EXAMPLE_COLORS = arrayOf(YELLOW, LIGHT_PURPLE, BLUE, DARK_PURPLE)
 
 val ERROR_EXAMPLES = mapOf<String, () -> Any>(
     "error.argument.basic_type" to any({ BattleConfig.getValidBasicCards() }, def = "wither_skeleton"),
-    "error.argument.card" to any({ BattleCardType.entries }, def = "witherman"),
+    "error.argument.card" to any({ BattleCardType.entries.filter { !it.isDisabled && it != BattleCardType.BASIC } }, def = "witherman"),
     "error.argument.entity_type" to any({ EntityType.entries }, def = "pig"),
 ).mapValues { (_, v) -> { v().toString() } }
 
