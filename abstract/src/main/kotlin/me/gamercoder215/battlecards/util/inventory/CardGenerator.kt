@@ -1,6 +1,7 @@
 package me.gamercoder215.battlecards.util.inventory
 
 import me.gamercoder215.battlecards.api.BattleConfig
+import me.gamercoder215.battlecards.api.card.BattleCardClass
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.Card
 import me.gamercoder215.battlecards.impl.*
@@ -78,7 +79,7 @@ object CardGenerator {
 
                 val cardL = mutableListOf<String>()
                 cardL.addAll(listOf(
-                    "${card.rarity} ${card.cardClass}",
+                    "${card.rarity}${if (card.cardClass != BattleCardClass.BASIC) " ${card.cardClass}" else ""}",
                     " ",
                     "$YELLOW${format(get("constants.level"), card.level)} $WHITE| $GOLD${format(get("constants.card.deploy"), card.deployTime)}",
                     if (card.isMaxed) "$AQUA$BOLD${get("constants.maxed")}" else "$GRAY${createLine(card).replace("=", "$GREEN=$GRAY")} $WHITE| $DARK_AQUA${format(get("constants.card.next_level"), card.remainingExperience.withSuffix())}"
