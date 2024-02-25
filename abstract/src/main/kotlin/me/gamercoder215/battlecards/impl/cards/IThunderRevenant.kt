@@ -49,7 +49,7 @@ class IThunderRevenant(data: ICard) : IBattleCard<Zombie>(data) {
         val target = event.entity as? LivingEntity ?: return
 
         target.world.strikeLightning(target.location)
-        event.damage += if (event.damager.isCard) statistics.attackDamage * 1.15 else r.nextDouble(5.0, 20.0)
+        event.damage += if (event.damager.isCard) statistics.attackDamage * 1.15 else (r.nextDouble(15.0) + 5.0)
         target.fireTicks += 20 * 4
     }
 

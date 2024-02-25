@@ -28,7 +28,7 @@ class ISilverfishHive(data: ICard) : IBattleCard<Silverfish>(data) {
     private fun hivemind() {
         if (minions.size >= 50) return
 
-        val count = r.nextInt(4, 11)
+        val count = r.nextInt(7) + 4
         for (i in 0 until count)
             minion(Silverfish::class.java) {
                 maxHealth = statistics.maxHealth / 2

@@ -19,7 +19,7 @@ class ISpiderHive(data: ICard) : IBattleCard<CaveSpider>(data) {
     private fun colony() {
         if (minions.size >= 50) return
 
-        val count = r.nextInt(3, 8)
+        val count = r.nextInt(5) + 3
 
         for (i in 0 until count)
             minion(CaveSpider::class.java) {
