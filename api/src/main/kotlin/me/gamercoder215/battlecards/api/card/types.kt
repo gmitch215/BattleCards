@@ -344,7 +344,7 @@ enum class BattleCardClass(
      */
     val color: ChatColor,
 
-    vararg mods: Pair<Int, Double>,
+    private vararg val mods0: Pair<Int, Double>,
 ) {
 
     /**
@@ -357,48 +357,51 @@ enum class BattleCardClass(
      * Represents a Melee Class.
      */
     MELEE(ChatColor.RED,
-        1 to 2.0,
-        3 to 3.0),
+        2 to 2.0,
+        4 to 3.0),
 
     /**
      * Represents a Ranged Class.
      */
     RANGED(ChatColor.GREEN,
-        3 to 2.0,
-        2 to 3.0),
+        4 to 2.0,
+        3 to 3.0),
 
     /**
      * Represents a Magic Class.
      */
     MAGIC(ChatColor.BLUE,
-        4 to 2.0,
-        0 to 3.0),
+        5 to 2.0,
+        1 to 3.0),
 
     /**
      * Represents a Tank Class.
      */
-    TANK(ChatColor.YELLOW,
-        2 to 2.0,
-        4 to 3.0),
+    TANK(ChatColor.DARK_AQUA,
+        3 to 2.0,
+        5 to 3.0),
 
     /**
      * Represents a Support Class.
      */
-    GROUP(ChatColor.AQUA,
-        0 to 2.0,
-        1 to 3.0)
+    GROUP(ChatColor.DARK_PURPLE,
+        1 to 2.0,
+        2 to 3.0)
 
     ;
 
-    /**
-     * The classes this card is strong against
-     */
-    val classes: Set<BattleCardClass> = mods.map { BattleCardClass.entries[it.first] }.toSet()
 
     /**
-     * The modifiers for this class, mapped to the class it is strong against. These modifiers will always be greater than `1`.
+     * The classes this card is weak against, mapped to its modifier
      */
-    val mods: Map<BattleCardClass, Double> = mods.associate { BattleCardClass.entries[it.first] to it.second }
+    val weaknesses: Map<BattleCardClass, Double>
+        get() = BattleCardClass.entries.filter { it.strengths.contains(this) }.associateWith { it.strengths[this]!! }
+
+    /**
+     * The classes this card is strong against, mapped to its modifier
+     */
+    val strengths: Map<BattleCardClass, Double>
+        get() = mods0.associate { BattleCardClass.entries[it.first] to it.second }
 
     /**
      * Gets the modifier for this class against another class.
@@ -406,9 +409,9 @@ enum class BattleCardClass(
      * @return The modifier, or `1` if not found
      */
     fun modifier(other: BattleCardClass): @Range(from = 1L, to = Int.MAX_VALUE.toLong()) Double {
-        return mods[other] ?: 1.0
+        return this.strengths[other] ?: 1.0
     }
 
-    override fun toString(): String = "$color${ChatColor.BOLD}${ChatColor.ITALIC}$name"
+    override fun toString(): String = "$color${ChatColor.BOLD}$name"
 
 }
