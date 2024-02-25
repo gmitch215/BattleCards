@@ -155,7 +155,7 @@ object Generator {
         val inv: BattleInventory
 
         if (quest == null) {
-            inv = genGUI(27, get("menu.card_quests"))
+            inv = genGUI(36, get("menu.card_quests"))
             inv["card"] = card
             inv["back"] = Consumer { p: Player -> p.openInventory(generateCardInfo(card)) }
 
@@ -176,7 +176,7 @@ object Generator {
                     nbt["quest"] = q.ordinal
                 })
 
-            inv[22] = Items.back()
+            inv[29] = Items.back()
         } else {
             val count = ceil(quest.maxLevel / progressString.size.toDouble()).toInt()
             val invs = mutableListOf<BattleInventory>()
@@ -502,7 +502,25 @@ object Generator {
             }
         }
 
-        inv[31] = ItemStack(BattleMaterial.CRAFTING_TABLE.find()).apply {
+        inv[21] = ItemStack(Material.DIAMOND_SWORD).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "$AQUA${get("menu.card_catalogue.strengths")}"
+                lore = type.cardClass.strengths.map { "$GREEN- ${it.key} $GREEN(x${format("%,.0f", it.value)})" }
+
+                addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+            }
+        }
+
+        inv[23] = ItemStack(BattleMaterial.WOODEN_SWORD.find()).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "$GRAY${get("menu.card_catalogue.weaknesses")}"
+                lore = type.cardClass.weaknesses.map { "$RED- ${it.key} $RED(x${format("%,.0f", it.value)})" }
+
+                addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+            }
+        }
+
+        inv[22] = ItemStack(BattleMaterial.CRAFTING_TABLE.find()).apply {
             itemMeta = itemMeta.apply {
                 displayName = "$GOLD${get("menu.card_catalogue.view_crafting_recipe")}"
             }
