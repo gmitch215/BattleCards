@@ -4,14 +4,13 @@ import com.google.common.collect.ImmutableMap
 import me.gamercoder215.battlecards.api.BattleConfig
 import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.impl.ICard
+import me.gamercoder215.battlecards.messages.sendError
+import me.gamercoder215.battlecards.messages.sendSuccess
 import me.gamercoder215.battlecards.util.*
-import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
 import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.wrapper.Wrapper
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
-import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -44,32 +43,28 @@ interface CommandWrapper {
             .put("bquery", "/bquery <card>")
             .build()
 
-        fun getError(key: String): String = "${get("plugin.prefix")} ${ChatColor.RED}${get(key)}"
-
-        fun getSuccess(key: String): String = "${get("plugin.prefix")} ${ChatColor.GREEN}${get(key)}"
-
         private val COOLDOWN: MutableMap<String, MutableMap<UUID, Long>> = mutableMapOf()
     }
 
     fun reloadPlugin(sender: CommandSender) {
-        sender.sendMessage(getSuccess("command.reload.reloading"))
+        sender.sendSuccess("command.reload.reloading")
 
         val plugin = BattleConfig.plugin
 
         plugin.reloadConfig()
         BattleConfig.loadConfig()
         Wrapper.getCommandWrapper()
-        sender.sendMessage(getSuccess("command.reload.reloaded"))
+        sender.sendSuccess("command.reload.reloaded")
     }
 
     fun cardInfo(p: Player) {
         if (!p.hasPermission("battlecards.user.info"))
-            return p.sendMessage(getError("error.permission"))
+            return p.sendError("error.permission")
 
         if (p.inventory.itemInHand == null)
-            return p.sendMessage(getError("error.argument.item.held"))
+            return p.sendError("error.argument.item.held")
 
-        val card = p.cardInHand ?: return p.sendMessage(getError("error.argument.item.held.card"))
+        val card = p.cardInHand ?: return p.sendError("error.argument.item.held.card")
         card.statistics.checkQuestCompletions()
         p.inventory.itemInHand = CardGenerator.toItem(card)
 
@@ -79,29 +74,29 @@ interface CommandWrapper {
     
     fun createCard(p: Player, type: BattleCardType, basicType: EntityType? = null) {
         if (!p.hasPermission("battlecards.admin.card.create"))
-            return p.sendMessage(getError("error.permission.argument"))
+            return p.sendError("error.permission.argument")
 
         if (type.isDisabled)
-            return p.sendMessage(getError("error.card.disabled"))
+            return p.sendError("error.card.disabled")
 
         if (p.inventory.firstEmpty() == -1)
-            return p.sendMessage(getError("error.inventory.full"))
+            return p.sendError("error.inventory.full")
 
         if (type == BattleCardType.BASIC)
             if (basicType == null || !BattleConfig.getValidBasicCards().contains(basicType))
-                return p.sendMessage(getError("error.argument.basic_type"))
+                return p.sendError("error.argument.basic_type")
 
         p.inventory.addItem(CardGenerator.toItem(type().apply { this as ICard; storedEntityType = basicType } ))
-        p.sendMessage(format(getSuccess("success.card.created"), type.formatName()))
+        p.sendSuccess("success.card.created", type.formatName())
         p.playSuccess()
     }
 
     fun queryCard(p: Player, type: BattleCardType) {
         if (!p.hasPermission("battlecards.user.query"))
-            return p.sendMessage(getError("error.permission.argument"))
+            return p.sendError("error.permission.argument")
 
         if (type.isDisabled)
-            return p.sendMessage(getError("error.card.disabled"))
+            return p.sendError("error.card.disabled")
 
         p.openInventory(Generator.generateCardInfo(type()))
         p.playSuccess()
@@ -109,9 +104,9 @@ interface CommandWrapper {
 
     fun editCard(p: Player, action: (ICard) -> Unit) {
         if (!p.hasPermission("battlecards.admin.card.edit"))
-            return p.sendMessage(getError("error.permission.argument"))
+            return p.sendError("error.permission.argument")
 
-        val card = p.cardInHand ?: return p.sendMessage(getError("error.argument.item.held.card"))
+        val card = p.cardInHand ?: return p.sendError("error.argument.item.held.card")
 
         p.inventory.itemInHand = CardGenerator.toItem(
             card.apply { action(this) }
@@ -121,16 +116,16 @@ interface CommandWrapper {
 
     fun catalogue(p: Player, input: String) {
         if (!p.hasPermission("battlecards.user.query"))
-            return p.sendMessage(getError("error.permission.argument"))
+            return p.sendError("error.permission.argument")
 
         if (BattleCardType.entries.map { it.name.lowercase() }.contains(input.lowercase())) {
             val type = BattleCardType.valueOf(input.uppercase())
 
             if (type.isDisabled)
-                return p.sendMessage(getError("error.card.disabled"))
+                return p.sendError("error.card.disabled")
 
             if (type == BattleCardType.BASIC)
-                return p.sendMessage(getError("error.argument.basic_type"))
+                return p.sendError("error.argument.basic_type")
 
             p.openInventory(Generator.generateCatalogue(type()))
         }
@@ -146,12 +141,12 @@ interface CommandWrapper {
 
     fun giveItem(p: Player, id: String) {
         if (!p.hasPermission("battlecards.admin.items"))
-            return p.sendMessage(getError("error.permission.argument"))
+            return p.sendError("error.permission.argument")
 
-        val item = Items.PUBLIC_ITEMS[id] ?: return p.sendMessage(getError("error.argument.item"))
+        val item = Items.PUBLIC_ITEMS[id] ?: return p.sendError("error.argument.item")
 
         p.inventory.addItem(item)
-        p.sendMessage(getSuccess("success.item.given"))
+        p.sendSuccess("success.item.given")
         p.playSuccess()
     }
 
@@ -169,7 +164,7 @@ interface CommandWrapper {
 
     fun despawnCards(p: Player) {
         if (cooldown("despawn", p) > System.currentTimeMillis() && !p.hasPermission("battlecards.admin.cooldown"))
-            return p.sendMessage(format(getError("error.cooldown"), (cooldown("despawn", p) - System.currentTimeMillis()).formatTime()))
+            return p.sendError("error.cooldown", (cooldown("despawn", p) - System.currentTimeMillis()).formatTime())
 
         if (!p.hasPermission("battlecards.admin.cooldown"))
             cooldown("despawn", p, 1000 * 30)

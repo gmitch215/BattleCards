@@ -203,11 +203,18 @@ enum class CardEquipments(
      * Represents a Chainmail Chestplate CardEquipment.
      */
     CHAINMAIL(Material.CHAINMAIL_CHESTPLATE, HISTORICAL,
-        mod(defense = 1.02, speed = 0.915), ability("chainmail", AbilityType.DEFENSIVE, 1.0) { _, event ->
+        mod(defense = 1.03, speed = 0.915), ability("chainmail", AbilityType.DEFENSIVE, 1.0) { _, event ->
             if (event.damager !is Projectile) return@ability
 
             event.damage *= 0.65
         }),
+
+    /**
+     * Represents an End Stone CardEquipment.
+     */
+    MOON_CHEESE(Material.matchMaterial("END_STONE") ?: Material.matchMaterial("ENDER_STONE")!!, HISTORICAL,
+        mod(damage = 0.92, defense = 1.04, knockbackResistance = 1.07)
+    ),
 
     // Mythological
 

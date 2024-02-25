@@ -8,14 +8,14 @@ import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.api.card.item.CardEquipment.Potion
 import me.gamercoder215.battlecards.impl.CardAttribute
 import me.gamercoder215.battlecards.impl.ICard
+import me.gamercoder215.battlecards.messages.format
+import me.gamercoder215.battlecards.messages.get
+import me.gamercoder215.battlecards.messages.sendError
 import me.gamercoder215.battlecards.util.*
-import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.util.inventory.CardGenerator.generationColors
 import me.gamercoder215.battlecards.wrapper.BattleInventory
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
-import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
-import org.bukkit.ChatColor
+import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
@@ -64,14 +64,14 @@ object Generator {
 
         inv[4] = BattleMaterial.PLAYER_HEAD.findStack().apply {
             itemMeta = (itemMeta as SkullMeta).apply {
-                displayName = "${ChatColor.AQUA}${get("constants.created_by")}"
+                displayName = "$AQUA${get("constants.created_by")}"
                 owner = "GamerCoder"
             }
         }
 
         inv[12] = Items.head("github") {
             itemMeta = itemMeta.apply {
-                displayName = "${ChatColor.DARK_GRAY}GitHub"
+                displayName = "${DARK_GRAY}GitHub"
             }
         }.nbt { nbt ->
             nbt.id = "plugin_info:link"
@@ -80,7 +80,7 @@ object Generator {
 
         inv[14] = Items.head("discord") {
             itemMeta = itemMeta.apply {
-                displayName = "${ChatColor.BLUE}Discord"
+                displayName = "${BLUE}Discord"
             }
         }.nbt {  nbt ->
             nbt.id = "plugin_info:link"
@@ -113,7 +113,7 @@ object Generator {
             if (card.level >= 10)
                 ItemStack(Material.DIAMOND_SWORD).apply {
                     itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.AQUA}${get("menu.card_equipment")}"
+                        displayName = "$AQUA${get("menu.card_equipment")}"
 
                         addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                     }
@@ -127,7 +127,7 @@ object Generator {
             if (card.level >= floor(card.maxCardLevel / 2.0))
                 ItemStack(Material.CHEST).apply {
                     itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.GOLD}${get("menu.card_quests")}"
+                        displayName = "$GOLD${get("menu.card_quests")}"
                     }
                 }.nbt { nbt ->
                     nbt.id = "card:info_item"
@@ -138,7 +138,7 @@ object Generator {
         if (card.type != BattleCardType.BASIC)
             inv[23] = ItemStack(Material.BOOK).apply {
                 itemMeta = itemMeta.apply {
-                    displayName = "${ChatColor.YELLOW}${get("menu.card_catalogue.view_in_catalogue")}"
+                    displayName = "$YELLOW${get("menu.card_catalogue.view_in_catalogue")}"
                 }
             }.nbt { nbt ->
                 nbt.id = "card:info_item"
@@ -155,18 +155,18 @@ object Generator {
         val inv: BattleInventory
 
         if (quest == null) {
-            inv = genGUI(27, get("menu.card_quests"))
+            inv = genGUI(36, get("menu.card_quests"))
             inv["card"] = card
             inv["back"] = Consumer { p: Player -> p.openInventory(generateCardInfo(card)) }
 
             for (q in CardQuest.entries)
                 inv.addItem(ItemStack(q.icon).apply {
                     itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.GOLD}${get("menu.card_quests.${q.name.lowercase()}")}"
+                        displayName = "$GOLD${get("menu.card_quests.${q.name.lowercase()}")}"
 
                         if (card.getQuestLevel(q) > 0)
                             lore = listOf(
-                                "${ChatColor.AQUA}${format(get("constants.level"), card.getQuestLevel(q).formatInt())}"
+                                "$AQUA${format(get("constants.level"), card.getQuestLevel(q).formatInt())}"
                             )
 
                         addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)
@@ -176,7 +176,7 @@ object Generator {
                     nbt["quest"] = q.ordinal
                 })
 
-            inv[22] = Items.back()
+            inv[29] = Items.back()
         } else {
             val count = ceil(quest.maxLevel / progressString.size.toDouble()).toInt()
             val invs = mutableListOf<BattleInventory>()
@@ -192,11 +192,11 @@ object Generator {
                 gui[4] = card.icon
                 gui[9] = ItemStack(quest.icon).apply {
                     itemMeta = itemMeta.apply {
-                        displayName = "${ChatColor.GOLD}${get("menu.card_quests.${quest.name.lowercase()}")}"
+                        displayName = "$GOLD${get("menu.card_quests.${quest.name.lowercase()}")}"
 
                         lore = listOf(
-                            "${ChatColor.AQUA}${format(get("constants.level"), card.getQuestLevel(quest).formatInt())}",
-                            "${ChatColor.YELLOW}${format(get("constants.total_experience_reward"), quest.getTotalExperience(card).withSuffix())}"
+                            "$AQUA${format(get("constants.level"), card.getQuestLevel(quest).formatInt())}",
+                            "$YELLOW${format(get("constants.total_experience_reward"), quest.getTotalExperience(card).withSuffix())}"
                         )
 
                         addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS)
@@ -221,15 +221,15 @@ object Generator {
                         else -> BattleMaterial.RED_STAINED_GLASS_PANE.findStack()
                     }.apply {
                         val unlocked = lvl <= currentLvl
-                        val color = if (unlocked) ChatColor.GREEN else ChatColor.AQUA
+                        val color = if (unlocked) GREEN else AQUA
 
                         itemMeta = itemMeta.apply {
                             displayName = "$color${format(get("constants.level"), lvl.formatInt())}"
                             lore = listOf(
-                                "${ChatColor.YELLOW}${quest.getLocalizedProgress(card, lvl)}",
+                                "$YELLOW${quest.getLocalizedProgress(card, lvl)}",
                                 " ",
-                                "${ChatColor.DARK_GREEN}${format(get("constants.completed"), "${quest.getProgressPercentage(card, lvl).times(100).format()}%")}",
-                                "${if (unlocked) ChatColor.DARK_AQUA else ChatColor.BLUE}${quest.getExperienceReward(card, lvl).withSuffix()} XP"
+                                "$DARK_GREEN${format(get("constants.completed"), "${quest.getProgressPercentage(card, lvl).times(100).format()}%")}",
+                                "${if (unlocked) DARK_AQUA else BLUE}${quest.getExperienceReward(card, lvl).withSuffix()} XP"
                             )
 
                             if (unlocked) addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
@@ -336,7 +336,7 @@ object Generator {
             }
 
             if (sent.get())
-                p.sendMessage(getError("error.card.equipment.input_1"))
+                p.sendError("error.card.equipment.input_1")
         }
 
         inv["card"] = card
@@ -369,7 +369,7 @@ object Generator {
 
     fun generateEffectiveModifiers(equipment: Iterable<CardEquipment>) = ItemStack(BattleMaterial.MAP.find()).apply {
         itemMeta = itemMeta.apply {
-            displayName = "${ChatColor.BLUE}${get("constants.effective_modifiers")}"
+            displayName = "$BLUE${get("constants.effective_modifiers")}"
 
             val lore = mutableListOf<String>()
             val modifiers = equipment.map { it.mods }.run {
@@ -385,28 +385,17 @@ object Generator {
             if (!modifiers.all { it.value == 0.0 })
                 lore.add(" ")
             else
-                lore.add("${ChatColor.WHITE}${get("constants.none")}")
+                lore.add("$WHITE${get("constants.none")}")
 
             for ((attribute, mod) in modifiers) {
                 if (mod == 0.0) continue
 
                 val modS = mod.times(100).run {
-                    if (this < 0) "${ChatColor.RED}${this.format()}%"
-                    else "${ChatColor.GREEN}+${this.format()}%"
+                    if (this < 0) "$RED${this.format()}%"
+                    else "$GREEN+${this.format()}%"
                 }
 
-                val str = "constants.card_equipment.${
-                    when (attribute) {
-                        CardAttribute.MAX_HEALTH -> "health"
-                        CardAttribute.ATTACK_DAMAGE -> "damage"
-                        CardAttribute.DEFENSE -> "defense"
-                        CardAttribute.SPEED -> "speed"
-                        CardAttribute.KNOCKBACK_RESISTANCE -> "knockback_resistance"
-                        else -> throw AssertionError("Invalid CardAttribute")
-                    }
-                }"
-
-                lore.add(format(get(str), modS))
+                lore.add(format(get(attribute.displayName), modS))
             }
 
             val effects = equipment.map { it.effects }.flatten().run {
@@ -449,27 +438,27 @@ object Generator {
             itemMeta = itemMeta.apply {
                 displayName = "${generationColors[type.generation]}${format(get("constants.card.generation"), type.generation.toRoman())}"
                 lore = listOf(
-                    "${ChatColor.GOLD}${get("constants.card.rideable")} ${if (rideable) "${ChatColor.GREEN}${get("constants.yes")}" else "${ChatColor.RED}${get("constants.no")}" }"
+                    "$GOLD${get("constants.card.rideable")} ${if (rideable) "$GREEN${get("constants.yes")}" else "$RED${get("constants.no")}" }"
                 )
             }
         }
 
         val attributes = mapOf(
-            "health" to (ChatColor.RED to card.statistics.maxHealth),
-            "damage" to (ChatColor.DARK_RED to card.statistics.attackDamage * 2),
-            "defense" to (ChatColor.GREEN to card.statistics.defense * 1.75),
-            "speed" to (ChatColor.DARK_AQUA to card.statistics.speed.pow(500.0)),
-            "knockback_resistance" to (ChatColor.BLUE to card.statistics.knockbackResistance)
+            "health" to (RED to card.statistics.maxHealth),
+            "damage" to (DARK_RED to card.statistics.attackDamage * 2),
+            "defense" to (GREEN to card.statistics.defense * 1.75),
+            "speed" to (DARK_AQUA to card.statistics.speed.pow(500.0)),
+            "knockback_resistance" to (BLUE to card.statistics.knockbackResistance)
         )
         val best = attributes.maxBy { it.value.second }
         inv[13] = ItemStack(Material.IRON_HELMET).apply {
             itemMeta = itemMeta.apply {
-                displayName = "${ChatColor.YELLOW}${get("constants.card.attr.best")}"
+                displayName = "$YELLOW${get("constants.card.attr.best")}"
                 lore = mutableListOf(
                     "${best.value.first}${get("constants.card.attr.${best.key}")}",
                     " "
                 ).apply {
-                    addAll(ChatPaginator.wordWrap(get("constants.card.attr.${best.key}.desc"), 30).map { "${ChatColor.GRAY}$it" })
+                    addAll(ChatPaginator.wordWrap(get("constants.card.attr.${best.key}.desc"), 30).map { "$GRAY$it" })
                 }
 
                 addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
@@ -496,26 +485,44 @@ object Generator {
 
         inv[14] = ItemStack(Material.BOOK).apply {
             itemMeta = itemMeta.apply {
-                displayName = "${ChatColor.LIGHT_PURPLE}${get("constants.card.to_max")}"
+                displayName = "$LIGHT_PURPLE${get("constants.card.to_max")}"
                 lore = listOf(
-                    "${ChatColor.DARK_GREEN}-> ${maxCardExperience.withSuffix()} XP",
+                    "$DARK_GREEN-> ${maxCardExperience.withSuffix()} XP",
                     " ",
-                    "${ChatColor.DARK_GREEN}${format(get("constants.card.to_max.zombies"), zombies)}",
-                    "${ChatColor.DARK_PURPLE}${format(get("constants.card.to_max.endermen"), endermen)}",
-                    "${ChatColor.DARK_GRAY}${format(get("constants.card.to_max.withers"), withers)}",
-                    "${ChatColor.BLUE}${format(get("constants.card.to_max.wardens"), wardens)}",
-                    "${ChatColor.RED}${format(get("constants.card.to_max.passive"), passive)}",
+                    "$DARK_GREEN${format(get("constants.card.to_max.zombies"), zombies)}",
+                    "$DARK_PURPLE${format(get("constants.card.to_max.endermen"), endermen)}",
+                    "$DARK_GRAY${format(get("constants.card.to_max.withers"), withers)}",
+                    "$BLUE${format(get("constants.card.to_max.wardens"), wardens)}",
+                    "$RED${format(get("constants.card.to_max.passive"), passive)}",
                     " ",
-                    "${ChatColor.GOLD}${format(get("constants.card.to_max.small_experience_books"), smallBook)}",
-                    "${ChatColor.GOLD}${format(get("constants.card.to_max.large_experience_books"), largeBook)}",
-                    "${ChatColor.GOLD}${format(get("constants.card.to_max.huge_experience_books"), hugeBook)}"
+                    "$GOLD${format(get("constants.card.to_max.small_experience_books"), smallBook)}",
+                    "$GOLD${format(get("constants.card.to_max.large_experience_books"), largeBook)}",
+                    "$GOLD${format(get("constants.card.to_max.huge_experience_books"), hugeBook)}"
                 )
             }
         }
 
-        inv[31] = ItemStack(BattleMaterial.CRAFTING_TABLE.find()).apply {
+        inv[21] = ItemStack(Material.DIAMOND_SWORD).apply {
             itemMeta = itemMeta.apply {
-                displayName = "${ChatColor.GOLD}${get("menu.card_catalogue.view_crafting_recipe")}"
+                displayName = "$AQUA${get("menu.card_catalogue.strengths")}"
+                lore = type.cardClass.strengths.map { "$GREEN- ${it.key} $GREEN(x${format("%,.0f", it.value)})" }
+
+                addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+            }
+        }
+
+        inv[23] = ItemStack(BattleMaterial.WOODEN_SWORD.find()).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "$GRAY${get("menu.card_catalogue.weaknesses")}"
+                lore = type.cardClass.weaknesses.map { "$RED- ${it.key} $RED(x${format("%,.0f", it.value)})" }
+
+                addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+            }
+        }
+
+        inv[22] = ItemStack(BattleMaterial.CRAFTING_TABLE.find()).apply {
+            itemMeta = itemMeta.apply {
+                displayName = "$GOLD${get("menu.card_catalogue.view_crafting_recipe")}"
             }
         }.nbt { nbt ->
             nbt.id = "card_catalogue:crafting_recipe"

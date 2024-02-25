@@ -8,9 +8,9 @@ import me.gamercoder215.battlecards.impl.IBattleStatistics
 import me.gamercoder215.battlecards.impl.ICard
 import me.gamercoder215.battlecards.impl.Passive
 import me.gamercoder215.battlecards.impl.UnlockedAt
+import me.gamercoder215.battlecards.messages.sendError
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
-import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -265,7 +265,7 @@ abstract class IBattleCard<T : Creature>(
         currentItem = data.itemStack
 
         if (p.inventory.firstEmpty() == -1) {
-            p.sendMessage(getError("error.inventory.full.card_dropped"))
+            p.sendError("error.inventory.full.card_dropped")
             p.world.dropItemNaturally(p.location, currentItem)
         } else
             p.inventory.addItem(currentItem)

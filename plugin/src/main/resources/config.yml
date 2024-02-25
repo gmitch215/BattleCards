@@ -16,12 +16,22 @@ Language: en
 # Plugin Functionality Configuration
 Functionality:
 
-  # The Command Wrapper Version to use. Requires a restart in order to load properly.
+  # The Command Wrapper Version to use. **Requires a restart in order to load properly.**
   # Available Options:
   # - auto | Automatically detect the Command Wrapper Version
   # - 1 | Use Command Wrapper V1 (1.8+)
   # - 2 | Use Command Wrapper V2 (1.13.2+)
   CommandVersion: auto
+
+  # Overrides the current Message Handler. **Requires a restart in order to load properly.**
+  #
+  # Use BUKKIT for the Bukkit Message Handler (basic strings), used for Bukkit Servers
+  # Use SPIGOT for the Spigot Message Handler (components, hover, some click), used for Spigot Servers
+  # Use ADVENTURE for the Adventure Message Handler (more advanced components, hover, click), used for Paper Servers on 1.16.5+
+  # Use auto to automatically recognize
+  #
+  # If a version is invalid or not supported, it will default to Bukkit
+  MessageHandler: auto
 
 # Card Configuration
 Cards:

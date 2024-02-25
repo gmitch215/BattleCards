@@ -7,14 +7,12 @@ import me.gamercoder215.battlecards.impl.BlockAttachment
 import me.gamercoder215.battlecards.impl.MinionBlockAttachment
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
-import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.util.Vector
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.pow
@@ -117,48 +115,6 @@ object CardUtils {
         }
 
         card.minionAttachments[minion.uniqueId] = map
-    }
-
-    // String Utils / Extensions
-
-    fun format(string: String, vararg args: Any): String {
-        return String.format(BattleConfig.config.locale, string, *args)
-    }
-
-    fun color(s: String): String {
-        val array = s.trim().split("\\s".toRegex()).toTypedArray()
-
-        val list: MutableList<String> = mutableListOf()
-
-        for (i in array.indices) {
-            var str = array[i].replace("&", "${ChatColor.COLOR_CHAR}")
-
-            if (!str.startsWith(ChatColor.COLOR_CHAR)) {
-                val strC = str.replace("[.,!+]".toRegex(), "")
-                str = when {
-                    strC.contains("-") && strC.split("-").size == 2 -> {
-                        val split = strC.split("-").toTypedArray()
-                        "${color(split[0])}-${color(split[1])}"
-                    }
-                    strC.endsWith("%") -> "${ChatColor.DARK_AQUA}$str"
-                    strC.endsWith("s") && str.substringBeforeLast("s").toDoubleOrNull() != null -> "${ChatColor.GOLD}$str"
-                    strC.endsWith("x") && str.substringBeforeLast("x").toDoubleOrNull() != null -> "${ChatColor.RED}$str"
-                    strC.toDoubleOrNull() != null -> "${ChatColor.BLUE}$str"
-                    else -> "${ChatColor.GRAY}$str"
-                }
-            }
-
-            list.add(str)
-        }
-
-        return list.joinToString(" ")
-    }
-
-    fun dateFormat(date: Date?, time: Boolean = false): String? {
-        if (date == null || date.time == 0L) return null
-
-        val pattern = if (time) "MMM dd, yyyy '|' h:mm a" else "MMM dd, yyyy"
-        return SimpleDateFormat(pattern, BattleConfig.config.locale).format(date)
     }
 
     // Other

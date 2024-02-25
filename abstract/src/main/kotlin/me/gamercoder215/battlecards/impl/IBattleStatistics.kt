@@ -16,6 +16,9 @@ class IBattleStatistics(
     override val card: ICard,
 ) : BattleStatistics {
 
+    override val rawStatistics: MutableMap<String, Number>
+        get() = card.stats
+
     override var playerKills: Int
         get() = (card.stats["kills.player"] ?: 0).toInt()
         set(value) {

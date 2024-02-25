@@ -5,13 +5,14 @@ import me.gamercoder215.battlecards.api.card.BattleCardType
 import me.gamercoder215.battlecards.api.card.item.CardEquipment
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.messages.color
+import me.gamercoder215.battlecards.messages.format
+import me.gamercoder215.battlecards.messages.get
 import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
-import me.gamercoder215.battlecards.util.CardUtils.color
-import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.wrapper.NBTWrapper
-import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.get
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
 import org.bukkit.*
+import org.bukkit.ChatColor.*
 import org.bukkit.block.Block
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.*
@@ -106,6 +107,16 @@ inline var IBattleCard<*>.attackType: CardAttackType
 inline val ItemStack.nbt
     get() = NBTWrapper.of(this)
 
+inline val CardAttribute.displayName: String
+    get() = "constants.card_equipment.${when (this) {
+        CardAttribute.MAX_HEALTH -> "health"
+        CardAttribute.ATTACK_DAMAGE -> "damage"
+        CardAttribute.DEFENSE -> "defense"
+        CardAttribute.SPEED -> "speed"
+        CardAttribute.KNOCKBACK_RESISTANCE -> "knockback_resistance"
+        else -> throw AssertionError("Invalid CardAttribute")
+    }}"
+
 val CardEquipment.itemStack: ItemStack
     get() = ItemStack(item).apply {
         itemMeta = itemMeta.apply {
@@ -116,29 +127,20 @@ val CardEquipment.itemStack: ItemStack
                 if (mod == 1.0) continue
 
                 val modS = mod.run { -(1 - this).times(100) }.run {
-                    if (this < 0) "${ChatColor.RED}${this.format()}%"
-                    else "${ChatColor.GREEN}+${this.format()}%"
+                    if (this < 0) "$RED${this.format()}%"
+                    else "$GREEN+${this.format()}%"
                 }
 
-                val str = "constants.card_equipment.${when (attribute) {
-                    CardAttribute.MAX_HEALTH -> "health"
-                    CardAttribute.ATTACK_DAMAGE -> "damage"
-                    CardAttribute.DEFENSE -> "defense"
-                    CardAttribute.SPEED -> "speed"
-                    CardAttribute.KNOCKBACK_RESISTANCE -> "knockback_resistance"
-                    else -> throw AssertionError("Invalid CardAttribute")
-                }}"
-
-                lore.add(format(get(str), modS))
+                lore.add(format(get(attribute.displayName), modS))
             }
 
             if (mods.isNotEmpty()) lore.add(" ")
 
             if (ability != null) {
                 val ability = ability!!
-                lore.add("${ChatColor.WHITE}${get("constants.card_equipment.ability.${ability.name}")}")
+                lore.add("$WHITE${get("constants.card_equipment.ability.${ability.name}")}")
                 lore.addAll(
-                    ChatPaginator.wordWrap(color(get("constants.card_equipment.ability.${ability.name}.desc")), 30).map { s -> "${ChatColor.GRAY}$s" }
+                    ChatPaginator.wordWrap(color(get("constants.card_equipment.ability.${ability.name}.desc")), 30).map { s -> "$GRAY$s" }
                 )
 
                 lore.add(" ")
@@ -151,7 +153,7 @@ val CardEquipment.itemStack: ItemStack
                 lore.add(" ")
             }
 
-            lore.add("${ChatColor.DARK_GRAY}${get("menu.card_equipment")}")
+            lore.add("$DARK_GRAY${get("menu.card_equipment")}")
             this.lore = lore
 
             addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
@@ -288,26 +290,26 @@ inline val Material?.airOrNull: Boolean
 
 val PotionEffectType.prefix: String
     get() = when (this.name.lowercase()) {
-        "absorption", "fire_resistance" -> ChatColor.GOLD
-        "health_boost", "regeneration" -> ChatColor.RED
-        "bad_omen" -> ChatColor.GRAY
-        "blindness", "invisibility", "slow", "weakness" -> ChatColor.DARK_GRAY
-        "conduit_power" -> ChatColor.DARK_AQUA
-        "confusion", "fast_digging", "glowing", "unluck" -> ChatColor.YELLOW
-        "damage_resistance" -> ChatColor.BLUE
-        "darkness", "wither" -> ChatColor.BLACK
+        "absorption", "fire_resistance" -> GOLD
+        "health_boost", "regeneration" -> RED
+        "bad_omen" -> GRAY
+        "blindness", "invisibility", "slow", "weakness" -> DARK_GRAY
+        "conduit_power" -> DARK_AQUA
+        "confusion", "fast_digging", "glowing", "unluck" -> YELLOW
+        "damage_resistance" -> BLUE
+        "darkness", "wither" -> BLACK
         "dolphins_grace" -> "a5d1d3"
-        "harm", "increase_damage" -> ChatColor.DARK_RED
+        "harm", "increase_damage" -> DARK_RED
         "hunger" -> "8b4513"
-        "levitation", "slow_digging", "slow_falling" -> ChatColor.WHITE
-        "luck", "poison" -> ChatColor.DARK_GREEN
-        "night_vision" -> ChatColor.DARK_BLUE
-        "speed", "water_breathing" -> ChatColor.AQUA
-        else -> ChatColor.GREEN
+        "levitation", "slow_digging", "slow_falling" -> WHITE
+        "luck", "poison" -> DARK_GREEN
+        "night_vision" -> DARK_BLUE
+        "speed", "water_breathing" -> AQUA
+        else -> GREEN
     }.run {
         when (this) {
             is ChatColor -> this.toString()
-            is String -> ChatColor.translateAlternateColorCodes('&', "&x&${this[0]}&${this[1]}&${this[2]}&${this[3]}&${this[4]}&${this[5]}")
+            is String -> translateAlternateColorCodes('&', "&x&${this[0]}&${this[1]}&${this[2]}&${this[3]}&${this[4]}&${this[5]}")
             else -> throw UnsupportedOperationException()
         }
     }

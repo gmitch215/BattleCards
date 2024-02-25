@@ -5,9 +5,9 @@ import me.gamercoder215.battlecards.api.events.CardExperienceChangeEvent
 import me.gamercoder215.battlecards.api.events.entity.CardUseAbilityEvent
 import me.gamercoder215.battlecards.impl.*
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.messages.sendError
 import me.gamercoder215.battlecards.util.*
 import me.gamercoder215.battlecards.util.CardUtils.BLOCK_DATA
-import me.gamercoder215.battlecards.util.CardUtils.format
 import me.gamercoder215.battlecards.util.inventory.CONTAINERS_CARD_BLOCKS
 import me.gamercoder215.battlecards.util.inventory.CardGenerator
 import me.gamercoder215.battlecards.util.inventory.Generator
@@ -15,7 +15,6 @@ import me.gamercoder215.battlecards.util.inventory.Items
 import me.gamercoder215.battlecards.vault.VaultChat
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.w
-import me.gamercoder215.battlecards.wrapper.commands.CommandWrapper.Companion.getError
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.GameMode
@@ -98,6 +97,13 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             }
     }
 
+    inline val LivingEntity.healthColor
+        get() = when (health) {
+            in 0.0..(maxHealth / 4) -> ChatColor.RED
+            in (maxHealth / 4)..(maxHealth / 2) -> ChatColor.YELLOW
+            else -> ChatColor.GREEN
+        }
+
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
         val p = event.player
@@ -118,19 +124,19 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
             Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> {
                 val cooldown = !isIgnoredByCooldown(p)
                 if ((uses[p.uniqueId] ?: 0) > plugin.playerCooldownCount && cooldown) {
-                    p.sendMessage(format(getError("error.card.use_limit"), plugin.playerCooldownCount.formatInt(), plugin.playerCooldownTime))
+                    p.sendError("error.card.use_limit", plugin.playerCooldownCount.formatInt(), plugin.playerCooldownTime)
                     p.playFailure()
                     return
                 }
 
                 if (!card.canUse && cooldown) {
-                    p.sendMessage(format(getError("error.card.cooldown"), (card.cooldownTime / 1000).formatInt()))
+                    p.sendError("error.card.cooldown", (card.cooldownTime / 1000).formatInt())
                     p.playFailure()
                     return
                 }
 
                 if (p.spawnedCards.size >= plugin.maxCardsSpawned) {
-                    p.sendMessage(format(getError("error.card.max_spawned"), plugin.maxCardsSpawned.formatInt()))
+                    p.sendError("error.card.max_spawned", plugin.maxCardsSpawned.formatInt())
                     p.playFailure()
                     return
                 }
@@ -200,13 +206,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         if (entity.isCard) run {
             val card = entity.card ?: return@run
-
-            val healthColor = when (entity.health) {
-                in 0.0..(entity.maxHealth / 4) -> ChatColor.RED
-                in (entity.maxHealth / 4)..(entity.maxHealth / 2) -> ChatColor.YELLOW
-                else -> ChatColor.GREEN
-            }
-            card.healthHologram.customName = "$healthColor${entity.health.format()} HP"
+            card.healthHologram.customName = "${entity.healthColor}${entity.health.format()} HP"
 
             val damage = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Damage::class.java) }
             for (m in damage) {
@@ -269,6 +269,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         if (entity.isCard) run {
             val card = entity.card ?: return@run
+            event.damage *= damager.card?.cardClass?.modifier(card.cardClass) ?: 1.0
 
             val defensive = card.javaClass.declaredMethods.filter { it.isAnnotationPresent(Defensive::class.java) }
             if (defensive.isNotEmpty())
@@ -333,6 +334,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
 
         if (damager.isCard) run {
             val card = damager.card ?: return@run
+            event.damage /= entity.card?.cardClass?.modifier(card.cardClass) ?: 1.0
 
             if (entity.isMinion && entity.cardByMinion == card) {
                 event.isCancelled = true
@@ -368,6 +370,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                     else -> card.statistics.entityKills++
                 }
 
+                BattleQuestListener.onKill(card, event)
                 addExperience(card.data, modifier * entity.maxHealth * (if (entity.isCard) plugin.growthKillCardMultiplier else 1.0))
             }
             card.statistics.checkQuestCompletions()
@@ -514,12 +517,7 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
         val entity = event.entity as? Creature ?: return
         val card = entity.card ?: return
 
-        val healthColor = when (entity.health) {
-            in 0.0..(entity.maxHealth / 4) -> ChatColor.RED
-            in (entity.maxHealth / 4)..(entity.maxHealth / 2) -> ChatColor.YELLOW
-            else -> ChatColor.GREEN
-        }
-        card.healthHologram.customName = "$healthColor${entity.health.format()} HP"
+        card.healthHologram.customName = "${entity.healthColor}${entity.health.format()} HP"
     }
 
     @EventHandler
