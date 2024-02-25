@@ -78,7 +78,7 @@ enum class CardQuest(
     GOLIATH(Material.matchMaterial("CROSSBOW") ?: Material.BOW, 40,
         { card, current -> (10.0 + (5 * current) + (7.5 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(5) },
         { card, needed -> (card.statistics.rawStatistics["quests.goliath"]?.toDouble() ?: 0.0) / needed },
-        { card, level -> ((20.0 * level) + (15.0 * level.minus(1))) * 7.0.pow(card.rarity.ordinal) }
+        { card, level -> ((110.0 * level) + (40.0 * level.minus(1))) * 7.0.pow(card.rarity.ordinal) }
     ),
 
     /**
@@ -87,7 +87,7 @@ enum class CardQuest(
     TITAN(Material.ANVIL, 40,
         { card, current -> (75.0 + (25.0 * current) + (150.0 * current.minus(1))).pow(1 + (RARITY_MODIFIER * card.rarity.experienceModifier)).roundTo(100) },
         { card, needed -> (card.statistics.rawStatistics["quests.titan"]?.toDouble() ?: 0.0) / needed },
-        { card, level -> ((20.0 * level) + (15.0 * level.minus(1))) * 7.0.pow(card.rarity.ordinal) }
+        { card, level -> ((110.0 * level) + (40.0 * level.minus(1))) * 7.0.pow(card.rarity.ordinal) }
     )
 
     ;
