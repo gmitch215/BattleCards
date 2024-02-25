@@ -61,7 +61,7 @@ internal class AdventureMessageHandler(plugin: Plugin) : MessageHandler {
                 // Card Names
                 BattleCardType.entries.map { card ->
                     TextReplacementConfig.builder()
-                        .match(Pattern.compile(card.name, Pattern.LITERAL))
+                        .match(Pattern.compile(card.name.replace('_', ' '), Pattern.LITERAL and Pattern.CASE_INSENSITIVE))
                         .replacement(
                             Component.text(card.name)
                                 .hoverEvent(HoverEvent.showText(
@@ -118,22 +118,22 @@ internal class AdventureMessageHandler(plugin: Plugin) : MessageHandler {
     }
 
     override fun send(sender: CommandSender, key: String, vararg args: Any) {
-        val message = map(fromLegacy(format(get(key), args)), key)
+        val message = map(fromLegacy(format(get(key), *args)), key)
         sender.sendMessage(message)
     }
 
     override fun sendMessage(sender: CommandSender, key: String, vararg args: Any) {
-        val message = map(fromLegacy(format(get(key), args)), key)
+        val message = map(fromLegacy(format(get(key), *args)), key)
         sendComponents(sender, prefix, message)
     }
 
     override fun sendError(sender: CommandSender, key: String, vararg args: Any) {
-        val message = map(fromLegacy("$RED${format(get(key), args)}"), key)
+        val message = map(fromLegacy("$RED${format(get(key), *args)}"), key)
         sendComponents(sender, prefix, message)
     }
 
     override fun sendSuccess(sender: CommandSender, key: String, vararg args: Any) {
-        val message = map(fromLegacy("$GREEN${format(get(key), args)}"), key)
+        val message = map(fromLegacy("$GREEN${format(get(key), *args)}"), key)
         sendComponents(sender, prefix, message)
     }
 
