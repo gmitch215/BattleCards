@@ -29,6 +29,30 @@ internal class CommandWrapperV2(private val plugin: Plugin) : CommandWrapper {
             if (hasHandler()) return@run
             handler = BukkitCommandHandler.create(plugin)
 
+            handler
+                .registerValueResolver(BattleCardType::class.java) { ctx ->
+                    val type: BattleCardType?
+                    try {
+                        type = BattleCardType.valueOf(ctx.popForParameter().uppercase())
+                        if (type.isDisabled || type == BattleCardType.BASIC)
+                            throw TranslatableErrorException("error.argument.card")
+                    } catch (e: IllegalArgumentException) {
+                        throw TranslatableErrorException("error.argument.card")
+                    }
+
+                    return@registerValueResolver type
+                }
+                .registerValueResolver(EntityType::class.java) { ctx ->
+                    val type: EntityType?
+                    try {
+                        type = EntityType.valueOf(ctx.popForParameter().uppercase())
+                    } catch (e: IllegalArgumentException) {
+                        throw TranslatableErrorException("error.argument.entity_type")
+                    }
+
+                    return@registerValueResolver type
+                }
+
             handler.autoCompleter
                 .registerParameterSuggestions(BattleCardType::class.java, SuggestionProvider.of { BattleCardType.entries.filter { it != BattleCardType.BASIC && !it.isDisabled }.map { it.name.lowercase() } })
                 .registerParameterSuggestions(EntityType::class.java, SuggestionProvider.of { EntityType.entries.map { it.name.lowercase() } })
