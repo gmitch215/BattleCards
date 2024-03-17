@@ -78,7 +78,7 @@ class ISuspiciousZombie(data: ICard) : IBattleCard<Zombie>(data) {
         )
 
         effects.random().apply {
-            target.addPotionEffect(PotionEffect(this, 20 * r.nextInt(4, 11), r.nextInt(0, 2 + (level / 15).coerceAtMost(3)), true))
+            target.addPotionEffect(PotionEffect(this, 20 * (r.nextInt(7) + 4), r.nextInt(2 + (level / 15).coerceAtMost(3)), true))
         }
     }
 

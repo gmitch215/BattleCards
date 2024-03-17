@@ -57,7 +57,7 @@ class IKnight(data: ICard) : IBattleCard<Vindicator>(data) {
         horse.style = Horse.Style.BLACK_DOTS
         horse.color = Horse.Color.entries.random()
         horse.isTamed = true
-        horse.jumpStrength = r.nextDouble(0.3, 0.8)
+        horse.jumpStrength = 0.3 + r.nextDouble()
         horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)!!.baseValue = statistics.speed + 0.06
 
         horse.inventory.saddle = ItemStack(Material.SADDLE)

@@ -153,6 +153,7 @@ jobs:
     needs: test
 
     strategy:
+      fail-fast: false
       matrix:
         version: [ 1.16.5, 1.15.2, 1.14.4, 1.13.2, 1.12.2, 1.11.2, 1.10.2, 1.9.4, 1.8.8 ]
         java-version: [ 8 ]
@@ -174,7 +175,7 @@ jobs:
       - name: Change Permissions
         run: chmod +x ./gradlew
       - name: Build Plugin
-        run: ./gradlew clean assemble
+        run: ./gradlew clean assemble -x dokkaJavadoc
       - name: Test Plugin - ${{ matrix.version }}
         uses: GamerCoder215/TestMC@v1.0.1
         with:

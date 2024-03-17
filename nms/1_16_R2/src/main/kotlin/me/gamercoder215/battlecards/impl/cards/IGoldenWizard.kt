@@ -40,7 +40,7 @@ class IGoldenWizard(data: ICard) : IBattleCard<Illusioner>(data) {
         val target = event.entity as? LivingEntity ?: return
 
         target.world.strikeLightning(event.entity.location)
-        event.damage += r.nextDouble(9.0, 13.5 + (level / 15.0))
+        event.damage += 9.0 + r.nextDouble().times(13.5 + (level / 15.0))
     }
 
     @EventHandler

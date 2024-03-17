@@ -78,7 +78,7 @@ class INecromancer(data: ICard) : IBattleCard<Skeleton>(data) {
         val minionCap = (15 + level).coerceAtMost(30)
         if (minions.size >= minionCap) return
 
-        val count = r.nextInt(2, 5).coerceAtMost( minionCap - minions.size)
+        val count = (2 + r.nextInt(3)).coerceAtMost( minionCap - minions.size)
         for (i in 0 until count)
             minion(Skeleton::class.java) {
                 equipment.helmet = ItemStack(Material.IRON_BLOCK)
