@@ -443,6 +443,10 @@ internal class BattleCardListener(private val plugin: BattleCards) : Listener {
                 if (tCard.p.uniqueId == card.p.uniqueId)
                     event.isCancelled = true
             }
+
+            for (minion in card.minions.filterIsInstance<Creature>())
+                if (minion.target == null && event.target is LivingEntity)
+                    minion.target = event.target as LivingEntity
         }
 
         if (event.entity.cardByMinion != null) {
