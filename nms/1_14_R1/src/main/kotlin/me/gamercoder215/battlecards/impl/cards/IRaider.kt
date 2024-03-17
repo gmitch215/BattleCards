@@ -67,7 +67,7 @@ class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
     @Passive(780, CardOperation.SUBTRACT, 10, min = 300)
     @UnlockedAt(25)
     private fun raidGolems() {
-        val count = r.nextInt(1, 3)
+        val count = r.nextInt(2) + 1
         for (i in 0 until count)
             minion(IronGolem::class.java)
     }
@@ -78,7 +78,7 @@ class IRaider(data: ICard) : IBattleCard<Pillager>(data) {
         if (event.cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) return
 
         val target = event.entity as? LivingEntity ?: return
-        target.world.createExplosion(target.location, r.nextFloat(2.0F, 4.0F), false, true, entity)
+        target.world.createExplosion(target.location, (r.nextFloat() * 2.0F) + 2.0F, false, true, entity)
     }
 
     @CardAbility("card.raider.ability.illusioner", ChatColor.DARK_PURPLE)

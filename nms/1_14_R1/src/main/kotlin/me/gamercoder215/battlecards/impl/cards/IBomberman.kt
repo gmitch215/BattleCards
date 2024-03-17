@@ -91,7 +91,7 @@ class IBomberman(data: ICard) : IBattleCard<Zombie>(data) {
     private fun tntLings() {
         if (entity.target == null) return
 
-        val amount = r.nextInt(1, (1 + (level / 15)).coerceAtMost(6))
+        val amount = (1 + r.nextInt(1 + (level / 15)).coerceAtMost(6))
         for (i in 0..amount)
             minion(Zombie::class.java) {
                 isBaby = true

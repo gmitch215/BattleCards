@@ -90,7 +90,7 @@ class IPhantomRider(data: ICard) : IBattleCard<Stray>(data) {
     @Offensive
     private fun phantomBow(event: EntityDamageByEntityEvent) {
         val target = event.entity as? LivingEntity ?: return
-        target.addPotionEffect(PotionEffect(PotionEffectType.LEVITATION, 20 * r.nextInt(5, 11), r.nextInt(0, 2)))
+        target.addPotionEffect(PotionEffect(PotionEffectType.LEVITATION, 20 * (r.nextInt(6) + 5), r.nextInt(2)))
     }
 
     @EventHandler

@@ -82,7 +82,7 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         villagerExperience = 5
 
                         ingredients = listOf(
-                            ItemStack(Material.EMERALD, r.nextInt(40, 53))
+                            ItemStack(Material.EMERALD, (40..53).random())
                         )
                     }
                 },
@@ -99,7 +99,7 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
 
                         ingredients = listOf(
                             ItemStack(Material.EMERALD, 64),
-                            ItemStack(Material.EMERALD, r.nextInt(52, 65))
+                            ItemStack(Material.EMERALD, (52..65).random())
                         )
                     }
                 },
@@ -129,7 +129,7 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         villagerExperience = 50
 
                         ingredients = listOf(
-                            ItemStack(Material.EMERALD_BLOCK, r.nextInt(18, 24))
+                            ItemStack(Material.EMERALD_BLOCK, (18..24).random())
                         )
                     }
                 }
@@ -214,7 +214,7 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         villagerExperience = 5
 
                         ingredients = listOf(
-                            ItemStack(Material.EMERALD, r.nextInt(31, 47))
+                            ItemStack(Material.EMERALD, (31..47).random())
                         )
                     }
                 },
@@ -224,8 +224,8 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         villagerExperience = 10
 
                         ingredients = listOf(
-                            Items.cardShard(Rarity.COMMON).apply { amount = r.nextInt(3, 6) },
-                            ItemStack(Material.EMERALD, r.nextInt(28, 51))
+                            Items.cardShard(Rarity.COMMON).apply { amount = (3..6).random() },
+                            ItemStack(Material.EMERALD, (28..51).random())
                         )
                     }
                 },
@@ -235,8 +235,8 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         villagerExperience = 25
 
                         ingredients = listOf(
-                            Items.cardShard(Rarity.UNCOMMON).apply { amount = r.nextInt(3, 6) },
-                            ItemStack(Material.EMERALD, r.nextInt(38, 65))
+                            Items.cardShard(Rarity.UNCOMMON).apply { amount = (3..6).random() },
+                            ItemStack(Material.EMERALD, (38..65).random())
                         )
                     }
                 },
@@ -246,7 +246,7 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         villagerExperience = 5
 
                         ingredients = listOf(
-                            ItemStack(Material.EMERALD, r.nextInt(35, 53))
+                            ItemStack(Material.EMERALD, (35..53).random())
                         )
                     }
                 },
@@ -256,8 +256,8 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
                         villagerExperience = 40
 
                         ingredients = listOf(
-                            Items.cardShard(Rarity.RARE).apply { amount = r.nextInt(3, 6) },
-                            ItemStack(Material.EMERALD, r.nextInt(49, 65))
+                            Items.cardShard(Rarity.RARE).apply { amount = (3..6).random() },
+                            ItemStack(Material.EMERALD, (49..65).random())
                         )
                     }
                 },
@@ -268,7 +268,7 @@ internal class CardLoader1_14_R1 : CardLoader, Listener {
 
                         ingredients = listOf(
                             ItemStack(Material.EMERALD, 64),
-                            ItemStack(Material.EMERALD, r.nextInt(31, 54))
+                            ItemStack(Material.EMERALD, (31..54).random())
                         )
                     }
                 }
