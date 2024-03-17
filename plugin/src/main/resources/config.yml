@@ -52,6 +52,10 @@ Cards:
   # This Configuration option does not prevent non-card entities from attacking BattleCards.
   TargetCards: true
 
+  # Whether cards automatically are agressive towards their given targets. Depending on the rest of these settings, this can be a very powerful feature.
+  # This will only affect newly spawned cards. If there are cards that are currently spawned, you need to respawn them for it to take effect.
+  Aggressive: false
+
   # The maximum amount of BattleCards a player can have spawned at once.
   MaxSpawned: 2
 

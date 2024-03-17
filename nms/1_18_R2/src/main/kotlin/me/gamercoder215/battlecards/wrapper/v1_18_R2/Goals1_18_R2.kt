@@ -1,7 +1,10 @@
 package me.gamercoder215.battlecards.wrapper.v1_18_R2
 
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.isMinion
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.goal.Goal
@@ -11,7 +14,6 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer
 import org.bukkit.event.entity.EntityTargetEvent
-import java.util.*
 
 class FollowCardOwner1_18_R2(
     private val creature: Mob,
@@ -158,6 +160,42 @@ internal class CardMasterHurtByTargetGoal1_18_R2(
         creature.setTarget(lastHurtBy, EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true)
         timestamp = nms.lastHurtByMobTimestamp
 
+        super.start()
+    }
+
+}
+
+internal class CardNearestAttackableTargetGoal1_18_R2(entity: PathfinderMob, private val card: IBattleCard<*>) : TargetGoal(entity, false, true) {
+
+    val randomInterval: Int = reducedTickDelay(10)
+    val targetConditions: TargetingConditions = TargetingConditions.forCombat().range(followDistance)
+
+    var target: LivingEntity? = null
+
+    override fun canUse(): Boolean {
+        if (randomInterval > 0 && r.nextInt(randomInterval) != 0) return false
+        findTarget()
+
+        return this.target != null
+    }
+
+    fun findTarget() {
+        this.target = mob.level.getNearestEntity(
+            mob.level.getEntitiesOfClass(LivingEntity::class.java, mob.boundingBox.inflate(followDistance)) {
+                val en = it.bukkitEntity
+                en != card.entity && !en.isMinion(card) && en != card.p
+            },
+            targetConditions,
+            mob,
+            mob.x, mob.eyeY, mob.z
+        )
+    }
+
+    override fun start() {
+        mob.setTarget(target,
+            if ((target is ServerPlayer)) EntityTargetEvent.TargetReason.CLOSEST_PLAYER else EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
+            true
+        )
         super.start()
     }
 

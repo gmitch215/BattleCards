@@ -85,6 +85,8 @@ internal class Wrapper1_10_R1 : Wrapper {
         nms.targetSelector.a(1, CardOwnerHurtByTargetGoal1_10_R1(nms, card))
         nms.targetSelector.a(2, CardOwnerHurtTargetGoal1_10_R1(nms, card))
         nms.targetSelector.a(3, PathfinderGoalHurtByTarget(nms, true))
+        if (BattleConfig.config.isAggressive)
+            nms.targetSelector.a(4, CardNearestAttackableTargetGoal1_10_R1(nms, card))
 
         nms.a("battlecards")
 

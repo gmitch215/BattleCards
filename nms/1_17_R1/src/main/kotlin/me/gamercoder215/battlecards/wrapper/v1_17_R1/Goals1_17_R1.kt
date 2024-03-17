@@ -1,9 +1,12 @@
 package me.gamercoder215.battlecards.wrapper.v1_17_R1
 
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.isMinion
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import net.minecraft.server.level.EntityPlayer
 import net.minecraft.world.entity.EntityCreature
 import net.minecraft.world.entity.EntityInsentient
+import net.minecraft.world.entity.EntityLiving
 import net.minecraft.world.entity.ai.goal.PathfinderGoal
 import net.minecraft.world.entity.ai.goal.target.PathfinderGoalTarget
 import net.minecraft.world.entity.ai.targeting.PathfinderTargetCondition
@@ -157,6 +160,43 @@ internal class CardMasterHurtByTargetGoal1_17_R1(
         creature.setGoalTarget(lastHurtBy, EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true)
         timestamp = nms.dH()
 
+        super.c()
+    }
+
+}
+
+internal class CardNearestAttackableTargetGoal1_17_R1(entity: EntityCreature, private val card: IBattleCard<*>) : PathfinderGoalTarget(entity, false, true) {
+
+    val mob: EntityCreature = (card.entity as CraftCreature).handle
+    val randomInterval: Int = 10
+    val targetConditions: PathfinderTargetCondition = PathfinderTargetCondition.a().a(k())
+
+    var target: EntityLiving? = null
+
+    override fun a(): Boolean {
+        if (r.nextInt(randomInterval) != 0) return false
+        findTarget()
+
+        return this.target != null
+    }
+
+    fun findTarget() {
+        this.target = mob.t.a(
+            mob.t.a(EntityLiving::class.java, mob.boundingBox.a(k())) {
+                val en = it.bukkitEntity
+                en != card.entity && !en.isMinion(card) && en != card.p
+            },
+            targetConditions,
+            mob,
+            mob.locX(), mob.headY, mob.locZ()
+        )
+    }
+
+    override fun c() {
+        mob.setGoalTarget(target,
+            if ((target is EntityPlayer)) EntityTargetEvent.TargetReason.CLOSEST_PLAYER else EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
+            true
+        )
         super.c()
     }
 

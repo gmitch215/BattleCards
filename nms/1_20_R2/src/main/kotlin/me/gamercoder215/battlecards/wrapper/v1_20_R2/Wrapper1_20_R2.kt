@@ -111,6 +111,8 @@ internal class Wrapper1_20_R2 : Wrapper {
         nms.targetSelector.addGoal(1, CardOwnerHurtByTargetGoal1_20_R2(nms, card))
         nms.targetSelector.addGoal(2, CardOwnerHurtTargetGoal1_20_R2(nms, card))
         nms.targetSelector.addGoal(3, HurtByTargetGoal(nms))
+        if (BattleConfig.config.isAggressive)
+            nms.targetSelector.addGoal(4, CardNearestAttackableTargetGoal1_20_R2(nms, card))
 
         nms.addTag("battlecards")
 

@@ -1,10 +1,13 @@
 package me.gamercoder215.battlecards.wrapper.v1_13_R1
 
 import me.gamercoder215.battlecards.impl.cards.IBattleCard
+import me.gamercoder215.battlecards.util.isMinion
+import me.gamercoder215.battlecards.wrapper.Wrapper.Companion.r
 import net.minecraft.server.v1_13_R1.*
 import org.bukkit.craftbukkit.v1_13_R1.entity.CraftCreature
 import org.bukkit.craftbukkit.v1_13_R1.entity.CraftPlayer
 import org.bukkit.event.entity.EntityTargetEvent
+import java.util.function.Predicate
 
 class FollowCardOwner1_13_R1(
     private val creature: EntityInsentient,
@@ -151,6 +154,37 @@ internal class CardMasterHurtByTargetGoal1_13_R1(
         creature.setGoalTarget(lastHurtBy, EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true)
         timestamp = nms.hurtTimestamp
 
+        super.c()
+    }
+
+}
+
+internal class CardNearestAttackableTargetGoal1_13_R1(entity: EntityCreature, private val card: IBattleCard<*>) : PathfinderGoalTarget(entity, false, true) {
+
+    val mob: EntityCreature = (card.entity as CraftCreature).handle
+    val randomInterval: Int = 10
+
+    var target: EntityLiving? = null
+
+    override fun a(): Boolean {
+        if (r.nextInt(randomInterval) != 0) return false
+        findTarget()
+
+        return this.target != null
+    }
+
+    fun findTarget() {
+        this.target = mob.world.a(EntityLiving::class.java, mob.boundingBox.grow(i(), i(), i()), Predicate {
+            val en = it.bukkitEntity
+            en != card.entity && !en.isMinion(card) && en != card.p
+        }).filterNotNull().minBy { mob.h(it) }
+    }
+
+    override fun c() {
+        mob.setGoalTarget(target,
+            if ((target is EntityPlayer)) EntityTargetEvent.TargetReason.CLOSEST_PLAYER else EntityTargetEvent.TargetReason.CLOSEST_ENTITY,
+            true
+        )
         super.c()
     }
 

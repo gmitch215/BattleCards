@@ -105,6 +105,7 @@ interface BattleConfig {
             if (!config.isBoolean("Cards.AttackPlayers")) config["Cards.AttackPlayers"] = false
             if (!config.isBoolean("Cards.TargetCards")) config["Cards.TargetCards"] = true
             if (!config.isInt("Cards.MaxSpawned")) config["Cards.MaxSpawned"] = 2
+            if (!config.isBoolean("Cards.Aggressive")) config["Cards.Aggressive"] = false
 
             if (!config.isConfigurationSection("Cards.Destruction")) config.createSection("Cards.Destruction")
             if (!config.isBoolean("Cards.Destruction.Cactus")) config["Cards.Destruction.Cactus"] = false
@@ -490,5 +491,17 @@ interface BattleConfig {
          * @param value Chance
          */
         set(value) = setConfig("Cards.Trades.Chance", value)
+
+    var isAggressive: Boolean
+        /**
+         * Fetches whether Battle Cards will automatically attack their targets.
+         * @return true if will attack, false otherwise
+         */
+        get() = configuration.getBoolean("Cards.Aggressive")
+        /**
+         * Sets whether Battle Cards will automatically attack their targets.
+         * @param value true if will attack, false otherwise
+         */
+        set(value) = setConfig("Cards.Aggressive", value)
 
 }
