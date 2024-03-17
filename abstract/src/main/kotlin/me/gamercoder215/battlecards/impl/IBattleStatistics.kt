@@ -127,6 +127,9 @@ class IBattleStatistics(
     override val knockbackResistance: Double
         get() = find(CardAttribute.KNOCKBACK_RESISTANCE)
 
+    override val followRange: Double
+        get() = find(CardAttribute.FOLLOW_RANGE)
+
     val attributes: Map<CardAttribute, Double>
         get() = mapOf(
             CardAttribute.MAX_HEALTH to maxHealth,

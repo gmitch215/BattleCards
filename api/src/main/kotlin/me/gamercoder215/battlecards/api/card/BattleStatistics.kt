@@ -42,6 +42,12 @@ interface BattleStatistics {
      */
     val knockbackResistance: Double
 
+    /**
+     * Fetches the distance this card will follow its target.
+     * @return Follow Range
+     */
+    val followRange: Double
+
     // Statistics
 
     /**
