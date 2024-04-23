@@ -22,7 +22,7 @@ done
 cp -Rfv ./docs/* ./
 rm -rf ./docs
 
-echo "battlecards.gamercoder215.me" > CNAME
+echo "battlecards.gmitch215.xyz" > CNAME
 
 git add .
 git commit -m "Update JavaDocs ($1)"
