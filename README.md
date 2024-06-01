@@ -1,6 +1,8 @@
 # <img style="height: 7vh; width: auto;" src="https://repository-images.githubusercontent.com/555359817/10af05e9-d2f4-41c8-9451-d9bbfa2bd0bb"> BattleCards
 > Unique, action-packed Minecraft Plugin, featuring upgradable and collectible cards used in Battle.
 
+# This resource is no longer mainainted. Thanks for playing!
+
 # 🎴 Deploy your Mobs!
 
 <details>
